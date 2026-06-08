@@ -1016,33 +1016,22 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 400; line-height: 1.
     display: block;
   }
 
-  /* Title + description + button below the image */
+  /* Text image + button below the mockup */
   .case-card-full__info {
     display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 0.9rem 1rem 1rem;
+    flex-direction: column;
   }
 
-  .case-card-full__info-text {
-    flex: 1;
-    min-width: 0;
+  .case-card-full__info-img {
+    width: 100%;
+    height: auto;
+    display: block;
   }
 
-  .case-card-full__info-title {
-    font-family: var(--font-display);
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--ink);
-    margin: 0 0 0.25rem;
-  }
-
-  .case-card-full__info-desc {
-    font-size: 0.75rem;
-    color: #555;
-    line-height: 1.45;
-    margin: 0;
+  .case-card-full__info-btn-row {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0.6rem 1rem 0.9rem;
   }
 
   .case-card-full__btn-mobile {
