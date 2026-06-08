@@ -187,6 +187,11 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 400; line-height: 1.
   border-radius: 2px;
   transition: transform 0.3s, opacity 0.3s;
 }
+/* X when open */
+.nav-hamburger[aria-expanded="true"] { position: relative; z-index: 100; }
+.nav-hamburger[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-hamburger[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+.nav-hamburger[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
 /* ── HERO ─────────────────────────────────────────────────── */
 .hero {
@@ -959,6 +964,9 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 400; line-height: 1.
 
 /* ── RESPONSIVE ───────────────────────────────────────────── */
 /* Mobile nav open state */
+/* Icons inside drawer — hidden by default, shown when drawer open */
+.nav-drawer-icons { display: none; }
+
 .nav-links.nav-open {
   display: flex;
   flex-direction: column;
@@ -974,6 +982,14 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 400; line-height: 1.
   font-size: 1.5rem;
   color: var(--ink);
 }
+.nav-links.nav-open .nav-drawer-icons {
+  display: flex;
+  margin-top: 0.5rem;
+}
+.nav-links.nav-open .nav-drawer-icons a {
+  font-size: 1.5rem;
+  color: var(--ink);
+}
 .nav-links a.active { color: var(--ink); }
 .nav-links a.active::after { width: 100%; }
 
@@ -983,6 +999,8 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 400; line-height: 1.
   .hero-bio { margin: 0 auto 2.5rem; }
   .hero-actions { justify-content: center; }
   .hero-scroll-hint { display: none; }
+  .hero { padding-bottom: 1.25rem; }
+  .section-rule { margin-top: 0; }
 
   .case-card, .case-card--right { grid-template-columns: 1fr; direction: ltr; gap: 2rem; }
   .case-card__image img { height: auto; }
@@ -996,30 +1014,55 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 400; line-height: 1.
 
   .nav-links { display: none; }
   .nav-hamburger { display: flex; }
+  .nav-icons { display: none; }
+  .nav-inner { grid-template-columns: 1fr auto; }
 
-  /* Hide desktop overlay button, show info row instead */
+  /* Hide desktop overlay button */
   .case-card-full__btn { display: none; }
 
-  .case-card-full {
-    overflow: hidden;
-    background: #fff;
+  /* Remove section side padding on mobile so cards control their own margins */
+  .section.work {
+    padding-left: 0;
+    padding-right: 0;
   }
 
-  /* Image fills full width at natural height */
+  .work-header {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  /* No card container on mobile — just content */
+  .case-card-full {
+    overflow: visible;
+    background: transparent;
+    border-radius: 0;
+    width: auto;
+    margin-left: 20px;
+    margin-right: 20px;
+  }
+
   .case-card-full picture {
     display: block;
+    margin-left: -20px;
+    margin-right: -20px;
   }
 
-  .case-card-full img {
-    height: auto;
+  /* Mockup image: full width, no rounded corners */
+  .case-card-full picture img,
+  .case-card-full > img {
     width: 100%;
+    height: auto;
     display: block;
+    border-radius: 0;
   }
 
-  /* Text image + button below the mockup */
+  /* Text image + button below */
   .case-card-full__info {
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
+    padding: 0;
+    margin-top: 30px;
   }
 
   .case-card-full__info-img {
@@ -1028,24 +1071,20 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 400; line-height: 1.
     display: block;
   }
 
-  .case-card-full__info-btn-row {
-    display: flex;
-    justify-content: flex-end;
-    padding: 0.6rem 1rem 0.9rem;
-  }
-
+  /* Large dark filled button, aligned with text */
   .case-card-full__btn-mobile {
     display: inline-block;
-    flex-shrink: 0;
     font-family: var(--font-body);
-    font-size: 0.78rem;
+    font-size: 0.95rem;
     font-weight: 500;
-    padding: 0.38rem 0.9rem;
-    border: 1.5px solid var(--ink);
+    padding: 0.8rem 2rem;
+    background: var(--ink);
+    color: #fff;
+    border: none;
     border-radius: 100px;
-    background: transparent;
-    color: var(--ink);
     white-space: nowrap;
+    margin-top: 30px;
+    margin-left: 5px;
   }
 }
 
