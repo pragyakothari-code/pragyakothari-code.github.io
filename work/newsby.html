@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Newsby, Pragya Kothari</title>
+  <meta name="description" content="Redesigning how people engage with news after reading, surfacing reflection, conversation, and meaning through a feature called Circles.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css?v=8">
+  <style>
+    /* ── NEWSBY CASE STUDY ───────────────────────────────── */
+    :root {
+      --nb-blue:      #3E62E0;
+      --nb-blue-dark: #2A4BC4;
+      --nb-blue-bg:   #3E62E0;
+    }
+
+    /* ── HERO TWO-COL LAYOUT ─────────────────────────────── */
+    .cs-hero-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 3rem;
+    }
+    .cs-hero-left { flex: 1; }
+    .cs-hero-cta {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+    }
+
+    /* ── HERO CTA BUTTON ─────────────────────────────────── */
+    .nb-cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.7rem 1.3rem;
+      background: var(--ink);
+      color: #fff;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      border-radius: 100px;
+      letter-spacing: 0.01em;
+      transition: background 0.2s, transform 0.15s;
+      box-shadow: none;
+      white-space: nowrap;
+    }
+    .nb-cta-icon { font-size: 0.75rem; }
+    .nb-cta-btn:hover {
+      background: #333;
+      transform: translateY(-1px);
+    }
+    @media (max-width: 640px) {
+      .cs-hero-row { flex-direction: column; align-items: flex-start; }
+      .nb-cta-btn { width: 100%; justify-content: center; }
+    }
+
+    /* ── NAV BACK LINK ───────────────────────────────────── */
+    .cs-nav-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: var(--font-body);
+      font-size: 0.875rem;
+      color: var(--ink-light);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .cs-nav-back:hover { color: var(--ink); }
+
+    /* ── HERO ────────────────────────────────────────────── */
+    .cs-hero {
+      padding: calc(clamp(3rem, 5vw, 5rem) + 64px) var(--pad) 0;
+      max-width: var(--max-w);
+      margin: 0 auto;
+    }
+    .cs-hero-meta { margin-bottom: 1.5rem; }
+    .cs-tag {
+      display: inline-block;
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--ink-light);
+      margin-top: 1rem;
+      display: block;
+    }
+    .cs-logo-wrap {
+      margin: 0.75rem 0 1.25rem;
+    }
+    .cs-logo {
+      height: clamp(2rem, 4vw, 3rem);
+      width: auto;
+      display: block;
+    }
+    .cs-hero-sub {
+      font-size: clamp(1rem, 1.5vw, 1.175rem);
+      color: var(--ink-mid);
+      max-width: 60ch;
+      line-height: 1.75;
+    }
+    .cs-hero-img {
+      margin-top: 3rem;
+      width: 100%;
+      overflow: hidden;
+      background: var(--nb-blue-bg);
+    }
+    .cs-hero-img img {
+      width: 100%;
+      display: block;
+    }
+
+    /* ── OVERVIEW BAR ────────────────────────────────────── */
+    .cs-overview {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border-top: 1px solid #E4E1DC;
+      border-bottom: 1px solid #E4E1DC;
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 var(--pad);
+    }
+    .cs-ov-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      padding: 1.75rem 0;
+    }
+    .cs-ov-item + .cs-ov-item {
+      border-left: 1px solid #E4E1DC;
+      padding-left: 2rem;
+    }
+    .cs-ov-label {
+      font-family: var(--font-body);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-light);
+    }
+    .cs-ov-val {
+      font-family: var(--font-body);
+      font-size: 0.9375rem;
+      color: var(--ink);
+    }
+
+    /* ── SECTIONS ────────────────────────────────────────── */
+    .cs-section {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: clamp(3rem, 5vw, 5rem) var(--pad);
+    }
+    .cs-section + .cs-section {
+      border-top: 1px solid #E4E1DC;
+    }
+    .cs-section--blue {
+      background: var(--nb-blue-bg);
+      max-width: 100%;
+      padding: clamp(3rem, 5vw, 5rem) var(--pad);
+    }
+    .cs-section--blue .cs-section-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+    }
+
+    /* ── TYPOGRAPHY ──────────────────────────────────────── */
+    .cs-label {
+      font-family: var(--font-body);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--nb-blue);
+      display: block;
+      margin-bottom: 0.875rem;
+    }
+    .cs-label--white {
+      color: rgba(255,255,255,0.65);
+    }
+    .cs-section h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.625rem, 2.75vw, 2.375rem);
+      font-weight: 400;
+      color: #1a3347;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      margin: 0 0 1.25rem;
+    }
+    .cs-section--blue h2 { color: #fff; }
+    .cs-section p {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      color: var(--ink-mid);
+      line-height: 1.8;
+      max-width: 68ch;
+    }
+    .cs-section p + p { margin-top: 0.875rem; }
+    .cs-section--blue p { color: rgba(255,255,255,0.82); }
+    .cs-strong {
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .cs-section--blue .cs-strong { color: #fff; }
+    .cs-section--blue .cs-strong--blue { color: #fff; }
+
+    /* image full */
+    .cs-img {
+      width: 100%;
+      display: block;
+      margin: 2.5rem 0 0;
+    }
+    .cs-img--rounded { border-radius: 12px; }
+    .cs-img--shadow { box-shadow: 0 12px 48px rgba(0,0,0,0.12); }
+    .cs-caption {
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      color: var(--ink-light);
+      margin-top: 0.75rem;
+      font-style: italic;
+    }
+
+    /* two-col layout */
+    .cs-two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+      margin-top: 2rem;
+    }
+    .cs-two-col--wide {
+      grid-template-columns: 1.1fr 0.9fr;
+    }
+
+    /* ── FLOW DIAGRAM ────────────────────────────────────── */
+    .nb-flow {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 2rem;
+    }
+    .nb-pill {
+      background: var(--nb-blue);
+      color: #fff;
+      font-family: var(--font-body);
+      font-size: 0.875rem;
+      font-weight: 500;
+      padding: 0.55rem 1.1rem;
+      border-radius: 100px;
+    }
+    .nb-pill--dark {
+      background: #1a1a1a;
+    }
+    .nb-pill--ghost {
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.4);
+    }
+    .nb-pill--empty {
+      background: rgba(62,98,224,0.18);
+      color: var(--nb-blue);
+      font-size: 1.25rem;
+      padding: 0.45rem 1.1rem;
+      font-weight: 600;
+    }
+    .nb-arrow {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      color: var(--ink-light);
+    }
+    .nb-flow--white .nb-arrow { color: rgba(255,255,255,0.5); }
+    .nb-flow-caption {
+      display: block;
+      width: 100%;
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      color: var(--nb-blue);
+      margin-top: 0.875rem;
+      font-style: italic;
+    }
+    .nb-flow-caption--white {
+      color: rgba(255,255,255,0.7);
+    }
+
+    /* ── PROBLEM BULLETS ─────────────────────────────────── */
+    .cs-bullet-list {
+      list-style: none;
+      margin: 1rem 0 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .cs-bullet-list li {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.6;
+      padding-left: 1.25rem;
+      position: relative;
+    }
+    .cs-bullet-list li::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      color: var(--nb-blue);
+    }
+
+    /* ── RESEARCH COLUMNS ────────────────────────────────── */
+    .nb-research-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    .nb-research-col h4 {
+      background: var(--nb-blue);
+      color: #fff;
+      font-family: var(--font-body);
+      font-size: 0.875rem;
+      font-weight: 600;
+      padding: 0.75rem 1rem;
+      margin-bottom: 0;
+    }
+    .nb-research-col ul {
+      list-style: none;
+      border: 1px solid #E4E1DC;
+      border-top: none;
+    }
+    .nb-research-col ul li {
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      line-height: 1.65;
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid #E4E1DC;
+    }
+    .nb-research-col ul li:last-child { border-bottom: none; }
+    .nb-research-col ul li strong {
+      display: block;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 0.2rem;
+    }
+    .nb-research-col ul li span { color: var(--ink-mid); }
+
+    /* ── INSIGHT CHAIN ───────────────────────────────────── */
+    .nb-insight-chain {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      margin-top: 2rem;
+      border: 1px solid #E4E1DC;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .nb-chain-item {
+      flex: 1;
+      padding: 1.25rem 1rem;
+      border-right: 1px solid #E4E1DC;
+      position: relative;
+    }
+    .nb-chain-item:last-child { border-right: none; }
+    .nb-chain-label {
+      display: block;
+      font-family: var(--font-body);
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--nb-blue);
+      margin-bottom: 0.5rem;
+    }
+    .nb-chain-item p {
+      font-family: var(--font-body);
+      font-size: 0.875rem;
+      color: var(--ink-mid);
+      line-height: 1.55;
+      max-width: none;
+    }
+    .nb-chain-arrow {
+      display: flex;
+      align-items: center;
+      padding: 0 0.25rem;
+      background: var(--cream-dark);
+      color: var(--ink-light);
+      font-size: 0.875rem;
+      flex: 0 0 auto;
+    }
+
+    /* ── PRINCIPLES GRID ─────────────────────────────────── */
+    .nb-principles-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    .nb-principle {
+      background: var(--nb-blue);
+      padding: 1.75rem;
+      border-radius: 4px;
+    }
+    .nb-principle h4 {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.875rem;
+      line-height: 1.3;
+    }
+    .nb-principle p {
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.82);
+      line-height: 1.65;
+      max-width: none;
+    }
+    .nb-principle p + p { margin-top: 0.5rem; }
+
+    /* ── CIRCLES INTRO TWO-COL ───────────────────────────── */
+    .nb-circles-intro {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+      margin-top: 2rem;
+    }
+    .nb-circles-intro img {
+      width: 100%;
+      display: block;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    }
+    .nb-circles-intro-caption {
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      color: var(--ink-light);
+      font-style: italic;
+      margin-top: 0.75rem;
+      text-align: center;
+    }
+
+    /* ── BLUE SECTION TWO-COL ────────────────────────────── */
+    .nb-blue-two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+    .nb-blue-two-col img {
+      width: 100%;
+      display: block;
+    }
+
+    /* ── ACTION STEPS ────────────────────────────────────── */
+    .nb-action-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin: 1.5rem 0;
+    }
+    .nb-action-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.875rem;
+    }
+    .nb-step-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--nb-blue);
+      flex-shrink: 0;
+      margin-top: 0.45rem;
+    }
+    .nb-action-step p {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      color: var(--ink-mid);
+      line-height: 1.6;
+      margin: 0;
+      max-width: none;
+    }
+    .nb-action-step p strong { color: var(--ink); }
+
+    /* ── PROTOTYPE SLIDE ─────────────────────────────────── */
+    .nb-proto-slide {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 4rem;
+      align-items: center;
+      padding: 4rem var(--pad);
+      max-width: var(--max-w);
+      margin: 0 auto;
+      scroll-margin-top: 80px;
+    }
+    .nb-proto-phone-col {
+      width: clamp(220px, 26vw, 300px);
+      margin-left: 3rem;
+    }
+    .nb-proto-tips-col { }
+    .nb-proto-eyebrow {
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      color: #888;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin: 0 0 0.25rem;
+    }
+    .nb-proto-heading {
+      font-family: var(--font-display);
+      font-size: clamp(1.75rem, 3vw, 2.5rem);
+      font-weight: 700;
+      color: var(--nb-blue);
+      line-height: 1.2;
+      margin: 0 0 1.5rem;
+    }
+    .nb-proto-intro {
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--ink-light);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin: 0 0 0.75rem;
+    }
+    .nb-proto-steps {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      counter-reset: steps;
+    }
+    .nb-proto-steps li {
+      counter-increment: steps;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      color: var(--ink);
+      line-height: 1.45;
+    }
+    .nb-proto-steps li::before {
+      content: counter(steps);
+      flex-shrink: 0;
+      width: 1.6rem;
+      height: 1.6rem;
+      background: var(--nb-blue);
+      color: #fff;
+      border-radius: 50%;
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .nb-proto-steps li strong { display: inline !important; font-weight: 700; }
+    @media (max-width: 640px) {
+      .nb-proto-slide { grid-template-columns: 1fr; }
+      .nb-proto-phone-col { width: 220px; margin: 0 auto; }
+    }
+
+    /* ── CONCLUSION LAYOUT ───────────────────────────────── */
+    .nb-conclusion-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1.6fr;
+      gap: 3rem;
+      align-items: center;
+    }
+    .nb-conclusion-text { }
+    .nb-conclusion-lead {
+      font-family: var(--font-display);
+      font-size: clamp(0.95rem, 1.4vw, 1.25rem);
+      line-height: 1.5;
+      font-weight: 300;
+      color: var(--ink);
+      margin-bottom: 1rem;
+    }
+    .nb-conclusion-body {
+      font-family: var(--font-body);
+      font-size: clamp(0.85rem, 1.2vw, 1.05rem);
+      font-weight: 400;
+      line-height: 1.6;
+      color: var(--ink-light);
+      margin: 0;
+    }
+    .nb-phone-col-hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .nb-phone-col-hero .try-label {
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      color: #888;
+      margin: 0;
+      letter-spacing: 0.03em;
+    }
+    .nb-phone-col-hero .try-sub {
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--nb-blue);
+      margin: 0 0 0.5rem;
+    }
+    .nb-tagline {
+      font-family: var(--font-body);
+      font-size: clamp(2rem, 4.5vw, 3.5rem);
+      font-weight: 700;
+      font-style: normal;
+      color: var(--nb-blue);
+      line-height: 1.2;
+      margin: 0;
+      letter-spacing: -0.02em;
+    }
+    @media (max-width: 640px) {
+      .nb-conclusion-wrap { grid-template-columns: 1fr; }
+    }
+
+    /* ── CSS PHONE MOCKUP ────────────────────────────────── */
+    .nb-phone-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      width: clamp(200px, 24vw, 280px);
+    }
+    .nb-phone-col .try-label {
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      color: #888;
+      margin: 0;
+      letter-spacing: 0.03em;
+    }
+    .nb-phone-col .try-sub {
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--nb-blue);
+      margin: 0 0 0.5rem;
+    }
+    .nb-phone-shell {
+      position: relative;
+      width: 100%;
+      background: #1c1c2e;
+      border-radius: 46px;
+      padding: 6px 6px 10px;
+      box-shadow: 0 32px 72px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.07);
+    }
+
+    .nb-phone-screen {
+      border-radius: 40px;
+      overflow: hidden;
+      aspect-ratio: 390 / 844;
+      position: relative;
+      background: #fff;
+    }
+    /* Notch sits INSIDE the screen, proportional height so it matches
+       the scaled status bar (30px app-px / 390px wide = 7.69% of screen width).
+       Logo (left) and search icon (right) remain fully visible. */
+    .nb-phone-notch {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 22%;
+      height: 0;
+      padding-bottom: 7.69%;
+      background: #1c1c2e;
+      border-radius: 0 0 12px 12px;
+      z-index: 2;
+      pointer-events: none;
+    }
+    .nb-phone-screen iframe {
+      position: absolute;
+      top: 0; left: 0;
+      width: 390px;
+      height: 844px;
+      border: none;
+      display: block;
+      transform-origin: top left;
+    }
+    @media (max-width: 640px) {
+      .nb-conclusion { grid-template-columns: 1fr; }
+      .nb-phone-col { width: 200px; margin: 0 auto; }
+    }
+
+    /* ── PROTOTYPE ──────────────────────────────────────── */
+    .proto-wrap {
+      display: flex;
+      align-items: flex-start;
+      gap: 4rem;
+      margin-top: 3rem;
+      justify-content: center;
+    }
+    .proto-phone {
+      flex: 0 0 auto;
+      width: 260px;
+      background: #111;
+      border-radius: 40px;
+      padding: 14px;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.25), inset 0 0 0 1px rgba(255,255,255,0.08);
+      position: relative;
+    }
+    .proto-notch {
+      width: 80px;
+      height: 22px;
+      background: #111;
+      border-radius: 0 0 14px 14px;
+      margin: 0 auto 8px;
+      position: relative;
+      z-index: 2;
+    }
+    .proto-screen {
+      border-radius: 28px;
+      overflow: hidden;
+      background: #fff;
+      position: relative;
+      aspect-ratio: 9 / 19.5;
+    }
+    .proto-screen-inner {
+      position: absolute;
+      inset: 0;
+      animation: proto-fade-in 0.25s ease;
+    }
+    .proto-screen-inner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top;
+      display: block;
+    }
+    @keyframes proto-fade-in {
+      from { opacity: 0; transform: translateX(12px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    .proto-hit {
+      position: absolute;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background 0.15s;
+    }
+    .proto-hit:hover {
+      background: rgba(62,98,224,0.12);
+      outline: 2px solid rgba(62,98,224,0.3);
+    }
+
+    /* hints panel */
+    .proto-hints {
+      flex: 0 0 auto;
+      max-width: 220px;
+      padding-top: 1rem;
+    }
+    .proto-hint-title {
+      font-family: var(--font-body);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--ink-light);
+      margin-bottom: 1rem;
+      max-width: none;
+    }
+    .proto-hint-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.125rem;
+    }
+    .proto-hint-step {
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      color: var(--ink-light);
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      counter-increment: step;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .proto-hint-step::before {
+      content: counter(step);
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--ink-light);
+      background: var(--cream-dark);
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .proto-hint-list { counter-reset: step; }
+    .proto-hint-step:hover { background: rgba(62,98,224,0.06); color: var(--nb-blue); }
+    .proto-hint-step.active {
+      background: rgba(62,98,224,0.1);
+      color: var(--nb-blue);
+      font-weight: 500;
+    }
+    .proto-hint-step.active::before {
+      background: var(--nb-blue);
+      color: #fff;
+    }
+    .proto-restart {
+      margin-top: 1.5rem;
+      font-family: var(--font-body);
+      font-size: 0.8125rem;
+      color: var(--ink-light);
+      background: none;
+      border: 1px solid #E4E1DC;
+      padding: 0.4rem 0.875rem;
+      border-radius: 100px;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .proto-restart:hover { color: var(--nb-blue); border-color: var(--nb-blue); }
+
+    @media (max-width: 640px) {
+      .proto-wrap { flex-direction: column; align-items: center; gap: 2rem; }
+      .proto-hints { max-width: 260px; }
+    }
+
+    /* ── NEXT CASE ───────────────────────────────────────── */
+    .cs-next {
+      background: #fff;
+      padding: clamp(3rem, 5vw, 5rem) var(--pad);
+      text-align: center;
+    }
+    .cs-next-inner { max-width: 600px; margin: 0 auto; }
+    .cs-next span {
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-light);
+      display: block;
+      margin-bottom: 1rem;
+    }
+    .cs-next h3 {
+      font-family: var(--font-display);
+      font-size: clamp(1.5rem, 3vw, 2.25rem);
+      font-weight: 400;
+      color: var(--ink);
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      margin-bottom: 2rem;
+    }
+    .cs-next a {
+      background: var(--ink);
+      color: #fff;
+      padding: 0.875rem 2rem;
+      font-family: var(--font-body);
+      font-size: 0.9375rem;
+      font-weight: 500;
+      text-decoration: none;
+      display: inline-block;
+      border-radius: 100px;
+      transition: opacity 0.2s;
+    }
+    .cs-next a:hover { opacity: 0.85; }
+
+    /* ── RESPONSIVE ──────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .cs-overview { grid-template-columns: 1fr 1fr; }
+      .cs-ov-item:nth-child(3) { border-left: none; border-top: 1px solid #E4E1DC; padding-left: 0; }
+      .cs-ov-item:nth-child(4) { border-top: 1px solid #E4E1DC; }
+      .cs-two-col,
+      .nb-circles-intro,
+      .nb-blue-two-col,
+      .nb-conclusion { grid-template-columns: 1fr; gap: 2rem; }
+      .nb-research-grid { grid-template-columns: 1fr; }
+      .nb-principles-grid { grid-template-columns: 1fr; }
+      .nb-insight-chain { flex-direction: column; }
+      .nb-chain-arrow { display: none; }
+      .nb-chain-item { border-right: none; border-bottom: 1px solid #E4E1DC; }
+      .nb-chain-item:last-child { border-bottom: none; }
+    }
+    @media (max-width: 480px) {
+      .cs-overview { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── NAV ─────────────────────────────────────────────── -->
+  <nav id="nav">
+    <div class="nav-inner">
+      <ul class="nav-links">
+        <li><a href="../index.html#work">Work</a></li>
+        <li><a href="../index.html#about">About</a></li>
+        <li><a href="../index.html#contact">Contact</a></li>
+        <li><a href="../index.html#playground">Playground</a></li>
+      </ul>
+      <button class="nav-hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="nav-rule"></div>
+  </nav>
+
+  <!-- ── HERO ────────────────────────────────────────────── -->
+  <div class="cs-hero">
+    <div class="cs-hero-meta">
+      <a href="../index.html#work" class="cs-nav-back">← All Work</a>
+    </div>
+    <div class="cs-hero-row">
+      <div class="cs-hero-left">
+        <span class="cs-tag">Mobile App &middot; UX Research &middot; Product Design</span>
+        <div class="cs-logo-wrap">
+          <img src="../images/newsby/newsby-logo.png" alt="Newsby" class="cs-logo">
+        </div>
+        <p class="cs-hero-sub">Redesigning how people engage with news after reading, surfacing reflection, conversation, and meaning through a feature called Circles.</p>
+      </div>
+      <div class="cs-hero-cta">
+        <button type="button" class="nb-cta-btn" id="nb-proto-cta">
+          <span class="nb-cta-icon">▶</span> Try prototype
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── OVERVIEW BAR ────────────────────────────────────── -->
+  <div class="cs-overview">
+    <div class="cs-ov-item">
+      <span class="cs-ov-label">Role</span>
+      <span class="cs-ov-val">UX Designer</span>
+    </div>
+    <div class="cs-ov-item">
+      <span class="cs-ov-label">Timeline</span>
+      <span class="cs-ov-val">8 Weeks</span>
+    </div>
+    <div class="cs-ov-item">
+      <span class="cs-ov-label">Tools</span>
+      <span class="cs-ov-val">Figma &middot; Miro</span>
+    </div>
+    <div class="cs-ov-item">
+      <span class="cs-ov-label">Platform</span>
+      <span class="cs-ov-val">iOS Mobile</span>
+    </div>
+  </div>
+
+  <!-- ── COVER ─────────────────────────────────────────────── -->
+  <div style="background:var(--nb-blue-bg);">
+    <img src="../images/newsby/cover.png" alt="Newsby, two phones showing the home feed and article view, with the tagline: News shaped by people you trust" style="width:100%;display:block;">
+  </div>
+
+  <!-- ── THE PROBLEM ──────────────────────────────────────── -->
+  <hr style="border:none; border-top:1px solid #E4E1DC; margin:0;">
+  <div style="padding:0;">
+    <img src="../images/newsby/unmet-needs.png" alt="Unmet needs, what happens after reading the article" style="width:100%;display:block;">
+  </div>
+  <hr style="border:none; border-top:1px solid #E4E1DC; margin:0;">
+
+  <!-- ── RESEARCH ─────────────────────────────────────────── -->
+  <div style="padding:0;">
+    <img src="../images/newsby/research-confirmed.png" alt="Research confirmed this behavior" style="width:100%;display:block;">
+  </div>
+  <hr style="border:none; border-top:1px solid #E4E1DC; margin:0;">
+
+  <!-- ── WHAT RESEARCH REVEALED ───────────────────────────── -->
+  <div style="padding:0;">
+    <img src="../images/newsby/what-research-revealed.png" alt="What research revealed" style="width:100%;display:block;">
+  </div>
+  <hr style="border:none; border-top:1px solid #E4E1DC; margin:0;">
+
+
+  <!-- ── DESIGN PRINCIPLES ─────────────────────────────────── -->
+  <div class="cs-section">
+    <h2>Design principles behind Newsby</h2>
+    <div class="nb-principles-grid">
+      <div class="nb-principle">
+        <h4>1. Context over reach</h4>
+        <p>News is shared with intention, not for visibility.</p>
+        <p>What matters is who a story is for, not how far it travels.</p>
+      </div>
+      <div class="nb-principle">
+        <h4>2. Thought before reaction</h4>
+        <p>The interface creates space to pause and reflect before responding.</p>
+        <p>No likes. No counters. No performance pressure.</p>
+      </div>
+      <div class="nb-principle">
+        <h4>3. Social, but personal</h4>
+        <p>Discussion happens in small, trusted groups shaped by real relationships.</p>
+        <p>Meaning comes from shared context, not public opinion.</p>
+      </div>
+      <div class="nb-principle">
+        <h4>4. Stay close to the source</h4>
+        <p>Notes and discussion live alongside the article itself.</p>
+        <p>Nothing is separated from what sparked the thought.</p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ── INTRODUCING CIRCLES ──────────────────────────────── -->
+  <div style="padding:0;">
+    <img src="../images/newsby/introducing-circles.png" alt="Introducing Circles" style="width:100%;display:block;">
+  </div>
+  <hr style="border:none; border-top:1px solid #E4E1DC; margin:0;">
+
+
+  <!-- ── CIRCLES GROW ─────────────────────────────────────── -->
+  <div class="cs-section--blue" style="padding: 0;">
+    <div style="max-width: var(--max-w); margin: 0 auto;">
+      <img src="../images/newsby/circles-grow.png" alt="Circles grow with the story, ongoing spaces where stories return and meaning builds over time" style="width:100%; display:block;">
+    </div>
+  </div>
+
+  <!-- ── CIRCLES IN ACTION ─────────────────────────────────── -->
+  <div class="cs-section">
+    <!-- Circles in action, Figma slide -->
+    <div style="margin-top:2.5rem; border-radius:20px; overflow:hidden;">
+      <img src="../images/newsby/circles-action.png" alt="Circles in action, article view and saved-by-circles sheet side by side" style="width:100%;display:block;">
+    </div>
+  </div>
+
+
+  <!-- ── THE SOLUTION ─────────────────────────────────────── -->
+  <div style="padding:0;">
+    <img src="../images/newsby/the-solution.png" alt="The solution" style="width:100%;display:block;">
+  </div>
+  <hr style="border:none; border-top:1px solid #E4E1DC; margin:0;">
+
+  <!-- ── PROTOTYPE SLIDE ──────────────────────────────────── -->
+  <hr style="border:none; border-top:1px solid #E4E1DC; margin:0;">
+  <div id="prototype" class="nb-proto-slide">
+    <!-- Left: phone -->
+    <div class="nb-proto-phone-col">
+      <div class="nb-phone-shell">
+        <div class="nb-phone-screen" id="nb-phone-screen">
+          <div class="nb-phone-notch"></div>
+          <iframe id="nb-phone-iframe"
+                  src="../work/newsby-app/index.html?v=5#embed"
+                  scrolling="no"
+                  title="Newsby interactive prototype">
+          </iframe>
+        </div>
+      </div>
+    </div>
+    <!-- Right: label + nav tips -->
+    <div class="nb-proto-tips-col">
+      <p class="nb-proto-eyebrow">Try it</p>
+      <h3 class="nb-proto-heading">The interactive<br>prototype</h3>
+      <p class="nb-proto-intro">Explore the key flows:</p>
+      <ol class="nb-proto-steps">
+        <li><span><strong>Tap any article</strong> to open and read it, scroll down to see the comments</span></li>
+        <li><span>In the article, use the toolbar to <strong>Save</strong>, <strong>Highlight</strong>, or <strong>Add Note</strong></span></li>
+        <li><span>Tap <strong>Circles</strong> in the bottom nav to explore group discussions</span></li>
+        <li><span>Tap <strong>Profile</strong> in the bottom nav to explore the profile section</span></li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- ── CONCLUSION SLIDE ──────────────────────────────────── -->
+  <hr style="border:none; border-top:1px solid #E4E1DC; margin:0;">
+  <div style="padding:0;">
+    <img src="../images/newsby/conclusion.png" alt="Newsby, completes the news loop" style="width:100%; display:block;">
+  </div>
+
+  <!-- ── NEXT CASE ─────────────────────────────────────────── -->
+  <div class="cs-next">
+    <div class="cs-next-inner">
+      <span>Next Case Study</span>
+      <h3>EasyMoney, a budgeting app built on trust, clarity, and control.</h3>
+      <a href="easymoney.html">View EasyMoney →</a>
+    </div>
+  </div>
+
+  <!-- ── FOOTER ─────────────────────────────────────────── -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <span>© 2026 Pragya Kothari</span>
+      <div class="footer-links">
+        <a href="https://www.linkedin.com/in/pragya--kothari/" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://pragyak.com" target="_blank" rel="noopener">Illustration</a>
+      </div>
+      <a href="#" class="footer-top">↑ Back to top</a>
+    </div>
+  </footer>
+
+  <script>
+    // ── PROTOTYPE ─────────────────────────────────────────
+    function gotoScreen(id) {
+      document.querySelectorAll('.proto-screen-inner').forEach(s => s.style.display = 'none');
+      const target = document.getElementById('screen-' + id);
+      if (target) { target.style.display = 'block'; }
+      document.querySelectorAll('.proto-hint-step').forEach(s => {
+        s.classList.toggle('active', s.dataset.gotoScreen === id);
+      });
+    }
+    document.querySelectorAll('.proto-hit').forEach(el => {
+      el.addEventListener('click', () => gotoScreen(el.dataset.goto));
+    });
+    document.querySelectorAll('.proto-hint-step').forEach(el => {
+      el.addEventListener('click', () => gotoScreen(el.dataset.gotoScreen));
+    });
+    document.querySelector('.proto-restart')?.addEventListener('click', () => gotoScreen('home'));
+
+    // ── NAV ───────────────────────────────────────────────
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 40);
+    }, { passive: true });
+
+    const hamburger = document.querySelector('.nav-hamburger');
+    const navLinks  = document.querySelector('.nav-links');
+    hamburger?.addEventListener('click', () => {
+      const open = navLinks.classList.toggle('nav-open');
+      hamburger.setAttribute('aria-expanded', open);
+    });
+    navLinks?.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => navLinks.classList.remove('nav-open'));
+    });
+
+    const fadeEls = document.querySelectorAll('.cs-hero, .cs-overview, .cs-section, .cs-section--blue, .cs-next');
+    fadeEls.forEach(el => el.classList.add('fade-up'));
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), i * 60);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.06 });
+    fadeEls.forEach(el => observer.observe(el));
+
+  // Scale live prototype iframe to fit the CSS phone screen
+  (function() {
+    function nbFit() {
+      var screen = document.getElementById('nb-phone-screen');
+      var iframe = document.getElementById('nb-phone-iframe');
+      if (!screen || !iframe) return;
+      var s = screen.offsetWidth / 390;
+      iframe.style.transform = 'scale(' + s + ')';
+    }
+    window.addEventListener('load', nbFit);
+    window.addEventListener('resize', nbFit);
+    nbFit();
+
+    // Scroll so the prototype section is centred in the viewport when CTA is clicked
+    var ctaBtn = document.getElementById('nb-proto-cta');
+    if (ctaBtn) {
+      ctaBtn.addEventListener('click', function() {
+        var el = document.getElementById('prototype');
+        if (!el) return;
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+    }
+  })();
+  </script>
+</body>
+</html>

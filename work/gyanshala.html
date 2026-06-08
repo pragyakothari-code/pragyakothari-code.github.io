@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gyanshala, Pragya Kothari</title>
+  <meta name="description" content="A community education platform redesigned to reduce a 24-click scheduling flow to 2, across tablet and mobile.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css?v=8">
+  <style>
+    /* ── GYANSHALA CASE STUDY ────────────────────────────── */
+    :root {
+      --gy-blue:      #2E52A3;
+      --gy-blue-dark: #1E3A80;
+      --gy-yellow:    #FFD039;
+      --gy-bg:        #F5F0E8;
+      --gy-blue-muted: rgba(46, 82, 163, 0.10);
+    }
+
+    /* ── NAV BACK LINK ───────────────────────────────────── */
+    .cs-nav-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: var(--font-body);
+      font-size: 0.875rem;
+      color: var(--ink-light);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .cs-nav-back:hover { color: var(--ink); }
+
+    /* ── HERO CTA BUTTON ─────────────────────────────────── */
+    .gy-cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.7rem 1.3rem;
+      background: var(--ink);
+      color: #fff;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      border-radius: 100px;
+      letter-spacing: 0.01em;
+      transition: background 0.2s, transform 0.15s;
+      white-space: nowrap;
+    }
+    .gy-cta-btn:hover {
+      background: #333;
+      transform: translateY(-1px);
+    }
+
+    /* ── HERO ────────────────────────────────────────────── */
+    .cs-hero {
+      padding: calc(clamp(3rem, 5vw, 5rem) + 64px) var(--pad) 0;
+      max-width: var(--max-w);
+      margin: 0 auto;
+    }
+    .cs-hero-meta { margin-bottom: 1.5rem; }
+    .cs-tag {
+      display: block;
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--ink-light);
+      margin-top: 1rem;
+    }
+    .cs-hero-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 3rem;
+    }
+    .cs-hero-left { flex: 1; }
+    .cs-hero-cta {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    .cs-hero-title {
+      font-family: Georgia, serif;
+      font-size: clamp(2.25rem, 5vw, 4rem);
+      font-weight: 700;
+      color: var(--gy-blue-dark);
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      margin: 0.75rem 0 1.25rem;
+    }
+    .cs-hero-sub {
+      font-size: clamp(1rem, 1.5vw, 1.175rem);
+      color: var(--ink-mid);
+      max-width: 60ch;
+      line-height: 1.75;
+    }
+
+    /* ── STAT BADGE ──────────────────────────────────────── */
+    .gy-stat-badge {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 0.5rem;
+      background: var(--gy-yellow);
+      color: var(--gy-blue-dark);
+      border-radius: 12px;
+      padding: 0.625rem 1.125rem;
+      margin-bottom: 1.25rem;
+    }
+    .gy-stat-num {
+      font-family: var(--font-display);
+      font-size: 1.75rem;
+      font-weight: 600;
+      line-height: 1;
+      letter-spacing: -0.03em;
+    }
+    .gy-stat-label {
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    /* ── OVERVIEW BAR ────────────────────────────────────── */
+    .cs-overview {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border-top: 1px solid #E4E1DC;
+      border-bottom: 1px solid #E4E1DC;
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 var(--pad);
+    }
+    .cs-ov-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      padding: 1.75rem 0;
+    }
+    .cs-ov-item + .cs-ov-item {
+      padding-left: 2rem;
+      position: relative;
+    }
+    .cs-ov-item + .cs-ov-item::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 25%;
+      bottom: 25%;
+      width: 1px;
+      background: #E4E1DC;
+    }
+    .cs-ov-label {
+      font-family: var(--font-body);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-light);
+    }
+    .cs-ov-val {
+      font-family: var(--font-body);
+      font-size: 0.9375rem;
+      color: var(--ink);
+    }
+
+    /* ── COVER BANNER ─────────────────────────────────────── */
+    .gy-cover {
+      background: var(--gy-blue-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 5rem var(--pad);
+      text-align: center;
+      color: white;
+    }
+    .gy-cover-inner { max-width: 720px; }
+    .gy-cover-eyebrow {
+      font-family: var(--font-body);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gy-yellow);
+      margin-bottom: 1.25rem;
+    }
+    .gy-cover-hed {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4.5vw, 3.75rem);
+      font-weight: 400;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.25rem;
+    }
+    .gy-cover-hed span { color: var(--gy-yellow); }
+    .gy-cover-sub {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.75;
+      text-align: center;
+    }
+
+    /* ── SECTIONS ────────────────────────────────────────── */
+    .cs-section {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: clamp(3rem, 5vw, 5rem) var(--pad);
+    }
+    .cs-section + .cs-section {
+      border-top: 1px solid #E4E1DC;
+    }
+    .cs-section--dark {
+      background: var(--gy-blue-dark);
+      max-width: 100%;
+      padding: clamp(3rem, 5vw, 5rem) var(--pad);
+    }
+    .cs-section--dark .cs-section-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+    }
+    .cs-section--warm {
+      background: var(--gy-bg);
+      max-width: 100%;
+      padding: clamp(3rem, 5vw, 5rem) var(--pad);
+    }
+    .cs-section--warm .cs-section-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+    }
+
+    /* ── TYPOGRAPHY ──────────────────────────────────────── */
+    .cs-label {
+      font-family: var(--font-body);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gy-blue);
+      display: block;
+      margin-bottom: 0.875rem;
+    }
+    .cs-section h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.625rem, 2.75vw, 2.375rem);
+      font-weight: 400;
+      color: var(--gy-blue-dark);
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      margin: 0 0 1.25rem;
+    }
+    .cs-section p {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      color: var(--ink-mid);
+      line-height: 1.8;
+      max-width: 68ch;
+    }
+    .cs-section p + p { margin-top: 0.875rem; }
+    .cs-section--dark h2,
+    .cs-section--dark .cs-label { color: var(--gy-yellow); }
+    .cs-section--dark h2 { color: #fff; }
+    .cs-section--dark p { color: rgba(255,255,255,0.72); max-width: none; }
+
+    /* ── PROBLEM BULLETS ─────────────────────────────────── */
+    .cs-bullet-list {
+      list-style: none;
+      margin: 1rem 0 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .cs-bullet-list li {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.6;
+      padding-left: 1.25rem;
+      position: relative;
+    }
+    .cs-bullet-list li::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      color: var(--gy-blue);
+    }
+
+    /* ── INSIGHT CARDS ───────────────────────────────────── */
+    .gy-insights {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1.25rem;
+      margin-top: 2rem;
+    }
+    .gy-insight {
+      background: #fff;
+      border: 1px solid #E4E1DC;
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+    .gy-insight-icon {
+      font-size: 1.75rem;
+      margin-bottom: 0.875rem;
+      display: block;
+      width: 40px;
+      height: 40px;
+      background: var(--gy-blue-muted);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.875rem;
+    }
+    .gy-insight h4 {
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
+    }
+    .gy-insight p {
+      font-family: var(--font-body);
+      font-size: 0.875rem;
+      color: var(--ink-light);
+      line-height: 1.6;
+      max-width: none;
+    }
+
+    /* ── PRINCIPLES GRID ─────────────────────────────────── */
+    .gy-principles {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-top: 2rem;
+    }
+    .gy-principle {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 12px;
+      padding: 1.75rem;
+    }
+    .gy-principle-num {
+      font-family: var(--font-display);
+      font-size: 3rem;
+      font-weight: 600;
+      color: var(--gy-yellow);
+      opacity: 0.5;
+      line-height: 1;
+      margin-bottom: 0.75rem;
+      letter-spacing: -0.03em;
+    }
+    .gy-principle h4 {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.625rem;
+      line-height: 1.3;
+    }
+    .gy-principle p {
+      font-family: var(--font-body);
+      font-size: 0.875rem;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.65;
+      max-width: none;
+    }
+
+    /* ── PROBLEM GRID ───────────────────────────────────────── */
+    .gy-problem-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    .gy-problem-card {
+      background: var(--gy-blue-muted);
+      border-radius: 12px;
+      padding: 2rem 1.75rem;
+    }
+    .gy-problem-num {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      font-weight: 400;
+      color: var(--gy-yellow);
+      line-height: 1;
+      margin-bottom: 0.75rem;
+    }
+    .gy-problem-card h3 {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--gy-blue-dark);
+      margin-bottom: 0.5rem;
+    }
+    .gy-problem-card p {
+      font-size: 0.9375rem;
+      color: #444;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    /* ── UX AUDIT SECTION ──────────────────────────────────── */
+    .gy-audit-section {
+      background: #fff;
+      padding: clamp(3rem, 5vw, 5rem) var(--pad);
+    }
+    .gy-audit-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+    }
+    .gy-audit-layout {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 3rem;
+      align-items: start;
+      margin-top: 2.5rem;
+    }
+    .gy-audit-img-wrap {
+      position: relative;
+    }
+    .gy-audit-img-wrap img {
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid #e0e0e0;
+      display: block;
+    }
+    /* numbered dot markers on the screenshot */
+    .gy-audit-marker {
+      position: absolute;
+      width: 26px;
+      height: 26px;
+      background: var(--gy-yellow);
+      color: #111;
+      border-radius: 50%;
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      cursor: default;
+    }
+    .gy-audit-findings {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+    .gy-audit-finding {
+      display: grid;
+      grid-template-columns: 26px 1fr;
+      gap: 0.75rem;
+      align-items: start;
+    }
+    .gy-audit-finding-num {
+      width: 26px;
+      height: 26px;
+      background: var(--gy-yellow);
+      color: #111;
+      border-radius: 50%;
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .gy-audit-finding-text strong {
+      display: block;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: var(--gy-blue-dark);
+      margin-bottom: 0.2rem;
+    }
+    .gy-audit-finding-text p {
+      font-size: 0.875rem;
+      color: #555;
+      line-height: 1.5;
+      margin: 0;
+      max-width: none;
+    }
+
+    /* ── ILLUSTRATION SECTION ───────────────────────────────── */
+    .gy-illus-section {
+      background: var(--gy-bg);
+      padding: clamp(3rem, 5vw, 5rem) var(--pad);
+    }
+    .gy-illus-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+    }
+    .gy-illus-intro {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      align-items: start;
+      margin-bottom: 2.5rem;
+    }
+    .gy-illus-intro p {
+      font-family: var(--font-body);
+      font-size: 0.9375rem;
+      color: var(--ink-mid);
+      line-height: 1.75;
+      max-width: none;
+    }
+    .gy-illus-hero {
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .gy-illus-hero img {
+      width: 100%;
+      display: block;
+    }
+    .gy-char-strip {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0;
+      margin-top: 2rem;
+      border-top: 1px solid #000;
+    }
+    .gy-char-item {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 1.5rem 0.5rem 1rem;
+      transition: background 0.2s;
+      position: relative;
+    }
+    .gy-char-item:hover { background: var(--gy-blue-muted); }
+    .gy-char-item + .gy-char-item::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 20%;
+      bottom: 20%;
+      width: 1px;
+      background: #000;
+    }
+    .gy-char-item img {
+      width: 100%;
+      max-width: 110px;
+      height: 110px;
+      object-fit: contain;
+      display: block;
+    }
+    .gy-illus-callout {
+      margin-top: 2rem;
+      background: var(--gy-blue-dark);
+      border-radius: 16px;
+      padding: 2rem 2.5rem;
+      display: flex;
+      align-items: center;
+      gap: 3rem;
+    }
+    .gy-illus-callout-text { flex: 1; }
+    .gy-illus-callout-label {
+      font-family: var(--font-body);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gy-yellow);
+      margin-bottom: 0.75rem;
+    }
+    .gy-illus-callout-text p {
+      font-family: var(--font-display);
+      font-size: clamp(0.95rem, 1.4vw, 1.1rem);
+      font-style: italic;
+      font-weight: 300;
+      color: rgba(255,255,255,0.82);
+      line-height: 1.7;
+      max-width: none;
+    }
+    .gy-illus-stat {
+      flex-shrink: 0;
+      text-align: center;
+    }
+    .gy-illus-stat-num {
+      font-family: var(--font-display);
+      font-size: 4.5rem;
+      font-weight: 600;
+      color: var(--gy-yellow);
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+    .gy-illus-stat-label {
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: rgba(255,255,255,0.45);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 0.375rem;
+    }
+    @media (max-width: 768px) {
+      .gy-illus-intro { grid-template-columns: 1fr; }
+      .gy-char-strip { grid-template-columns: repeat(3, 1fr); }
+      .gy-illus-callout { flex-direction: column; gap: 1.5rem; text-align: center; }
+    }
+
+    /* ── DESIGN IMPACT TABLE ─────────────────────────────── */
+    .gy-impact-wrap { margin-top: 2rem; }
+    .gy-impact-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--font-body);
+    }
+    .gy-impact-table thead th {
+      background: var(--gy-blue);
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.75rem 0.5rem;
+      text-align: center;
+    }
+    .gy-impact-table thead th:first-child { border-radius: 10px 0 0 0; }
+    .gy-impact-table thead th:last-child  { border-radius: 0 10px 0 0; }
+    .gy-impact-arrow-col {
+      width: 20px;
+      background: #fff;
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--gy-blue-dark);
+      vertical-align: middle;
+      padding: 0 2px;
+    }
+    .gy-impact-table tbody td {
+      background: var(--gy-blue-muted);
+      color: var(--gy-blue-dark);
+      font-size: 0.8rem;
+      font-weight: 500;
+      padding: 0.75rem 0.75rem;
+      text-align: center;
+      border-top: 3px solid #fff;
+      line-height: 1.4;
+    }
+    .gy-impact-table tbody tr td.gy-impact-arrow-col {
+      background: #fff;
+      border-top: 3px solid #fff;
+    }
+
+    /* ── DUAL-DEVICE SECTION ─────────────────────────────── */
+    .gy-devices-section {
+      background: var(--gy-blue-dark);
+      padding: clamp(2rem, 3vw, 3rem) var(--pad) 0;
+    }
+    .gy-devices-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+    }
+    .gy-devices-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      margin-bottom: 0.75rem;
+    }
+    .gy-devices-hint {
+      font-family: var(--font-body);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gy-yellow);
+      margin-bottom: 0.75rem;
+    }
+    .gy-devices-header h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.5rem, 2.5vw, 2rem);
+      font-weight: 400;
+      color: #fff;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      margin: 0;
+    }
+    .gy-devices-flows {
+      display: flex;
+      gap: 1.5rem;
+      margin-top: 1.75rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .gy-flow-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      max-width: 240px;
+      text-align: left;
+    }
+    .gy-flow-num {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--gy-yellow);
+      opacity: 0.6;
+      line-height: 1.2;
+      flex-shrink: 0;
+      letter-spacing: -0.02em;
+    }
+    .gy-flow-text {
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.6;
+    }
+
+    .gy-devices-frame {
+      width: 100%;
+      overflow-x: auto;
+      background: transparent;
+      border: none;
+      scrollbar-width: none;
+    }
+    .gy-devices-frame::-webkit-scrollbar {
+      display: none;
+    }
+    .gy-devices-frame iframe {
+      width: 100%;
+      min-width: 700px;
+      height: 610px;
+      border: none;
+      display: block;
+      overflow: hidden;
+      scrollbar-width: none;
+    }
+    .gy-devices-frame iframe::-webkit-scrollbar {
+      display: none;
+    }
+    @media (max-width: 768px) {
+      .gy-devices-frame iframe { height: 680px; }
+    }
+    @media (max-width: 480px) {
+      .gy-devices-frame iframe { height: 560px; }
+      .gy-devices-header { align-items: flex-start; text-align: left; }
+    }
+
+    /* ── REFLECTION ──────────────────────────────────────── */
+    .gy-reflection-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    .gy-reflection-item {
+      padding: 1.5rem;
+      background: #FAFAF8;
+      border-radius: 12px;
+      border: 1px solid #E4E1DC;
+    }
+    .gy-reflect-num {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 400;
+      color: var(--gy-blue);
+      opacity: 0.35;
+      line-height: 1;
+      margin-bottom: 0.6rem;
+    }
+    .gy-reflection-item h4 {
+      font-family: var(--font-body);
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
+    }
+    .gy-reflection-item p {
+      font-family: var(--font-body);
+      font-size: 0.875rem;
+      color: var(--ink-light);
+      line-height: 1.65;
+      max-width: none;
+    }
+
+    /* ── NEXT CASE ───────────────────────────────────────── */
+    .cs-next {
+      background: #fff;
+      padding: clamp(3rem, 5vw, 5rem) var(--pad);
+      text-align: center;
+    }
+    .cs-next-inner { max-width: 600px; margin: 0 auto; }
+    .cs-next span {
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-light);
+      display: block;
+      margin-bottom: 1rem;
+    }
+    .cs-next h3 {
+      font-family: var(--font-display);
+      font-size: clamp(1.5rem, 3vw, 2.25rem);
+      font-weight: 400;
+      color: var(--ink);
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      margin-bottom: 2rem;
+    }
+    .cs-next a {
+      background: var(--ink);
+      color: #fff;
+      padding: 0.875rem 2rem;
+      font-family: var(--font-body);
+      font-size: 0.9375rem;
+      font-weight: 500;
+      text-decoration: none;
+      display: inline-block;
+      border-radius: 100px;
+      transition: opacity 0.2s;
+    }
+    .cs-next a:hover { opacity: 0.85; }
+
+    /* ── RESPONSIVE ──────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .cs-overview { grid-template-columns: 1fr 1fr; }
+      .cs-ov-item:nth-child(3) { border-left: none; border-top: 1px solid #E4E1DC; padding-left: 0; }
+      .cs-ov-item:nth-child(4) { border-top: 1px solid #E4E1DC; }
+      .gy-insights { grid-template-columns: 1fr; }
+      .gy-principles { grid-template-columns: 1fr; }
+      .gy-reflection-grid { grid-template-columns: 1fr; }
+      .cs-hero-row { flex-direction: column; align-items: flex-start; }
+      .gy-cta-btn { width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── NAV ─────────────────────────────────────────────── -->
+  <nav id="nav">
+    <div class="nav-inner">
+      <ul class="nav-links">
+        <li><a href="../index.html#work">Work</a></li>
+        <li><a href="../index.html#about">About</a></li>
+        <li><a href="../index.html#contact">Contact</a></li>
+        <li><a href="../index.html#playground">Playground</a></li>
+      </ul>
+      <button class="nav-hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="nav-rule"></div>
+  </nav>
+
+  <!-- ── HERO ────────────────────────────────────────────── -->
+  <div class="cs-hero">
+    <div class="cs-hero-meta">
+      <a href="../index.html#work" class="cs-nav-back">← All Work</a>
+    </div>
+    <div class="cs-hero-row">
+      <div class="cs-hero-left">
+        <span class="cs-tag">Web App &middot; UX Research &middot; Responsive Design</span>
+        <h1 class="cs-hero-title">Gyanshala</h1>
+        <p class="cs-hero-sub">A responsive redesign for a Jain Sunday school serving nearly 100 families.</p>
+      </div>
+      <div class="cs-hero-cta">
+        <button type="button" class="gy-cta-btn" id="gy-proto-cta">
+          ▶ &nbsp;View live site
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── OVERVIEW BAR ────────────────────────────────────── -->
+  <div class="cs-overview">
+    <div class="cs-ov-item">
+      <span class="cs-ov-label">Role</span>
+      <span class="cs-ov-val">UX Designer</span>
+    </div>
+    <div class="cs-ov-item">
+      <span class="cs-ov-label">Timeline</span>
+      <span class="cs-ov-val">8 Weeks</span>
+    </div>
+    <div class="cs-ov-item">
+      <span class="cs-ov-label">Tools</span>
+      <span class="cs-ov-val">Figma &middot; Procreate &middot; Claude Code</span>
+    </div>
+    <div class="cs-ov-item">
+      <span class="cs-ov-label">Platform</span>
+      <span class="cs-ov-val">Tablet &amp; Mobile Web</span>
+    </div>
+  </div>
+
+  <!-- ── COVER ────────────────────────────────────────────── -->
+  <div class="gy-cover">
+    <div class="gy-cover-inner">
+      <div class="gy-cover-eyebrow">The Design Challenge</div>
+      <h2 class="gy-cover-hed">How might we make community education <span>as easy to access</span> as it is to teach?</h2>
+      <p class="gy-cover-sub">Creating one reliable destination where Gyanshala parents could quickly find schedules, classwork, homework, and learning resources.</p>
+    </div>
+  </div>
+
+  <!-- ── THE PROBLEM ──────────────────────────────────────── -->
+  <div class="cs-section">
+    <span class="cs-label">The Problem</span>
+    <h2>12 clicks per child. 24 if you have two.</h2>
+    <p style="max-width:56ch; margin-bottom:2.5rem;">The experience was built around administrative structure instead of the way families actually searched for information. For parents managing multiple children, even simple weekly tasks became frustratingly time consuming.</p>
+    <div class="gy-problem-grid">
+      <div class="gy-problem-card">
+        <span class="gy-problem-num">01</span>
+        <h3>Fragmented information</h3>
+        <p>Schedules, homework, and updates were split between the website and WhatsApp.</p>
+      </div>
+      <div class="gy-problem-card">
+        <span class="gy-problem-num">02</span>
+        <h3>Too many clicks</h3>
+        <p>Finding one week's classwork meant navigating through subject pages, archives, dates, and homework sections every visit.</p>
+      </div>
+      <div class="gy-problem-card">
+        <span class="gy-problem-num">03</span>
+        <h3>Built for admins</h3>
+        <p>Navigation reflected internal organisation, not the questions parents actually asked like "What was taught this week?"</p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ── UX AUDIT ─────────────────────────────────────────── -->
+  <div class="gy-audit-section">
+    <div class="gy-audit-inner">
+      <span class="cs-label">UX Audit</span>
+      <h2 style="font-family:var(--font-display);font-size:clamp(1.75rem,3vw,2.5rem);font-weight:400;color:var(--gy-blue-dark);line-height:1.15;letter-spacing:-0.02em;margin:0.25rem 0 0;">The original site, annotated.</h2>
+      <div class="gy-audit-layout">
+        <div class="gy-audit-img-wrap">
+          <img src="../../gyanshala/images/original-site.png" alt="Original JVBNA Gyanshala website">
+          <!-- marker positions as % of image dimensions -->
+          <span class="gy-audit-marker" style="left:47%;top:12%">1</span>
+          <span class="gy-audit-marker" style="left:16%;top:28%">2</span>
+          <span class="gy-audit-marker" style="left:75%;top:50%">3</span>
+          <span class="gy-audit-marker" style="left:38%;top:64%">4</span>
+          <span class="gy-audit-marker" style="left:20%;top:80%">5</span>
+          <span class="gy-audit-marker" style="left:50%;top:95%">6</span>
+        </div>
+        <div class="gy-audit-findings">
+          <div class="gy-audit-finding">
+            <div class="gy-audit-finding-num">1</div>
+            <div class="gy-audit-finding-text">
+              <strong>Administrative title</strong>
+              <p>"2025-26 JVBNA Gyanshala Classwork &amp; Homework" reads like a filing label, not a parent-facing homepage.</p>
+            </div>
+          </div>
+          <div class="gy-audit-finding">
+            <div class="gy-audit-finding-num">2</div>
+            <div class="gy-audit-finding-text">
+              <strong>Equal weight everywhere</strong>
+              <p>Every subject button looked identical, making it difficult to understand hierarchy, grouping, or relevance.</p>
+            </div>
+          </div>
+          <div class="gy-audit-finding">
+            <div class="gy-audit-finding-num">3</div>
+            <div class="gy-audit-finding-text">
+              <strong>Navigation built around subjects, not tasks</strong>
+              <p>Parents searched for questions like "What was taught this week?" but the experience was organised around subject archives instead.</p>
+            </div>
+          </div>
+          <div class="gy-audit-finding">
+            <div class="gy-audit-finding-num">4</div>
+            <div class="gy-audit-finding-text">
+              <strong>Truncated labels</strong>
+              <p>Content titles were cut off mid sentence, reducing clarity and scanability.</p>
+            </div>
+          </div>
+          <div class="gy-audit-finding">
+            <div class="gy-audit-finding-num">5</div>
+            <div class="gy-audit-finding-text">
+              <strong>No warmth or visual identity</strong>
+              <p>Dark navy buttons, repetitive layouts, and the absence of imagery made the experience feel administrative rather than like a place where children learn, connect, and belong.</p>
+            </div>
+          </div>
+          <div class="gy-audit-finding">
+            <div class="gy-audit-finding-num">6</div>
+            <div class="gy-audit-finding-text">
+              <strong>No schedule anywhere</strong>
+              <p>The entire site had no answer to "when is class?" That information only existed in the WhatsApp group.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── APPROACH / PRINCIPLES ─────────────────────────────── -->
+  <div class="cs-section--dark">
+    <div class="cs-section-inner">
+      <span class="cs-label">Approach</span>
+      <h2>Four principles that guided the redesign</h2>
+      <p style="color:rgba(255,255,255,0.65); max-width:68ch; line-height:1.8;">The redesign started with a simple question: what does a parent actually need the moment they open the site? Every decision followed from there.</p>
+      <div class="gy-principles" style="margin-top:2rem;">
+        <div class="gy-principle">
+          <div class="gy-principle-num">01</div>
+          <h4>Content first</h4>
+          <p>The week's class schedule, homework, and key updates appear immediately without requiring multiple navigation steps.</p>
+        </div>
+        <div class="gy-principle">
+          <div class="gy-principle-num">02</div>
+          <h4>Mobile first</h4>
+          <p>Most parents accessed the site on phones, so every screen was designed for small screens first and then adapted for larger devices.</p>
+        </div>
+        <div class="gy-principle">
+          <div class="gy-principle-num">03</div>
+          <h4>One destination per question</h4>
+          <p>Navigation labels were rewritten around the questions parents actually asked, reducing guesswork and unnecessary browsing.</p>
+        </div>
+        <div class="gy-principle">
+          <div class="gy-principle-num">04</div>
+          <h4>Warm, community centred design</h4>
+          <p>Illustration, colour, and typography were used intentionally to make the experience feel approachable, familiar, and family focused rather than administrative.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ILLUSTRATION ─────────────────────────────────────── -->
+  <div class="gy-illus-section">
+    <div class="gy-illus-inner">
+      <div class="gy-illus-intro">
+        <div>
+          <span class="cs-label">Custom Illustration</span>
+          <h2 style="font-family:var(--font-display);font-size:clamp(1.625rem,2.75vw,2.375rem);font-weight:400;color:var(--gy-blue-dark);line-height:1.2;letter-spacing:-0.02em;margin:0;">Custom illustrations created from scratch</h2>
+        </div>
+        <p>The original site had no imagery, limited colour, and little sense of warmth or community. The redesign took inspiration directly from the students themselves, from yellow Gyanshala t-shirts to blue Gyanshala bags and familiar classroom moments. Every character was illustrated by hand using details families would instantly recognise, giving the experience a sense of personality, familiarity, and belonging.</p>
+      </div>
+      <div class="gy-illus-hero">
+        <img src="../../gyanshala/images/classroom-teacher.png" alt="Teacher at the front of a Gyanshala classroom with students at their desks">
+      </div>
+      <div class="gy-char-strip">
+        <div class="gy-char-item">
+          <img src="../../gyanshala/images/walking-to-gyanshala.png" alt="Two students walking to school">
+        </div>
+        <div class="gy-char-item">
+          <img src="../../gyanshala/images/child-reading-girl.png" alt="Girl reading and raising her hand">
+        </div>
+        <div class="gy-char-item">
+          <img src="../../gyanshala/images/sign-in-illus.png" alt="Two kids reading together">
+        </div>
+        <div class="gy-char-item">
+          <img src="../../gyanshala/images/syllabus-illus.png" alt="Stack of subject books">
+        </div>
+        <div class="gy-char-item">
+          <img src="../../gyanshala/images/schedule-illus.png" alt="Calendar with marked dates">
+        </div>
+      </div>
+      <div class="gy-illus-callout">
+        <div class="gy-illus-callout-text">
+          <div class="gy-illus-callout-label">Where illustration meets UX</div>
+          <p>18 years of visual storytelling informed the UX approach behind Gyanshala. Illustration was used as a functional design tool to create familiarity, emotional clarity, and a stronger sense of community throughout the experience.</p>
+        </div>
+        <div class="gy-illus-stat">
+          <div class="gy-illus-stat-num">18</div>
+          <div class="gy-illus-stat-label">years of illustration</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── DESIGN IMPACT ──────────────────────────────────────── -->
+  <hr style="border:none; border-top:1px solid #E4E1DC; margin:0;">
+  <div class="cs-section">
+    <span class="cs-label">Design Impact</span>
+    <h2>From friction to flow</h2>
+    <p>Every design decision maps directly to a friction point in the original experience.</p>
+    <div class="gy-impact-wrap">
+      <table class="gy-impact-table">
+        <thead>
+          <tr>
+            <th>Before</th>
+            <th class="gy-impact-arrow-col"></th>
+            <th>Decision</th>
+            <th class="gy-impact-arrow-col"></th>
+            <th>After</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>24 clicks to find classwork and homework</td>
+            <td class="gy-impact-arrow-col">→</td>
+            <td>One time login and weekly classwork surfaced directly from the home screen</td>
+            <td class="gy-impact-arrow-col">→</td>
+            <td>Faster access with fewer navigation steps</td>
+          </tr>
+          <tr>
+            <td>Back and forth between website and WhatsApp to find info</td>
+            <td class="gy-impact-arrow-col">→</td>
+            <td>Everything in one place on the website</td>
+            <td class="gy-impact-arrow-col">→</td>
+            <td>One reliable destination for information</td>
+          </tr>
+          <tr>
+            <td>Admin-labelled navigation</td>
+            <td class="gy-impact-arrow-col">→</td>
+            <td>Nav labels match parent questions</td>
+            <td class="gy-impact-arrow-col">→</td>
+            <td>Less guessing, faster understanding</td>
+          </tr>
+          <tr>
+            <td>Important information was buried deep within pages</td>
+            <td class="gy-impact-arrow-col">→</td>
+            <td>Prioritize high need content using progressive disclosure and clear hierarchy</td>
+            <td class="gy-impact-arrow-col">→</td>
+            <td>Critical information visible immediately</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── DUAL-DEVICE PROTOTYPE ────────────────────────────── -->
+  <div class="gy-devices-section" id="prototype">
+    <div class="gy-devices-inner">
+      <div class="gy-devices-header">
+        <span class="gy-devices-hint">Fully functional — scroll, tap, and navigate inside either device</span>
+        <h2>Responsive across every screen</h2>
+        <div class="gy-devices-flows">
+          <div class="gy-flow-item">
+            <span class="gy-flow-num">01</span>
+            <span class="gy-flow-text">Start on Home and see this week's class at a glance — no clicking required</span>
+          </div>
+          <div class="gy-flow-item">
+            <span class="gy-flow-num">02</span>
+            <span class="gy-flow-text">Tap "This Session" to see the full class breakdown: subject, homework, and classwork</span>
+          </div>
+          <div class="gy-flow-item">
+            <span class="gy-flow-num">03</span>
+            <span class="gy-flow-text">Try "Schedule" to see the full year, then "Syllabus" to explore what subjects are taught</span>
+          </div>
+        </div>
+      </div>
+      <div class="gy-devices-frame">
+        <iframe
+          src="gyanshala/dual-device.html?v=2"
+          title="Gyanshala live site on iPad and iPhone"
+          allowtransparency="true"
+          allowfullscreen>
+        </iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── REFLECTION ─────────────────────────────────────────── -->
+  <div class="cs-section">
+    <span class="cs-label">Reflection</span>
+    <h2>What I learned</h2>
+    <div class="gy-reflection-grid">
+      <div class="gy-reflection-item">
+        <span class="gy-reflect-num">01</span>
+        <h4>Audit before redesign</h4>
+        <p>Mapping the full parent journey before touching the interface revealed where the real friction existed and prevented superficial design fixes.</p>
+      </div>
+      <div class="gy-reflection-item">
+        <span class="gy-reflect-num">02</span>
+        <h4>Labels shape usability</h4>
+        <p>Rewriting navigation around parent questions improved clarity more than any visual change.</p>
+      </div>
+      <div class="gy-reflection-item">
+        <span class="gy-reflect-num">03</span>
+        <h4>Mobile constraints improve hierarchy</h4>
+        <p>Designing for small screens first forced clearer prioritization and reduced unnecessary complexity across the entire experience.</p>
+      </div>
+      <div class="gy-reflection-item">
+        <span class="gy-reflect-num">04</span>
+        <h4>Warmth builds trust</h4>
+        <p>Illustration, colour, and tone helped transform the experience from administrative to community centered without adding complexity.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── NEXT CASE ─────────────────────────────────────────── -->
+  <div class="cs-next">
+    <div class="cs-next-inner">
+      <span>Next Case Study</span>
+      <img src="../images/work/easymoney-logo.png" alt="EasyMoney" style="height:2.5rem; width:auto; display:block; margin:1rem auto 1.5rem;">
+      <h3>Reducing financial anxiety one interaction at a time.</h3>
+      <a href="easymoney.html">View EasyMoney →</a>
+    </div>
+  </div>
+
+  <!-- ── FOOTER ─────────────────────────────────────────── -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <span>© 2026 Pragya Kothari</span>
+      <div class="footer-links">
+        <a href="https://www.linkedin.com/in/pragya--kothari/" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://pragyak.com" target="_blank" rel="noopener">Illustration</a>
+      </div>
+      <a href="#" class="footer-top">↑ Back to top</a>
+    </div>
+  </footer>
+
+  <script>
+    // ── SCROLL TO PROTOTYPE ────────────────────────────────
+    document.getElementById('gy-proto-cta')?.addEventListener('click', function() {
+      document.getElementById('prototype')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    // ── NAV ───────────────────────────────────────────────
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 40);
+    }, { passive: true });
+
+    const hamburger = document.querySelector('.nav-hamburger');
+    const navLinks  = document.querySelector('.nav-links');
+    hamburger?.addEventListener('click', () => {
+      const open = navLinks.classList.toggle('nav-open');
+      hamburger.setAttribute('aria-expanded', open);
+    });
+    navLinks?.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => navLinks.classList.remove('nav-open'));
+    });
+
+    const fadeEls = document.querySelectorAll('.cs-hero, .cs-overview, .cs-section, .cs-section--dark, .cs-section--warm, .cs-next');
+    fadeEls.forEach(el => el.classList.add('fade-up'));
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), i * 60);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.06 });
+    fadeEls.forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>

@@ -1,0 +1,1556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=390, initial-scale=1">
+  <title>Newsby</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:      #4870E8;
+      --blue-bg:   rgba(72,112,232,.08);
+      --orange:    #D95328;
+      --orange-bg: #FDEEE9;
+      --green:     #7AB200;
+      --green-bg:  #EEF5DC;
+      --yellow:    #FEB21E;
+      --yellow-bg: #FEF6E0;
+      --pink:      #E24898;
+      --pink-bg:   #FCEAF4;
+      --bg:        #F5F6FA;
+      --card:      #FFFFFF;
+      --border:    #EBEBEB;
+      --text:      #0D0D0D;
+      --mid:       #555555;
+      --light:     #9A9A9A;
+    }
+
+    html, body {
+      width: 390px; height: 844px; overflow: hidden;
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: #F5F6FA; color: var(--text);
+      position: relative;
+    }
+
+    /* ── SCREENS ─────────────────────────────── */
+    .screen {
+      position: absolute; inset: 0;
+      width: 390px; height: 844px;
+      display: none; flex-direction: column;
+      background: var(--bg);
+    }
+    .screen.active { display: flex; }
+    .screen.anim-in      { animation: slide-in      .22s ease forwards; }
+    .screen.anim-back-in { animation: slide-back-in .22s ease forwards; }
+    @keyframes slide-in      { from { transform: translateX(44px);  opacity: .25 } to { transform: none; opacity: 1 } }
+    @keyframes slide-back-in { from { transform: translateX(-32px); opacity: .25 } to { transform: none; opacity: 1 } }
+
+    /* ── STATUS BAR ──────────────────────────── */
+    .sb {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 24px 4px; font-size: 12px; font-weight: 600;
+      flex-shrink: 0;
+    }
+    /* embed mode: keep white bg but hide time/icons so notch area is clean */
+    html.embed-mode .sb { background: #fff !important; }
+    html.embed-mode .sb span, html.embed-mode .sb .sb-icons { visibility: hidden; }
+    /* give the logo a little more breathing room below the notch */
+    html.embed-mode .h-topbar { padding-top: 36px; }
+    .sb-icons { display: flex; align-items: center; gap: 6px; }
+    .sig { display: flex; align-items: flex-end; gap: 2px; }
+    .sig span { display: block; width: 3px; border-radius: 1.5px; background: var(--text); }
+    .sig span:nth-child(1) { height: 5px; }
+    .sig span:nth-child(2) { height: 8px; }
+    .sig span:nth-child(3) { height: 11px; }
+    .sig span:nth-child(4) { height: 14px; opacity: .28; }
+    .wifi-icon { display: flex; align-items: flex-end; }
+    .batt { width: 22px; height: 11px; border: 1.5px solid var(--text); border-radius: 2.5px; position: relative; }
+    .batt::after { content: ''; position: absolute; right: -5px; top: 50%; transform: translateY(-50%); width: 3px; height: 5px; background: var(--text); border-radius: 0 1px 1px 0; }
+    .batt-fill { position: absolute; inset: 1.5px; border-radius: 1px; background: var(--text); right: 20%; }
+
+    /* ── BOTTOM NAV ──────────────────────────── */
+    .bnav {
+      display: flex; border-top: 1px solid var(--border);
+      background: #fff; padding: 9px 0 28px; flex-shrink: 0;
+    }
+    .ntab {
+      flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
+      cursor: pointer; padding: 3px 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .ntab svg { width: 23px; height: 23px; display: block; }
+    .ntab .nl { font-size: 10px; font-weight: 500; color: var(--light); }
+    .ntab.on .nl { color: var(--blue); }
+    .ntab:active { opacity: .6; }
+
+    /* ── SCROLL ──────────────────────────────── */
+    .scr { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; background: #F5F6FA; }
+    .scr::-webkit-scrollbar { display: none; }
+
+    /* ── FAB (profile only) ──────────────────── */
+    .fab {
+      position: absolute; bottom: 82px; right: 20px;
+      width: 52px; height: 52px; border-radius: 50%;
+      background: var(--blue); color: #fff; font-size: 28px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 20px rgba(72,112,232,.4);
+      cursor: pointer; z-index: 5;
+      -webkit-tap-highlight-color: transparent; user-select: none;
+    }
+    .fab:active { opacity: .85; transform: scale(.95); }
+
+    /* ── Create circle button ────────────────── */
+    .create-circle-btn {
+      display: flex; align-items: center; gap: 10px;
+      padding: 16px 18px; border-radius: 14px;
+      border: 1.5px dashed var(--blue); color: var(--blue);
+      font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600;
+      cursor: pointer; -webkit-tap-highlight-color: transparent;
+      background: var(--blue-bg);
+    }
+    .create-circle-btn:active { opacity: .75; }
+
+    /* ══════════════════════════════════════════ */
+    /*  HOME FEED                                 */
+    /* ══════════════════════════════════════════ */
+    #s-home { background: #F5F6FA; }
+
+    .h-topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 2px 20px 12px; flex-shrink: 0;
+    }
+    .logo { display: block; width: 156.35px; height: 43.15px; mix-blend-mode: multiply; }
+    .icon-btn { cursor: pointer; padding: 4px; -webkit-tap-highlight-color: transparent; }
+    .icon-btn:active { opacity: .5; }
+
+    .feed { padding: 16px 23px 20px; display: flex; flex-direction: column; gap: 12px; }
+
+    /* hero card */
+    .card-hero {
+      background: var(--card); border-radius: 16px; overflow: hidden;
+      cursor: pointer; -webkit-tap-highlight-color: transparent;
+      box-shadow: 0 1px 6px rgba(0,0,0,.07);
+    }
+    .card-hero:active { opacity: .88; }
+
+    .hero-photo { width: 100%; height: 222px; display: block; overflow: hidden; }
+    .hero-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center 35%; display: block; }
+
+    .cbody { padding: 14px 16px 16px; }
+    .ctag  { font-family: 'Source Sans 3', sans-serif; font-size: 16px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--orange); margin-bottom: 4px; }
+    .cmeta { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+    .cmeta-txt { font-family: 'Source Serif 4', Georgia, serif; font-size: 13px; font-weight: 400; color: var(--light); }
+    .more-btn { color: var(--light); font-size: 20px; line-height: 1; cursor: pointer; padding: 0 0 0 4px; }
+    .ctitle { font-family: 'Source Serif 4', Georgia, serif; font-size: 20px; font-weight: 700; line-height: 1.35; margin-bottom: 10px; }
+    .cnudge {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 12.5px; font-weight: 500; color: var(--blue);
+      background: #EEF2FC; border-radius: 999px; padding: 6px 12px;
+      cursor: pointer; -webkit-tap-highlight-color: transparent;
+    }
+    .cnudge:active { opacity: .6; }
+
+    /* small card */
+    .card-sm {
+      background: var(--card); border-radius: 16px; overflow: hidden;
+      cursor: pointer; -webkit-tap-highlight-color: transparent;
+      box-shadow: 0 1px 6px rgba(0,0,0,.07);
+    }
+    .card-sm:active { opacity: .88; }
+    .card-sm-body { padding: 14px 16px 16px; }
+    .sm-thumb { width: 100%; height: 160px; object-fit: cover; object-position: center 30%; display: block; }
+    .sm-title  { font-family: 'Source Serif 4', Georgia, serif; font-size: 20px; font-weight: 700; line-height: 1.35; margin: 5px 0 9px; }
+    .sm-nudge  { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 500; color: #8B2CF1; background: #F5EEFE; border-radius: 999px; padding: 6px 12px; }
+
+    /* ══════════════════════════════════════════ */
+    /*  ARTICLE DETAIL                            */
+    /* ══════════════════════════════════════════ */
+    #s-article { background: #fff; }
+
+    .art-topbar { padding: 6px 16px 0; flex-shrink: 0; }
+    .btn-back { font-size: 30px; color: var(--blue); cursor: pointer; line-height: 1; display: inline-block; padding: 2px 4px 2px 0; -webkit-tap-highlight-color: transparent; }
+    .btn-back:active { opacity: .5; }
+
+    .art-head { padding: 10px 20px 0; }
+    .art-h1    { font-family: 'Source Serif 4', Georgia, serif; font-size: 20px; font-weight: 700; line-height: 1.35; margin-bottom: 8px; }
+    .art-byline { font-family: 'Source Serif 4', Georgia, serif; font-size: 13px; font-weight: 400; color: var(--light); margin-bottom: 12px; }
+    .art-nudge {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 13px; font-weight: 500; color: var(--blue);
+      background: var(--blue-bg); border-radius: 10px;
+      padding: 9px 14px; margin-bottom: 18px;
+      cursor: pointer; -webkit-tap-highlight-color: transparent;
+    }
+    .art-nudge:active { opacity: .7; }
+
+    .art-photo { width: 100%; height: 222px; overflow: hidden; flex-shrink: 0; }
+    .art-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    .art-body { padding: 18px 20px 12px; }
+    .art-p { font-size: 15px; line-height: 1.78; color: #333; margin-bottom: 16px; }
+
+    .art-toolbar {
+      display: flex; border-top: 1px solid var(--border);
+      background: #fff; padding: 10px 0 4px; flex-shrink: 0;
+    }
+    .tool {
+      flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;
+      cursor: pointer; padding: 3px 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .tool svg { width: 19px; height: 19px; }
+    .tool span { font-size: 10.5px; color: var(--light); font-weight: 500; }
+    .tool:active { opacity: .6; }
+    /* Save toggled state */
+    .tool.saved svg path { stroke: var(--blue); fill: var(--blue); }
+    .tool.saved span { color: var(--blue); }
+    /* Highlight toggled state */
+    .tool.highlighted svg path { stroke: var(--yellow); }
+    .tool.highlighted span { color: var(--yellow); }
+
+    /* ── Tool action sheets ───────────────────── */
+    #sheet-highlight, #sheet-note, #sheet-share {
+      background: transparent; position: absolute; inset: 0; z-index: 50;
+      display: none; flex-direction: column; justify-content: flex-end;
+    }
+    #sheet-highlight.sheet-open,
+    #sheet-note.sheet-open,
+    #sheet-share.sheet-open { display: flex; }
+
+    /* Highlight colour chips */
+    .hl-colors { display: flex; gap: 10px; margin-top: 16px; }
+    .hl-chip {
+      flex: 1; height: 44px; border-radius: 12px; cursor: pointer;
+      transition: box-shadow .12s; -webkit-tap-highlight-color: transparent;
+    }
+    .hl-chip:active { opacity: .8; }
+    .hl-chip.hl-sel { box-shadow: 0 0 0 2.5px #0D0D0D; }
+
+    /* Note sheet */
+    .note-ta {
+      width: 100%; box-sizing: border-box; margin-top: 14px;
+      border: 1.5px solid var(--border); border-radius: 12px;
+      padding: 12px 14px; font-family: 'DM Sans', sans-serif;
+      font-size: 15px; resize: none; height: 104px;
+      color: var(--text); outline: none; display: block;
+    }
+    .note-ta:focus { border-color: var(--blue); }
+    .note-post {
+      margin-top: 12px; width: 100%; background: var(--blue); color: #fff;
+      border: none; border-radius: 12px; padding: 14px;
+      font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600;
+      cursor: pointer; -webkit-tap-highlight-color: transparent;
+    }
+    .note-post:active { opacity: .85; }
+
+    /* Profile sheets */
+    #sheet-saved-articles, #sheet-highlights, #sheet-notifs, #sheet-privacy, #sheet-create-circle {
+      background: transparent; position: absolute; inset: 0; z-index: 50;
+      display: none; flex-direction: column; justify-content: flex-end;
+    }
+    #sheet-saved-articles.sheet-open, #sheet-highlights.sheet-open,
+    #sheet-notifs.sheet-open, #sheet-privacy.sheet-open,
+    #sheet-create-circle.sheet-open { display: flex; }
+
+    /* Saved article rows inside sheet */
+    .saved-art-row { display: flex; gap: 12px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid var(--border); cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    .saved-art-row:last-child { border-bottom: none; }
+    .saved-art-thumb { width: 62px; height: 62px; border-radius: 10px; object-fit: cover; flex-shrink: 0; }
+    .saved-art-info { flex: 1; }
+    .saved-art-src { font-family: 'Source Sans 3', sans-serif; font-size: 11px; color: var(--light); font-weight: 400; margin-bottom: 4px; }
+    .saved-art-title { font-family: 'Source Serif 4', Georgia, serif; font-size: 15px; font-weight: 600; line-height: 1.35; color: var(--text); }
+
+    /* Highlight passage rows */
+    .hl-passage { background: #FEF9C3; border-radius: 10px; padding: 12px 14px; margin-bottom: 12px; }
+    .hl-passage:last-child { margin-bottom: 0; }
+    .hl-passage-txt { font-family: 'Source Serif 4', Georgia, serif; font-size: 15px; line-height: 1.5; color: var(--text); }
+    .hl-passage-src { font-family: 'Source Sans 3', sans-serif; font-size: 11px; color: var(--light); margin-top: 8px; }
+
+    /* Toggle rows */
+    .tog-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--border); }
+    .tog-row:last-child { border-bottom: none; }
+    .tog-label { font-size: 15px; font-weight: 500; color: var(--text); }
+    .tog-sub { font-size: 12px; color: var(--light); margin-top: 2px; }
+    .toggle { width: 44px; height: 26px; border-radius: 999px; background: var(--blue); flex-shrink: 0; position: relative; cursor: pointer; transition: background .2s; }
+    .toggle.off { background: #D1D5DB; }
+    .toggle::after { content: ''; position: absolute; top: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transition: left .2s; left: calc(100% - 23px); }
+    .toggle.off::after { left: 3px; }
+
+    /* Share option rows */
+    .share-opts { display: flex; flex-direction: column; margin-top: 4px; }
+    .share-opt {
+      display: flex; align-items: center; gap: 14px;
+      padding: 13px 0; border-bottom: 1px solid var(--border);
+      cursor: pointer; -webkit-tap-highlight-color: transparent;
+    }
+    .share-opt:last-child { border-bottom: none; }
+    .share-opt-icon {
+      width: 42px; height: 42px; border-radius: 12px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .share-opt-label { font-size: 15px; font-weight: 500; color: var(--text); }
+    .share-opt:active .share-opt-label { opacity: .5; }
+
+    /* ══════════════════════════════════════════ */
+    /*  SAVED BY SHEET                            */
+    /* ══════════════════════════════════════════ */
+    #s-saved {
+      background: transparent; position: absolute; inset: 0; z-index: 50;
+      display: none; flex-direction: column; justify-content: flex-end;
+    }
+    #s-saved.sheet-open { display: flex; }
+    .sheet-bd {
+      position: absolute; inset: 0; background: rgba(0,0,0,.42);
+      cursor: pointer; animation: fadein .18s ease;
+    }
+    @keyframes fadein { from { opacity: 0 } to { opacity: 1 } }
+    .sheet {
+      position: relative; z-index: 1; background: #fff;
+      border-radius: 24px 24px 0 0; padding: 22px 20px 44px;
+      animation: sheetup .22s ease;
+    }
+    @keyframes sheetup { from { transform: translateY(60px); opacity: 0 } to { transform: none; opacity: 1 } }
+    .sheet-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .sheet-ttl { font-size: 16px; font-weight: 700; }
+    .sheet-x {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: #F0F0F0; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 16px; color: var(--mid);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .sheet-x:active { opacity: .5; }
+    .saved-row {
+      display: flex; align-items: center; gap: 14px;
+      padding: 12px 0; border-bottom: 1px solid var(--border);
+    }
+    .saved-row:last-child { border-bottom: none; }
+    .ava {
+      width: 42px; height: 42px; border-radius: 50%; flex-shrink: 0;
+      overflow: hidden;
+    }
+    .ava img { width: 42px; height: 42px; object-fit: cover; display: block; }
+    .sv-name   { font-size: 15px; font-weight: 600; }
+    .sv-circle { font-size: 12px; font-weight: 600; margin-top: 2px; }
+
+    /* ══════════════════════════════════════════ */
+    /*  CIRCLES LIST                              */
+    /* ══════════════════════════════════════════ */
+    #s-circles { background: #fff; }
+
+    .ph { padding: 12px 20px 16px; flex-shrink: 0; background: #fff; }
+    .ph-title { font-family: 'Source Sans 3', sans-serif; font-size: 32px; font-weight: 600; letter-spacing: -.3px; }
+    .ph-sub   { font-family: 'Source Sans 3', sans-serif; font-size: 15px; font-weight: 300; color: var(--light); margin-top: 3px; }
+
+    .clist { padding: 10px 16px 20px; display: flex; flex-direction: column; gap: 10px; }
+    .crow {
+      display: flex; align-items: center; gap: 16px;
+      padding: 16px 18px; background: var(--card);
+      border: 1px solid var(--border); border-radius: 14px;
+      cursor: pointer; -webkit-tap-highlight-color: transparent;
+    }
+    .crow:active { background: var(--bg); }
+    .cicon { width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .cicon svg { width: 26px; height: 26px; }
+    .cinfo { flex: 1; }
+    .cname { font-family: 'Source Serif 4', Georgia, serif; font-size: 20px; font-weight: 600; margin-bottom: 3px; }
+    .cdesc { font-family: 'Source Sans 3', sans-serif; font-size: 15px; font-weight: 400; color: var(--text); margin-bottom: 2px; }
+    .ctime { font-family: 'Source Sans 3', sans-serif; font-size: 13px; font-weight: 300; color: var(--light); }
+    .cchev { color: #C8C8C8; font-size: 20px; }
+
+    /* ══════════════════════════════════════════ */
+    /*  CIRCLES DETAIL                            */
+    /* ══════════════════════════════════════════ */
+    #s-circles-detail { background: #fff; }
+
+    .dtopbar {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      padding: 12px 20px 16px; flex-shrink: 0; background: #fff;
+    }
+    .dtitle { font-family: 'Source Sans 3', sans-serif; font-size: 32px; font-weight: 600; letter-spacing: -.3px; }
+    .dsub   { font-family: 'Source Sans 3', sans-serif; font-size: 15px; font-weight: 300; color: var(--light); margin-top: 3px; }
+    .btn-back-r { font-size: 30px; color: var(--blue); cursor: pointer; padding: 2px 0 2px 4px; line-height: 1; -webkit-tap-highlight-color: transparent; }
+    .btn-back-r:active { opacity: .5; }
+
+    .slist { padding: 8px 16px 20px; display: flex; flex-direction: column; gap: 10px; }
+    .srow  { padding: 16px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    .srow:active { opacity: .85; }
+    .sh { font-family: 'Source Serif 4', Georgia, serif; font-size: 20px; font-weight: 600; line-height: 1.35; margin-bottom: 10px; }
+    .sc { display: flex; align-items: flex-start; gap: 9px; margin-bottom: 8px; }
+    .ca { width: 28px; height: 28px; border-radius: 50%; overflow: hidden; flex-shrink: 0; }
+    .ca img { width: 28px; height: 28px; object-fit: cover; display: block; }
+    .ct { font-size: 13px; color: var(--mid); line-height: 1.45; }
+    .ct b { color: var(--text); }
+    .sm { font-size: 11.5px; color: var(--light); }
+
+    /* ══════════════════════════════════════════ */
+    /*  PROFILE                                   */
+    /* ══════════════════════════════════════════ */
+    /* ══════════════════════════════════════════ */
+    /*  CIRCLE ARTICLE                            */
+    /* ══════════════════════════════════════════ */
+    #s-circle-article { background: #fff; }
+    .ca-topbar { padding: 6px 16px 0; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; background: #fff; }
+    .ca-back { font-size: 30px; color: var(--blue); cursor: pointer; line-height: 1; padding: 2px 4px 2px 0; -webkit-tap-highlight-color: transparent; }
+    .ca-back:active { opacity: .5; }
+    .ca-circle-tag { font-family: 'Source Sans 3', sans-serif; font-size: 13px; font-weight: 600; color: var(--green); background: var(--green-bg); border-radius: 999px; padding: 4px 10px; }
+    .comments-section { padding: 20px 20px 32px; border-top: 1px solid var(--border); margin-top: 4px; }
+    .comments-label { font-family: 'Source Sans 3', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--light); margin-bottom: 16px; }
+    .comment-row { display: flex; gap: 10px; margin-bottom: 16px; }
+    .comment-ava { width: 32px; height: 32px; border-radius: 50%; overflow: hidden; flex-shrink: 0; }
+    .comment-ava img { width: 32px; height: 32px; object-fit: cover; display: block; }
+    .comment-bubble { flex: 1; background: #F5F6FA; border-radius: 0 12px 12px 12px; padding: 10px 12px; }
+    .comment-name { font-size: 13px; font-weight: 700; margin-bottom: 3px; color: var(--text); }
+    .comment-txt { font-family: 'Source Sans 3', sans-serif; font-size: 14px; font-weight: 400; color: var(--text); line-height: 1.45; }
+    .comment-time { font-family: 'Source Sans 3', sans-serif; font-size: 11px; color: var(--light); margin-top: 5px; }
+
+    #s-profile { background: var(--bg); }
+
+    .pu {
+      margin: 8px 16px 14px; background: var(--card); border-radius: 14px;
+      padding: 15px 16px; display: flex; align-items: center; gap: 14px;
+      cursor: pointer; -webkit-tap-highlight-color: transparent;
+    }
+    .pu:active { opacity: .88; }
+    .pava { width: 52px; height: 52px; border-radius: 50%; overflow: hidden; flex-shrink: 0; }
+    .pava img { width: 52px; height: 52px; object-fit: cover; display: block; }
+    .pinfo { flex: 1; }
+    .pname  { font-size: 18px; font-weight: 700; }
+    .pemail { font-size: 12px; color: var(--light); margin-top: 2px; }
+    .pchev  { color: #C8C8C8; font-size: 20px; }
+
+    .psec { margin: 0 16px 14px; }
+    .slabel {
+      font-size: 10px; font-weight: 800; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--light);
+      padding: 0 4px 8px; display: block;
+    }
+    .sgroup { background: var(--card); border-radius: 14px; overflow: hidden; }
+    .srow2 {
+      display: flex; align-items: center; gap: 13px;
+      padding: 13px 16px; border-bottom: 1px solid var(--border);
+      cursor: pointer; -webkit-tap-highlight-color: transparent;
+    }
+    .srow2:last-child { border-bottom: none; }
+    .srow2:active { background: var(--bg); }
+    .sico { width: 30px; display: flex; align-items: center; justify-content: center; }
+    .sico svg { width: 19px; height: 19px; }
+    .stxt  { flex: 1; font-size: 15px; font-weight: 500; }
+    .sval  { font-size: 13px; color: var(--light); margin-right: 2px; }
+    .schev { color: #C8C8C8; font-size: 18px; }
+  </style>
+</head>
+<body><script>if(window.self!==window.top){document.documentElement.classList.add('embed-mode');}</script>
+
+<!-- ════════════════════════════════════════════════════════ -->
+<!--  HOME FEED                                              -->
+<!-- ════════════════════════════════════════════════════════ -->
+<div class="screen active" id="s-home">
+  <div class="sb" style="background:#fff">
+    <span>9:41</span>
+    <div class="sb-icons">
+      <div class="sig"><span></span><span></span><span></span><span></span></div>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+        <path d="M8 2.5C9.8 2.5 11.4 3.2 12.6 4.4L14 3C12.4 1.4 10.3 .5 8 .5S3.6 1.4 2 3L3.4 4.4C4.6 3.2 6.2 2.5 8 2.5Z" fill="currentColor"/>
+        <path d="M8 5.5C9 5.5 9.9 5.9 10.6 6.6L12 5.2C10.9 4.1 9.5 3.5 8 3.5S5.1 4.1 4 5.2L5.4 6.6C6.1 5.9 7 5.5 8 5.5Z" fill="currentColor"/>
+        <circle cx="8" cy="9.5" r="1.5" fill="currentColor"/>
+      </svg>
+      <div class="batt"><div class="batt-fill"></div></div>
+    </div>
+  </div>
+
+  <div class="h-topbar" style="background:#fff">
+    <img class="logo" src="../../images/newsby/newsby-logo.png" alt="Newsby">
+    <div class="icon-btn">
+      <svg width="22" height="22" fill="none" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="7.5" stroke="#555" stroke-width="2"/>
+        <path d="M16.5 16.5L21 21" stroke="#555" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="scr">
+    <div class="feed">
+
+      <!-- Hero card -->
+      <div class="card-hero" onclick="nav('circle-article')">
+        <div class="hero-photo">
+          <img src="../../images/newsby/climate-summit.png" alt="Climate Summit">
+        </div>
+        <div class="cbody">
+          <div class="ctag">Top Story</div>
+          <div class="cmeta">
+            <div class="cmeta-txt">The Daily Brief &nbsp;·&nbsp; 2h ago</div>
+            <div class="more-btn">⋮</div>
+          </div>
+          <div class="ctitle">Climate summit reaches breakthrough agreement on&nbsp;…</div>
+          <div class="cnudge" onclick="event.stopPropagation(); showSheet()">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="var(--blue)" stroke-width="2"/>
+              <circle cx="9" cy="7" r="4" stroke="var(--blue)" stroke-width="2"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="var(--blue)" stroke-width="2"/>
+            </svg>
+            Saved by 2 people in your circle
+          </div>
+        </div>
+      </div>
+
+      <!-- Second article -->
+      <div class="card-sm" onclick="nav('article-ai')">
+        <img class="sm-thumb" src="../../images/newsby/ai.png" alt="AI article" style="object-position:center 40%;">
+        <div class="card-sm-body">
+          <div class="cmeta">
+            <div class="cmeta-txt">Tech Insider &nbsp;·&nbsp; 5h ago</div>
+            <div class="more-btn">⋮</div>
+          </div>
+          <div class="sm-title">New AI model demonstrates advanced reasoning capabilities</div>
+          <div class="sm-nudge">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
+              <path d="m9 11-6 6v3h9l3-3" stroke="#8B2CF1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="m22 12-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4" stroke="#8B2CF1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            You highlighted this
+          </div>
+        </div>
+      </div>
+
+      <!-- Third article -->
+      <div class="card-sm" onclick="nav('article-privacy')">
+        <img class="sm-thumb" src="../../images/newsby/privacy-legislation.png" alt="Privacy legislation">
+        <div class="card-sm-body">
+          <div class="cmeta">
+            <div class="cmeta-txt">Global News Wire &nbsp;·&nbsp; 1d ago</div>
+            <div class="more-btn">⋮</div>
+          </div>
+          <div class="sm-title">Privacy legislation could reshape data practices across industries</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="bnav">
+    <div class="ntab on" onclick="nav('home')">
+      <svg fill="none" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="var(--blue)" stroke-width="2"/><polyline points="9,22 9,12 15,12 15,22" stroke="var(--blue)" stroke-width="2"/></svg>
+      <span class="nl">Home</span>
+    </div>
+    <div class="ntab" onclick="nav('circles')">
+      <svg fill="none" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="var(--light)" stroke-width="2"/><circle cx="9" cy="7" r="4" stroke="var(--light)" stroke-width="2"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="var(--light)" stroke-width="2"/></svg>
+      <span class="nl">Circles</span>
+    </div>
+    <div class="ntab" onclick="nav('profile')">
+      <svg fill="none" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="var(--light)" stroke-width="2"/><circle cx="12" cy="7" r="4" stroke="var(--light)" stroke-width="2"/></svg>
+      <span class="nl">Profile</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════ -->
+<!--  ARTICLE DETAIL                                         -->
+<!-- ════════════════════════════════════════════════════════ -->
+<div class="screen" id="s-article" style="background:#fff">
+  <div class="sb" style="background:#fff">
+    <span>9:41</span>
+    <div class="sb-icons">
+      <div class="sig"><span></span><span></span><span></span><span></span></div>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 2.5C9.8 2.5 11.4 3.2 12.6 4.4L14 3C12.4 1.4 10.3 .5 8 .5S3.6 1.4 2 3L3.4 4.4C4.6 3.2 6.2 2.5 8 2.5Z" fill="currentColor"/><path d="M8 5.5C9 5.5 9.9 5.9 10.6 6.6L12 5.2C10.9 4.1 9.5 3.5 8 3.5S5.1 4.1 4 5.2L5.4 6.6C6.1 5.9 7 5.5 8 5.5Z" fill="currentColor"/><circle cx="8" cy="9.5" r="1.5" fill="currentColor"/></svg>
+      <div class="batt"><div class="batt-fill"></div></div>
+    </div>
+  </div>
+
+  <div class="art-topbar">
+    <div class="btn-back" onclick="back('home')">‹</div>
+  </div>
+
+  <div class="scr" style="background:#fff; padding-bottom: 0">
+    <!-- Title and meta come BEFORE the image, matching Figma -->
+    <div class="art-head">
+      <div class="art-h1">Climate summit reaches breakthrough agreement on emissions targets</div>
+      <div class="art-byline">The Daily Brief &nbsp;·&nbsp; 2h ago</div>
+      <div class="art-nudge" onclick="showSheet()">
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="var(--blue)" stroke-width="2"/>
+          <circle cx="9" cy="7" r="4" stroke="var(--blue)" stroke-width="2"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="var(--blue)" stroke-width="2"/>
+        </svg>
+        Saved by 2 people in your circle
+      </div>
+    </div>
+
+    <!-- Photo below the headline block -->
+    <div class="art-photo">
+      <img src="../../images/newsby/climate-summit.png" alt="Climate Summit">
+    </div>
+
+    <div class="art-body">
+      <p class="art-p">World leaders gathered at the annual climate summit have reached a historic agreement on new emissions reduction targets. The landmark deal commits participating nations to achieving net-zero emissions by 2050, with intermediate targets set for 2030 and 2040.</p>
+      <p class="art-p">The agreement, which took three weeks of negotiations, includes binding commitments from 140 countries and creates a new international monitoring body to track progress. It also establishes a $500 billion climate finance fund to support developing nations.</p>
+      <p class="art-p">Environmental groups praised the deal as a major step forward, though some scientists cautioned that the 2050 target may not be ambitious enough to prevent the most severe effects of climate change.</p>
+    </div>
+  </div>
+
+  <div class="art-toolbar">
+    <div class="tool" onclick="toggleSave(this)"><svg fill="none" viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" stroke="var(--light)" stroke-width="2"/></svg><span>Save</span></div>
+    <div class="tool" onclick="showHighlight()"><svg fill="none" viewBox="0 0 24 24"><path d="m9 11-6 6v3h9l3-3" stroke="var(--light)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="m22 12-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4" stroke="var(--light)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Highlight</span></div>
+    <div class="tool" onclick="showNote()"><svg fill="none" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="var(--light)" stroke-width="2"/></svg><span>Add Note</span></div>
+    <div class="tool" onclick="showShare()"><svg fill="none" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3" stroke="var(--light)" stroke-width="2"/><circle cx="6" cy="12" r="3" stroke="var(--light)" stroke-width="2"/><circle cx="18" cy="19" r="3" stroke="var(--light)" stroke-width="2"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5" stroke="var(--light)" stroke-width="2"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5" stroke="var(--light)" stroke-width="2"/></svg><span>Share</span></div>
+  </div>
+
+  <div class="bnav" style="background:#fff">
+    <div class="ntab on" onclick="nav('home')">
+      <svg fill="none" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="var(--blue)" stroke-width="2"/><polyline points="9,22 9,12 15,12 15,22" stroke="var(--blue)" stroke-width="2"/></svg>
+      <span class="nl">Home</span>
+    </div>
+    <div class="ntab" onclick="nav('circles')">
+      <svg fill="none" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="var(--light)" stroke-width="2"/><circle cx="9" cy="7" r="4" stroke="var(--light)" stroke-width="2"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="var(--light)" stroke-width="2"/></svg>
+      <span class="nl">Circles</span>
+    </div>
+    <div class="ntab" onclick="nav('profile')">
+      <svg fill="none" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="var(--light)" stroke-width="2"/><circle cx="12" cy="7" r="4" stroke="var(--light)" stroke-width="2"/></svg>
+      <span class="nl">Profile</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════ -->
+<!--  SAVED BY CIRCLES SHEET                                 -->
+<!-- ════════════════════════════════════════════════════════ -->
+<div id="s-saved">
+  <div class="sheet-bd" onclick="hideSheet()"></div>
+  <div class="sheet">
+    <div class="sheet-hdr">
+      <div class="sheet-ttl">Saved by your circles</div>
+      <div class="sheet-x" onclick="hideSheet()">✕</div>
+    </div>
+
+    <!-- Tarun Jain – Family -->
+    <div class="saved-row">
+      <div class="ava">
+        <img src="../../images/newsby/tarun.png" alt="Tarun Jain">
+      </div>
+      <div>
+        <div class="sv-name">Tarun Jain</div>
+        <div class="sv-circle" style="color:var(--green)">Family</div>
+      </div>
+    </div>
+
+    <!-- Emily Perez – Work -->
+    <div class="saved-row">
+      <div class="ava">
+        <img src="../../images/newsby/emily.png" alt="Emily Perez">
+      </div>
+      <div>
+        <div class="sv-name">Emily Perez</div>
+        <div class="sv-circle" style="color:#FF7637">Work</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════ -->
+<!--  CIRCLES LIST                                           -->
+<!-- ════════════════════════════════════════════════════════ -->
+<div class="screen" id="s-circles" style="background:#F5F6FA">
+  <div class="sb" style="background:#fff">
+    <span>9:41</span>
+    <div class="sb-icons">
+      <div class="sig"><span></span><span></span><span></span><span></span></div>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 2.5C9.8 2.5 11.4 3.2 12.6 4.4L14 3C12.4 1.4 10.3 .5 8 .5S3.6 1.4 2 3L3.4 4.4C4.6 3.2 6.2 2.5 8 2.5Z" fill="currentColor"/><path d="M8 5.5C9 5.5 9.9 5.9 10.6 6.6L12 5.2C10.9 4.1 9.5 3.5 8 3.5S5.1 4.1 4 5.2L5.4 6.6C6.1 5.9 7 5.5 8 5.5Z" fill="currentColor"/><circle cx="8" cy="9.5" r="1.5" fill="currentColor"/></svg>
+      <div class="batt"><div class="batt-fill"></div></div>
+    </div>
+  </div>
+
+  <div class="ph">
+    <div class="ph-title">Circles</div>
+    <div class="ph-sub">Ongoing conversations around the news you read</div>
+  </div>
+
+  <div class="scr">
+    <div class="clist">
+
+      <!-- Family -->
+      <div class="crow" onclick="nav('circles-detail')">
+        <div class="cicon" style="background:var(--green)">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="9" cy="7" r="4" stroke="white" stroke-width="2"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="cinfo">
+          <div class="cname">Family</div>
+          <div class="cdesc">Stories to talk through as a family</div>
+          <div class="ctime">Last shared 2h ago</div>
+        </div>
+        <div class="cchev">›</div>
+      </div>
+
+      <!-- Work -->
+      <div class="crow" onclick="nav('circles-detail-work')">
+        <div class="cicon" style="background:#FF7637">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="9" cy="7" r="4" stroke="white" stroke-width="2"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="cinfo">
+          <div class="cname">Work</div>
+          <div class="cdesc">News I track for work</div>
+          <div class="ctime">Last shared 5h ago</div>
+        </div>
+        <div class="cchev">›</div>
+      </div>
+
+      <!-- Close Friends -->
+      <div class="crow" onclick="nav('circles-detail-friends')">
+        <div class="cicon" style="background:var(--yellow)">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="9" cy="7" r="4" stroke="white" stroke-width="2"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="cinfo">
+          <div class="cname">Close Friends</div>
+          <div class="cdesc">Things I want trusted perspective on</div>
+          <div class="ctime">Last shared 3h ago</div>
+        </div>
+        <div class="cchev">›</div>
+      </div>
+
+      <!-- Tech Enthusiasts -->
+      <div class="crow" onclick="nav('circles-detail-tech')">
+        <div class="cicon" style="background:var(--pink)">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="9" cy="7" r="4" stroke="white" stroke-width="2"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="cinfo">
+          <div class="cname">Tech Enthusiasts</div>
+          <div class="cdesc">Tech I'm watching closely</div>
+          <div class="ctime">Last shared 6h ago</div>
+        </div>
+        <div class="cchev">›</div>
+      </div>
+
+      <!-- Create new circle -->
+      <div class="create-circle-btn" onclick="showProfSheet('sheet-create-circle')">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" stroke="var(--blue)" stroke-width="2"/>
+          <path d="M12 8v8M8 12h8" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        Create new circle
+      </div>
+
+    </div>
+  </div>
+
+  <div class="bnav" style="background:#fff">
+    <div class="ntab" onclick="nav('home')">
+      <svg fill="none" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="var(--light)" stroke-width="2"/><polyline points="9,22 9,12 15,12 15,22" stroke="var(--light)" stroke-width="2"/></svg>
+      <span class="nl">Home</span>
+    </div>
+    <div class="ntab on" onclick="nav('circles')">
+      <svg fill="none" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="var(--blue)" stroke-width="2"/><circle cx="9" cy="7" r="4" stroke="var(--blue)" stroke-width="2"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="var(--blue)" stroke-width="2"/></svg>
+      <span class="nl">Circles</span>
+    </div>
+    <div class="ntab" onclick="nav('profile')">
+      <svg fill="none" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="var(--light)" stroke-width="2"/><circle cx="12" cy="7" r="4" stroke="var(--light)" stroke-width="2"/></svg>
+      <span class="nl">Profile</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════ -->
+<!--  CIRCLES DETAIL – FAMILY                                -->
+<!-- ════════════════════════════════════════════════════════ -->
+<div class="screen" id="s-circles-detail" style="background:#F5F6FA">
+  <div class="sb" style="background:#fff">
+    <span>9:41</span>
+    <div class="sb-icons">
+      <div class="sig"><span></span><span></span><span></span><span></span></div>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 2.5C9.8 2.5 11.4 3.2 12.6 4.4L14 3C12.4 1.4 10.3 .5 8 .5S3.6 1.4 2 3L3.4 4.4C4.6 3.2 6.2 2.5 8 2.5Z" fill="currentColor"/><path d="M8 5.5C9 5.5 9.9 5.9 10.6 6.6L12 5.2C10.9 4.1 9.5 3.5 8 3.5S5.1 4.1 4 5.2L5.4 6.6C6.1 5.9 7 5.5 8 5.5Z" fill="currentColor"/><circle cx="8" cy="9.5" r="1.5" fill="currentColor"/></svg>
+      <div class="batt"><div class="batt-fill"></div></div>
+    </div>
+  </div>
+
+  <div class="dtopbar">
+    <div class="btn-back-r" onclick="back('circles')" style="padding:2px 4px 2px 0">‹</div>
+    <div style="flex:1; margin-left:8px;">
+      <div class="dtitle">Family</div>
+      <div class="dsub">Stories shared in this circle</div>
+    </div>
+  </div>
+
+  <div class="scr">
+    <div class="slist">
+
+      <div class="srow" onclick="nav('circle-article')">
+        <div class="sh">Climate summit reaches breakthrough agreement</div>
+        <div class="sc">
+          <div class="ca"><img src="../../images/newsby/sara.png" alt="Sara"></div>
+          <div class="ct"><b>Sara:</b> This is huge! Finally some real progress on emissions…</div>
+        </div>
+        <div class="sm">8 comments &nbsp;·&nbsp; 2h ago</div>
+      </div>
+
+      <div class="srow" onclick="nav('circle-article')">
+        <div class="sh">New AI model demonstrates advanced reasoning</div>
+        <div class="sc">
+          <div class="ca"><img src="../../images/newsby/jay.png" alt="Jay"></div>
+          <div class="ct"><b>Jay:</b> The implications for research are enormous and wide-reaching…</div>
+        </div>
+        <div class="sm">12 comments &nbsp;·&nbsp; 3h ago</div>
+      </div>
+
+      <div class="srow" onclick="nav('circle-article')">
+        <div class="sh">Privacy legislation could reshape data practices</div>
+        <div class="sc">
+          <div class="ca"><img src="../../images/newsby/ayan.png" alt="Ayan"></div>
+          <div class="ct"><b>Ayan:</b> Mom, this could really work in our favor if passed…</div>
+        </div>
+        <div class="sm">6 comments &nbsp;·&nbsp; 5h ago</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="bnav" style="background:#fff">
+    <div class="ntab" onclick="nav('home')">
+      <svg fill="none" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="var(--light)" stroke-width="2"/><polyline points="9,22 9,12 15,12 15,22" stroke="var(--light)" stroke-width="2"/></svg>
+      <span class="nl">Home</span>
+    </div>
+    <div class="ntab on" onclick="nav('circles')">
+      <svg fill="none" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="var(--blue)" stroke-width="2"/><circle cx="9" cy="7" r="4" stroke="var(--blue)" stroke-width="2"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="var(--blue)" stroke-width="2"/></svg>
+      <span class="nl">Circles</span>
+    </div>
+    <div class="ntab" onclick="nav('profile')">
+      <svg fill="none" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="var(--light)" stroke-width="2"/><circle cx="12" cy="7" r="4" stroke="var(--light)" stroke-width="2"/></svg>
+      <span class="nl">Profile</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════ -->
+<!--  CIRCLES DETAIL – WORK                                  -->
+<!-- ════════════════════════════════════════════════════════ -->
+<div class="screen" id="s-circles-detail-work" style="background:#F5F6FA">
+  <div class="sb" style="background:#fff"><span>9:41</span><div class="sb-icons"><div class="sig"><span></span><span></span><span></span><span></span></div><svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 2.5C9.8 2.5 11.4 3.2 12.6 4.4L14 3C12.4 1.4 10.3 .5 8 .5S3.6 1.4 2 3L3.4 4.4C4.6 3.2 6.2 2.5 8 2.5Z" fill="currentColor"/><path d="M8 5.5C9 5.5 9.9 5.9 10.6 6.6L12 5.2C10.9 4.1 9.5 3.5 8 3.5S5.1 4.1 4 5.2L5.4 6.6C6.1 5.9 7 5.5 8 5.5Z" fill="currentColor"/><circle cx="8" cy="9.5" r="1.5" fill="currentColor"/></svg><div class="batt"><div class="batt-fill"></div></div></div></div>
+  <div class="dtopbar">
+    <div class="btn-back-r" onclick="back('circles')" style="padding:2px 4px 2px 0">‹</div>
+    <div style="flex:1; margin-left:8px;">
+      <div class="dtitle">Work</div>
+      <div class="dsub">Stories shared in this circle</div>
+    </div>
+  </div>
+  <div class="scr">
+    <div class="slist">
+      <div class="srow" onclick="nav('article-ai')">
+        <div class="sh">New AI model demonstrates advanced reasoning capabilities</div>
+        <div class="sc"><div class="ca"><img src="../../images/newsby/jay.png" alt="Jay"></div><div class="ct"><b>Jay:</b> The implications for research are enormous and wide-reaching…</div></div>
+        <div class="sm">12 comments &nbsp;·&nbsp; 3h ago</div>
+      </div>
+      <div class="srow" onclick="nav('article-privacy')">
+        <div class="sh">Privacy legislation could reshape data practices across industries</div>
+        <div class="sc"><div class="ca"><img src="../../images/newsby/emily.png" alt="Emily"></div><div class="ct"><b>Emily:</b> This will directly affect how we handle user data at work…</div></div>
+        <div class="sm">7 comments &nbsp;·&nbsp; 5h ago</div>
+      </div>
+      <div class="srow" onclick="nav('circle-article')">
+        <div class="sh">Climate summit reaches breakthrough agreement on emissions</div>
+        <div class="sc"><div class="ca"><img src="../../images/newsby/tarun.png" alt="Tarun"></div><div class="ct"><b>Tarun:</b> Big news for sustainability teams everywhere…</div></div>
+        <div class="sm">4 comments &nbsp;·&nbsp; 2h ago</div>
+      </div>
+    </div>
+  </div>
+  <div class="bnav" style="background:#fff">
+    <div class="ntab" onclick="nav('home')"><svg fill="none" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="var(--light)" stroke-width="2"/><polyline points="9,22 9,12 15,12 15,22" stroke="var(--light)" stroke-width="2"/></svg><span class="nl">Home</span></div>
+    <div class="ntab on" onclick="nav('circles')"><svg fill="none" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="var(--blue)" stroke-width="2"/><circle cx="9" cy="7" r="4" stroke="var(--blue)" stroke-width="2"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="var(--blue)" stroke-width="2"/></svg><span class="nl">Circles</span></div>
+    <div class="ntab" onclick="nav('profile')"><svg fill="none" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="var(--light)" stroke-width="2"/><circle cx="12" cy="7" r="4" stroke="var(--light)" stroke-width="2"/></svg><span class="nl">Profile</span></div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════ -->
+<!--  CIRCLES DETAIL – CLOSE FRIENDS                         -->
+<!-- ════════════════════════════════════════════════════════ -->
+<div class="screen" id="s-circles-detail-friends" style="background:#F5F6FA">
+  <div class="sb" style="background:#fff"><span>9:41</span><div class="sb-icons"><div class="sig"><span></span><span></span><span></span><span></span></div><svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 2.5C9.8 2.5 11.4 3.2 12.6 4.4L14 3C12.4 1.4 10.3 .5 8 .5S3.6 1.4 2 3L3.4 4.4C4.6 3.2 6.2 2.5 8 2.5Z" fill="currentColor"/><path d="M8 5.5C9 5.5 9.9 5.9 10.6 6.6L12 5.2C10.9 4.1 9.5 3.5 8 3.5S5.1 4.1 4 5.2L5.4 6.6C6.1 5.9 7 5.5 8 5.5Z" fill="currentColor"/><circle cx="8" cy="9.5" r="1.5" fill="currentColor"/></svg><div class="batt"><div class="batt-fill"></div></div></div></div>
+  <div class="dtopbar">
+    <div class="btn-back-r" onclick="back('circles')" style="padding:2px 4px 2px 0">‹</div>
+    <div style="flex:1; margin-left:8px;">
+      <div class="dtitle">Close Friends</div>
+      <div class="dsub">Stories shared in this circle</div>
+    </div>
+  </div>
+  <div class="scr">
+    <div class="slist">
+      <div class="srow" onclick="nav('article-privacy')">
+        <div class="sh">Privacy legislation could reshape data practices across industries</div>
+        <div class="sc"><div class="ca"><img src="../../images/newsby/sara.png" alt="Sara"></div><div class="ct"><b>Sara:</b> This one has huge implications for all of us, honestly…</div></div>
+        <div class="sm">9 comments &nbsp;·&nbsp; 3h ago</div>
+      </div>
+      <div class="srow" onclick="nav('circle-article')">
+        <div class="sh">Climate summit reaches breakthrough agreement on emissions targets</div>
+        <div class="sc"><div class="ca"><img src="../../images/newsby/ayan.png" alt="Ayan"></div><div class="ct"><b>Ayan:</b> Finally something worth being hopeful about…</div></div>
+        <div class="sm">5 comments &nbsp;·&nbsp; 2h ago</div>
+      </div>
+      <div class="srow" onclick="nav('article-ai')">
+        <div class="sh">New AI model demonstrates advanced reasoning capabilities</div>
+        <div class="sc"><div class="ca"><img src="../../images/newsby/jay.png" alt="Jay"></div><div class="ct"><b>Jay:</b> This changes so much about how we think about AI tools…</div></div>
+        <div class="sm">6 comments &nbsp;·&nbsp; 6h ago</div>
+      </div>
+    </div>
+  </div>
+  <div class="bnav" style="background:#fff">
+    <div class="ntab" onclick="nav('home')"><svg fill="none" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="var(--light)" stroke-width="2"/><polyline points="9,22 9,12 15,12 15,22" stroke="var(--light)" stroke-width="2"/></svg><span class="nl">Home</span></div>
+    <div class="ntab on" onclick="nav('circles')"><svg fill="none" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="var(--blue)" stroke-width="2"/><circle cx="9" cy="7" r="4" stroke="var(--blue)" stroke-width="2"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="var(--blue)" stroke-width="2"/></svg><span class="nl">Circles</span></div>
+    <div class="ntab" onclick="nav('profile')"><svg fill="none" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="var(--light)" stroke-width="2"/><circle cx="12" cy="7" r="4" stroke="var(--light)" stroke-width="2"/></svg><span class="nl">Profile</span></div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════ -->
+<!--  CIRCLES DETAIL – TECH ENTHUSIASTS                      -->
+<!-- ════════════════════════════════════════════════════════ -->
+<div class="screen" id="s-circles-detail-tech" style="background:#F5F6FA">
+  <div class="sb" style="background:#fff"><span>9:41</span><div class="sb-icons"><div class="sig"><span></span><span></span><span></span><span></span></div><svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 2.5C9.8 2.5 11.4 3.2 12.6 4.4L14 3C12.4 1.4 10.3 .5 8 .5S3.6 1.4 2 3L3.4 4.4C4.6 3.2 6.2 2.5 8 2.5Z" fill="currentColor"/><path d="M8 5.5C9 5.5 9.9 5.9 10.6 6.6L12 5.2C10.9 4.1 9.5 3.5 8 3.5S5.1 4.1 4 5.2L5.4 6.6C6.1 5.9 7 5.5 8 5.5Z" fill="currentColor"/><circle cx="8" cy="9.5" r="1.5" fill="currentColor"/></svg><div class="batt"><div class="batt-fill"></div></div></div></div>
+  <div class="dtopbar">
+    <div class="btn-back-r" onclick="back('circles')" style="padding:2px 4px 2px 0">‹</div>
+    <div style="flex:1; margin-left:8px;">
+      <div class="dtitle">Tech Enthusiasts</div>
+      <div class="dsub">Stories shared in this circle</div>
+    </div>
+  </div>
+  <div class="scr">
+    <div class="slist">
+      <div class="srow" onclick="nav('article-ai')">
+        <div class="sh">New AI model demonstrates advanced reasoning capabilities</div>
+        <div class="sc"><div class="ca"><img src="../../images/newsby/jay.png" alt="Jay"></div><div class="ct"><b>Jay:</b> We've been waiting for something like this. The reasoning chains are wild…</div></div>
+        <div class="sm">18 comments &nbsp;·&nbsp; 4h ago</div>
+      </div>
+      <div class="srow" onclick="nav('article-privacy')">
+        <div class="sh">Privacy legislation could reshape data practices across industries</div>
+        <div class="sc"><div class="ca"><img src="../../images/newsby/emily.png" alt="Emily"></div><div class="ct"><b>Emily:</b> GDPR 2.0 vibes. The enforcement mechanism is the key difference…</div></div>
+        <div class="sm">11 comments &nbsp;·&nbsp; 6h ago</div>
+      </div>
+    </div>
+  </div>
+  <div class="bnav" style="background:#fff">
+    <div class="ntab" onclick="nav('home')"><svg fill="none" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="var(--light)" stroke-width="2"/><polyline points="9,22 9,12 15,12 15,22" stroke="var(--light)" stroke-width="2"/></svg><span class="nl">Home</span></div>
+    <div class="ntab on" onclick="nav('circles')"><svg fill="none" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="var(--blue)" stroke-width="2"/><circle cx="9" cy="7" r="4" stroke="var(--blue)" stroke-width="2"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="var(--blue)" stroke-width="2"/></svg><span class="nl">Circles</span></div>
+    <div class="ntab" onclick="nav('profile')"><svg fill="none" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="var(--light)" stroke-width="2"/><circle cx="12" cy="7" r="4" stroke="var(--light)" stroke-width="2"/></svg><span class="nl">Profile</span></div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════ -->
+<!--  CIRCLE ARTICLE                                         -->
+<!-- ════════════════════════════════════════════════════════ -->
+<div class="screen" id="s-circle-article" style="background:#fff">
+  <div class="sb" style="background:#fff">
+    <span>9:41</span>
+    <div class="sb-icons">
+      <div class="sig"><span></span><span></span><span></span><span></span></div>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 2.5C9.8 2.5 11.4 3.2 12.6 4.4L14 3C12.4 1.4 10.3 .5 8 .5S3.6 1.4 2 3L3.4 4.4C4.6 3.2 6.2 2.5 8 2.5Z" fill="currentColor"/><path d="M8 5.5C9 5.5 9.9 5.9 10.6 6.6L12 5.2C10.9 4.1 9.5 3.5 8 3.5S5.1 4.1 4 5.2L5.4 6.6C6.1 5.9 7 5.5 8 5.5Z" fill="currentColor"/><circle cx="8" cy="9.5" r="1.5" fill="currentColor"/></svg>
+      <div class="batt"><div class="batt-fill"></div></div>
+    </div>
+  </div>
+
+  <div class="ca-topbar">
+    <div class="ca-back" onclick="backAuto()">‹</div>
+  </div>
+
+  <div class="scr" style="background:#fff">
+    <div class="art-head">
+      <div class="art-h1">Climate summit reaches breakthrough agreement on emissions targets</div>
+      <div class="art-byline">The Daily Brief &nbsp;·&nbsp; 2h ago</div>
+    </div>
+
+    <div class="art-photo">
+      <img src="../../images/newsby/climate-summit.png" alt="Climate Summit">
+    </div>
+
+    <div class="art-body">
+      <p class="art-p">World leaders gathered at the annual climate summit have reached a historic agreement on new emissions reduction targets. The landmark deal commits participating nations to achieving net-zero emissions by 2050, with intermediate targets set for 2030 and 2040.</p>
+      <p class="art-p">The agreement includes binding commitments from 140 countries and creates a new international monitoring body to track progress, along with a $500 billion climate finance fund.</p>
+    </div>
+
+    <!-- Family circle comments -->
+    <div class="comments-section">
+      <div class="comments-label">3 comments in Family</div>
+
+      <div class="comment-row">
+        <div class="comment-ava"><img src="../../images/newsby/sara.png" alt="Sara"></div>
+        <div class="comment-bubble">
+          <div class="comment-name">Sara</div>
+          <div class="comment-txt">This is huge! Finally some real progress on emissions. The 2050 target feels achievable now.</div>
+          <div class="comment-time">2h ago</div>
+        </div>
+      </div>
+
+      <div class="comment-row">
+        <div class="comment-ava"><img src="../../images/newsby/jay.png" alt="Jay"></div>
+        <div class="comment-bubble">
+          <div class="comment-name">Jay</div>
+          <div class="comment-txt">The $500B fund for developing nations is the real story here. Long overdue.</div>
+          <div class="comment-time">1h ago</div>
+        </div>
+      </div>
+
+      <div class="comment-row">
+        <div class="comment-ava"><img src="../../images/newsby/ayan.png" alt="Ayan"></div>
+        <div class="comment-bubble">
+          <div class="comment-name">Ayan</div>
+          <div class="comment-txt">Mom, this could work in our favor if India signs on. Big deal for renewable energy.</div>
+          <div class="comment-time">45m ago</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="art-toolbar">
+    <div class="tool" onclick="toggleSave(this)"><svg fill="none" viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" stroke="var(--light)" stroke-width="2"/></svg><span>Save</span></div>
+    <div class="tool" onclick="showHighlight()"><svg fill="none" viewBox="0 0 24 24"><path d="m9 11-6 6v3h9l3-3" stroke="var(--light)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="m22 12-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4" stroke="var(--light)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Highlight</span></div>
+    <div class="tool" onclick="showNote()"><svg fill="none" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="var(--light)" stroke-width="2"/></svg><span>Add Note</span></div>
+    <div class="tool" onclick="showShare()"><svg fill="none" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3" stroke="var(--light)" stroke-width="2"/><circle cx="6" cy="12" r="3" stroke="var(--light)" stroke-width="2"/><circle cx="18" cy="19" r="3" stroke="var(--light)" stroke-width="2"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5" stroke="var(--light)" stroke-width="2"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5" stroke="var(--light)" stroke-width="2"/></svg><span>Share</span></div>
+  </div>
+
+  <div class="bnav" style="background:#fff">
+    <div class="ntab" onclick="nav('home')">
+      <svg fill="none" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="var(--light)" stroke-width="2"/><polyline points="9,22 9,12 15,12 15,22" stroke="var(--light)" stroke-width="2"/></svg>
+      <span class="nl">Home</span>
+    </div>
+    <div class="ntab on" onclick="nav('circles')">
+      <svg fill="none" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="var(--blue)" stroke-width="2"/><circle cx="9" cy="7" r="4" stroke="var(--blue)" stroke-width="2"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="var(--blue)" stroke-width="2"/></svg>
+      <span class="nl">Circles</span>
+    </div>
+    <div class="ntab" onclick="nav('profile')">
+      <svg fill="none" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="var(--light)" stroke-width="2"/><circle cx="12" cy="7" r="4" stroke="var(--light)" stroke-width="2"/></svg>
+      <span class="nl">Profile</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════ -->
+<!--  AI ARTICLE                                              -->
+<!-- ════════════════════════════════════════════════════════ -->
+<div class="screen" id="s-article-ai" style="background:#fff">
+  <div class="sb" style="background:#fff">
+    <span>9:41</span>
+    <div class="sb-icons">
+      <div class="sig"><span></span><span></span><span></span><span></span></div>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 2.5C9.8 2.5 11.4 3.2 12.6 4.4L14 3C12.4 1.4 10.3 .5 8 .5S3.6 1.4 2 3L3.4 4.4C4.6 3.2 6.2 2.5 8 2.5Z" fill="currentColor"/><path d="M8 5.5C9 5.5 9.9 5.9 10.6 6.6L12 5.2C10.9 4.1 9.5 3.5 8 3.5S5.1 4.1 4 5.2L5.4 6.6C6.1 5.9 7 5.5 8 5.5Z" fill="currentColor"/><circle cx="8" cy="9.5" r="1.5" fill="currentColor"/></svg>
+      <div class="batt"><div class="batt-fill"></div></div>
+    </div>
+  </div>
+  <div class="ca-topbar">
+    <div class="ca-back" onclick="backAuto()">‹</div>
+    <div class="ca-circle-tag" style="color:#8B2CF1; background:#F0EEFF;">You highlighted</div>
+  </div>
+  <div class="scr" style="background:#fff">
+    <div class="art-head">
+      <div class="art-h1">New AI model demonstrates advanced reasoning capabilities</div>
+      <div class="art-byline">Tech Insider &nbsp;·&nbsp; 5h ago</div>
+    </div>
+    <div class="art-photo">
+      <img src="../../images/newsby/ai.png" alt="AI article" style="width:100%;height:100%;object-fit:cover;object-position:center 40%;display:block;">
+    </div>
+    <div class="art-body">
+      <p class="art-p">A research team has unveiled an AI model that exhibits unprecedented reasoning capabilities, successfully solving complex multi-step problems across mathematics, science, and legal analysis — performance that rivals top human experts in several domains.</p>
+      <p class="art-p">The model, trained on a novel architecture that mimics the brain's ability to form abstract concepts, scored in the 95th percentile on standardised graduate-level exams. Unlike previous systems, it can explain its reasoning step by step and identify gaps in its own knowledge.</p>
+      <p class="art-p">Critics caution that benchmark performance doesn't always translate to real-world reliability, but researchers say early deployments in drug discovery and climate modelling have already yielded promising results.</p>
+    </div>
+    <div class="comments-section">
+      <div class="comments-label">2 comments in Work</div>
+      <div class="comment-row">
+        <div class="comment-ava"><img src="../../images/newsby/jay.png" alt="Jay"></div>
+        <div class="comment-bubble">
+          <div class="comment-name">Jay</div>
+          <div class="comment-txt">The implications for research are enormous. We're already looking at how to integrate this into our pipeline.</div>
+          <div class="comment-time">4h ago</div>
+        </div>
+      </div>
+      <div class="comment-row">
+        <div class="comment-ava"><img src="../../images/newsby/sara.png" alt="Sara"></div>
+        <div class="comment-bubble">
+          <div class="comment-name">Sara</div>
+          <div class="comment-txt">This changes everything for my lab. The step-by-step reasoning alone is a game changer for reproducibility.</div>
+          <div class="comment-time">3h ago</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="art-toolbar">
+    <div class="tool" onclick="toggleSave(this)"><svg fill="none" viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" stroke="var(--light)" stroke-width="2"/></svg><span>Save</span></div>
+    <div class="tool" onclick="showHighlight()"><svg fill="none" viewBox="0 0 24 24"><path d="m9 11-6 6v3h9l3-3" stroke="var(--light)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="m22 12-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4" stroke="var(--light)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Highlight</span></div>
+    <div class="tool" onclick="showNote()"><svg fill="none" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="var(--light)" stroke-width="2"/></svg><span>Add Note</span></div>
+    <div class="tool" onclick="showShare()"><svg fill="none" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3" stroke="var(--light)" stroke-width="2"/><circle cx="6" cy="12" r="3" stroke="var(--light)" stroke-width="2"/><circle cx="18" cy="19" r="3" stroke="var(--light)" stroke-width="2"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5" stroke="var(--light)" stroke-width="2"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5" stroke="var(--light)" stroke-width="2"/></svg><span>Share</span></div>
+  </div>
+  <div class="bnav" style="background:#fff">
+    <div class="ntab on" onclick="nav('home')"><svg fill="none" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="var(--blue)" stroke-width="2"/><polyline points="9,22 9,12 15,12 15,22" stroke="var(--blue)" stroke-width="2"/></svg><span class="nl">Home</span></div>
+    <div class="ntab" onclick="nav('circles')"><svg fill="none" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="var(--light)" stroke-width="2"/><circle cx="9" cy="7" r="4" stroke="var(--light)" stroke-width="2"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="var(--light)" stroke-width="2"/></svg><span class="nl">Circles</span></div>
+    <div class="ntab" onclick="nav('profile')"><svg fill="none" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="var(--light)" stroke-width="2"/><circle cx="12" cy="7" r="4" stroke="var(--light)" stroke-width="2"/></svg><span class="nl">Profile</span></div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════ -->
+<!--  PRIVACY ARTICLE                                         -->
+<!-- ════════════════════════════════════════════════════════ -->
+<div class="screen" id="s-article-privacy" style="background:#fff">
+  <div class="sb" style="background:#fff">
+    <span>9:41</span>
+    <div class="sb-icons">
+      <div class="sig"><span></span><span></span><span></span><span></span></div>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 2.5C9.8 2.5 11.4 3.2 12.6 4.4L14 3C12.4 1.4 10.3 .5 8 .5S3.6 1.4 2 3L3.4 4.4C4.6 3.2 6.2 2.5 8 2.5Z" fill="currentColor"/><path d="M8 5.5C9 5.5 9.9 5.9 10.6 6.6L12 5.2C10.9 4.1 9.5 3.5 8 3.5S5.1 4.1 4 5.2L5.4 6.6C6.1 5.9 7 5.5 8 5.5Z" fill="currentColor"/><circle cx="8" cy="9.5" r="1.5" fill="currentColor"/></svg>
+      <div class="batt"><div class="batt-fill"></div></div>
+    </div>
+  </div>
+  <div class="ca-topbar">
+    <div class="ca-back" onclick="backAuto()">‹</div>
+  </div>
+  <div class="scr" style="background:#fff">
+    <div class="art-head">
+      <div class="art-h1">Privacy legislation could reshape data practices across industries</div>
+      <div class="art-byline">Global News Wire &nbsp;·&nbsp; 1d ago</div>
+    </div>
+    <div class="art-photo">
+      <img src="../../images/newsby/privacy-legislation.png" alt="Privacy legislation" style="width:100%;height:100%;object-fit:cover;object-position:center 30%;display:block;">
+    </div>
+    <div class="art-body">
+      <p class="art-p">A sweeping new data privacy bill under review in multiple jurisdictions would require companies to obtain explicit consent before collecting behavioural data, dramatically limiting the targeted advertising practices that underpin the digital economy.</p>
+      <p class="art-p">The legislation, modelled loosely on Europe's GDPR but with stricter enforcement mechanisms, would apply to any company with more than 10,000 users. Penalties for non-compliance could reach 4% of global annual revenue, with personal liability for executives in egregious cases.</p>
+      <p class="art-p">Industry groups argue the rules would stifle innovation and hurt small businesses disproportionately. Consumer advocates counter that the current system — where users routinely trade sensitive data for free services — is fundamentally broken and long overdue for reform.</p>
+    </div>
+    <div class="comments-section">
+      <div class="comments-label">2 comments in Family</div>
+      <div class="comment-row">
+        <div class="comment-ava"><img src="../../images/newsby/ayan.png" alt="Ayan"></div>
+        <div class="comment-bubble">
+          <div class="comment-name">Ayan</div>
+          <div class="comment-txt">Mom, this could really work in our favor if passed. Our startup would finally have a level playing field against big tech.</div>
+          <div class="comment-time">22h ago</div>
+        </div>
+      </div>
+      <div class="comment-row">
+        <div class="comment-ava"><img src="../../images/newsby/sara.png" alt="Sara"></div>
+        <div class="comment-bubble">
+          <div class="comment-name">Sara</div>
+          <div class="comment-txt">About time. I've been opting out of everything I can for years. The consent model is long overdue.</div>
+          <div class="comment-time">18h ago</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="art-toolbar">
+    <div class="tool" onclick="toggleSave(this)"><svg fill="none" viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" stroke="var(--light)" stroke-width="2"/></svg><span>Save</span></div>
+    <div class="tool" onclick="showHighlight()"><svg fill="none" viewBox="0 0 24 24"><path d="m9 11-6 6v3h9l3-3" stroke="var(--light)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="m22 12-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4" stroke="var(--light)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Highlight</span></div>
+    <div class="tool" onclick="showNote()"><svg fill="none" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="var(--light)" stroke-width="2"/></svg><span>Add Note</span></div>
+    <div class="tool" onclick="showShare()"><svg fill="none" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3" stroke="var(--light)" stroke-width="2"/><circle cx="6" cy="12" r="3" stroke="var(--light)" stroke-width="2"/><circle cx="18" cy="19" r="3" stroke="var(--light)" stroke-width="2"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5" stroke="var(--light)" stroke-width="2"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5" stroke="var(--light)" stroke-width="2"/></svg><span>Share</span></div>
+  </div>
+  <div class="bnav" style="background:#fff">
+    <div class="ntab on" onclick="nav('home')"><svg fill="none" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="var(--blue)" stroke-width="2"/><polyline points="9,22 9,12 15,12 15,22" stroke="var(--blue)" stroke-width="2"/></svg><span class="nl">Home</span></div>
+    <div class="ntab" onclick="nav('circles')"><svg fill="none" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="var(--light)" stroke-width="2"/><circle cx="9" cy="7" r="4" stroke="var(--light)" stroke-width="2"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="var(--light)" stroke-width="2"/></svg><span class="nl">Circles</span></div>
+    <div class="ntab" onclick="nav('profile')"><svg fill="none" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="var(--light)" stroke-width="2"/><circle cx="12" cy="7" r="4" stroke="var(--light)" stroke-width="2"/></svg><span class="nl">Profile</span></div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════ -->
+<!--  PROFILE                                                -->
+<!-- ════════════════════════════════════════════════════════ -->
+<div class="screen" id="s-profile" style="background:#fff">
+  <div class="sb" style="background:#fff">
+    <span>9:41</span>
+    <div class="sb-icons">
+      <div class="sig"><span></span><span></span><span></span><span></span></div>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 2.5C9.8 2.5 11.4 3.2 12.6 4.4L14 3C12.4 1.4 10.3 .5 8 .5S3.6 1.4 2 3L3.4 4.4C4.6 3.2 6.2 2.5 8 2.5Z" fill="currentColor"/><path d="M8 5.5C9 5.5 9.9 5.9 10.6 6.6L12 5.2C10.9 4.1 9.5 3.5 8 3.5S5.1 4.1 4 5.2L5.4 6.6C6.1 5.9 7 5.5 8 5.5Z" fill="currentColor"/><circle cx="8" cy="9.5" r="1.5" fill="currentColor"/></svg>
+      <div class="batt"><div class="batt-fill"></div></div>
+    </div>
+  </div>
+
+  <div class="ph">
+    <div class="ph-title">Profile</div>
+  </div>
+
+  <div class="scr" style="background:#fff">
+
+    <!-- User card -->
+    <div class="pu">
+      <div class="pava">
+        <img src="../../images/newsby/mira.png" alt="Mira">
+      </div>
+      <div class="pinfo">
+        <div class="pname">Mira</div>
+        <div class="pemail">Mira.Jain@gmail.com</div>
+      </div>
+      <div class="pchev">›</div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="psec">
+      <span class="slabel">Content</span>
+      <div class="sgroup">
+        <div class="srow2" onclick="showProfSheet('sheet-saved-articles')">
+          <div class="sico"><svg fill="none" viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" stroke="#555" stroke-width="2"/></svg></div>
+          <div class="stxt">Saved Articles</div>
+          <div class="sval">32</div>
+          <div class="schev">›</div>
+        </div>
+        <div class="srow2" onclick="showProfSheet('sheet-highlights')">
+          <div class="sico"><svg fill="none" viewBox="0 0 24 24"><path d="m9 11-6 6v3h9l3-3" stroke="#555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="m22 12-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4" stroke="#555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="stxt">Highlights</div>
+          <div class="sval">18</div>
+          <div class="schev">›</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SOCIAL -->
+    <div class="psec">
+      <span class="slabel">Social</span>
+      <div class="sgroup">
+        <div class="srow2" onclick="nav('circles')">
+          <div class="sico"><svg fill="none" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="#555" stroke-width="2"/><circle cx="9" cy="7" r="4" stroke="#555" stroke-width="2"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="#555" stroke-width="2"/></svg></div>
+          <div class="stxt">Manage Circles</div>
+          <div class="sval">4 circles</div>
+          <div class="schev">›</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRIVACY & NOTIFICATIONS -->
+    <div class="psec">
+      <span class="slabel">Privacy &amp; Notifications</span>
+      <div class="sgroup">
+        <div class="srow2" onclick="showProfSheet('sheet-notifs')">
+          <div class="sico"><svg fill="none" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0" stroke="#555" stroke-width="2"/></svg></div>
+          <div class="stxt">Notifications</div>
+          <div class="schev">›</div>
+        </div>
+        <div class="srow2" onclick="showProfSheet('sheet-privacy')">
+          <div class="sico"><svg fill="none" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="#555" stroke-width="2"/></svg></div>
+          <div class="stxt">Privacy</div>
+          <div class="schev">›</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="bnav">
+    <div class="ntab" onclick="nav('home')">
+      <svg fill="none" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="var(--light)" stroke-width="2"/><polyline points="9,22 9,12 15,12 15,22" stroke="var(--light)" stroke-width="2"/></svg>
+      <span class="nl">Home</span>
+    </div>
+    <div class="ntab" onclick="nav('circles')">
+      <svg fill="none" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="var(--light)" stroke-width="2"/><circle cx="9" cy="7" r="4" stroke="var(--light)" stroke-width="2"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="var(--light)" stroke-width="2"/></svg>
+      <span class="nl">Circles</span>
+    </div>
+    <div class="ntab on" onclick="nav('profile')">
+      <svg fill="none" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="var(--blue)" stroke-width="2"/><circle cx="12" cy="7" r="4" stroke="var(--blue)" stroke-width="2"/></svg>
+      <span class="nl">Profile</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════ -->
+<!--  SAVED ARTICLES SHEET                                    -->
+<!-- ════════════════════════════════════════════════════════ -->
+<div id="sheet-saved-articles">
+  <div class="sheet-bd" onclick="closeProfSheet('sheet-saved-articles')"></div>
+  <div class="sheet" style="padding-bottom:36px">
+    <div class="sheet-hdr">
+      <span class="sheet-ttl">Saved Articles</span>
+      <div class="sheet-x" onclick="closeProfSheet('sheet-saved-articles')">✕</div>
+    </div>
+    <div class="saved-art-row" onclick="closeProfSheet('sheet-saved-articles'); nav('circle-article')">
+      <img class="saved-art-thumb" src="../../images/newsby/climate-summit.png" alt="">
+      <div class="saved-art-info">
+        <div class="saved-art-src">The Daily Brief · 2h ago</div>
+        <div class="saved-art-title">Climate summit reaches breakthrough agreement on emissions targets</div>
+      </div>
+    </div>
+    <div class="saved-art-row" onclick="closeProfSheet('sheet-saved-articles'); nav('article-ai')">
+      <img class="saved-art-thumb" src="../../images/newsby/ai.png" alt="">
+      <div class="saved-art-info">
+        <div class="saved-art-src">Tech Insider · 5h ago</div>
+        <div class="saved-art-title">New AI model demonstrates advanced reasoning capabilities</div>
+      </div>
+    </div>
+    <div class="saved-art-row" onclick="closeProfSheet('sheet-saved-articles'); nav('article-privacy')">
+      <img class="saved-art-thumb" src="../../images/newsby/privacy-legislation.png" alt="">
+      <div class="saved-art-info">
+        <div class="saved-art-src">Global News Wire · 1d ago</div>
+        <div class="saved-art-title">Privacy legislation could reshape data practices across industries</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════ -->
+<!--  HIGHLIGHTS SHEET                                        -->
+<!-- ════════════════════════════════════════════════════════ -->
+<div id="sheet-highlights">
+  <div class="sheet-bd" onclick="closeProfSheet('sheet-highlights')"></div>
+  <div class="sheet" style="padding-bottom:36px">
+    <div class="sheet-hdr">
+      <span class="sheet-ttl">Highlights</span>
+      <div class="sheet-x" onclick="closeProfSheet('sheet-highlights')">✕</div>
+    </div>
+    <div class="hl-passage">
+      <div class="hl-passage-txt">"The model scored in the 95th percentile on standardised graduate-level exams and can explain its reasoning step by step."</div>
+      <div class="hl-passage-src">New AI model demonstrates advanced reasoning — Tech Insider</div>
+    </div>
+    <div class="hl-passage">
+      <div class="hl-passage-txt">"Penalties for non-compliance could reach 4% of global annual revenue, significantly exceeding existing frameworks."</div>
+      <div class="hl-passage-src">Privacy legislation could reshape data practices — Global News Wire</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════ -->
+<!--  NOTIFICATIONS SHEET                                     -->
+<!-- ════════════════════════════════════════════════════════ -->
+<div id="sheet-notifs">
+  <div class="sheet-bd" onclick="closeProfSheet('sheet-notifs')"></div>
+  <div class="sheet" style="padding-bottom:36px">
+    <div class="sheet-hdr">
+      <span class="sheet-ttl">Notifications</span>
+      <div class="sheet-x" onclick="closeProfSheet('sheet-notifs')">✕</div>
+    </div>
+    <div class="tog-row">
+      <div><div class="tog-label">Circle activity</div><div class="tog-sub">When someone comments on a shared story</div></div>
+      <div class="toggle" onclick="this.classList.toggle('off')"></div>
+    </div>
+    <div class="tog-row">
+      <div><div class="tog-label">Top Stories</div><div class="tog-sub">Daily digest of top stories</div></div>
+      <div class="toggle" onclick="this.classList.toggle('off')"></div>
+    </div>
+    <div class="tog-row">
+      <div><div class="tog-label">New saves</div><div class="tog-sub">When someone saves the same article</div></div>
+      <div class="toggle off" onclick="this.classList.toggle('off')"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════ -->
+<!--  PRIVACY SHEET                                           -->
+<!-- ════════════════════════════════════════════════════════ -->
+<div id="sheet-privacy">
+  <div class="sheet-bd" onclick="closeProfSheet('sheet-privacy')"></div>
+  <div class="sheet" style="padding-bottom:36px">
+    <div class="sheet-hdr">
+      <span class="sheet-ttl">Privacy</span>
+      <div class="sheet-x" onclick="closeProfSheet('sheet-privacy')">✕</div>
+    </div>
+    <div class="tog-row">
+      <div><div class="tog-label">Show reading activity</div><div class="tog-sub">Let your circles see what you're reading</div></div>
+      <div class="toggle" onclick="this.classList.toggle('off')"></div>
+    </div>
+    <div class="tog-row">
+      <div><div class="tog-label">Public highlights</div><div class="tog-sub">Allow others to see your highlights</div></div>
+      <div class="toggle off" onclick="this.classList.toggle('off')"></div>
+    </div>
+    <div class="tog-row">
+      <div><div class="tog-label">Data personalisation</div><div class="tog-sub">Use reading habits to improve recommendations</div></div>
+      <div class="toggle" onclick="this.classList.toggle('off')"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════ -->
+<!--  CREATE CIRCLE SHEET                                     -->
+<!-- ════════════════════════════════════════════════════════ -->
+<div id="sheet-create-circle">
+  <div class="sheet-bd" onclick="closeProfSheet('sheet-create-circle')"></div>
+  <div class="sheet" style="padding-bottom:44px">
+    <div class="sheet-hdr">
+      <span class="sheet-ttl">New circle</span>
+      <div class="sheet-x" onclick="closeProfSheet('sheet-create-circle')">✕</div>
+    </div>
+    <p style="margin:0 0 14px;font-family:'Source Sans 3',sans-serif;font-size:13px;color:var(--light);">Choose a colour</p>
+    <div style="display:flex;gap:10px;margin-bottom:20px;">
+      <div style="width:40px;height:40px;border-radius:50%;background:var(--green);cursor:pointer;box-shadow:0 0 0 3px #fff,0 0 0 5px var(--green);" onclick="selectCircleColor(this)"></div>
+      <div style="width:40px;height:40px;border-radius:50%;background:#FF7637;cursor:pointer;" onclick="selectCircleColor(this)"></div>
+      <div style="width:40px;height:40px;border-radius:50%;background:var(--yellow);cursor:pointer;" onclick="selectCircleColor(this)"></div>
+      <div style="width:40px;height:40px;border-radius:50%;background:var(--pink);cursor:pointer;" onclick="selectCircleColor(this)"></div>
+      <div style="width:40px;height:40px;border-radius:50%;background:var(--blue);cursor:pointer;" onclick="selectCircleColor(this)"></div>
+    </div>
+    <p style="margin:0 0 8px;font-family:'Source Sans 3',sans-serif;font-size:13px;color:var(--light);">Circle name</p>
+    <input type="text" placeholder="e.g. Book Club, Neighbours…" style="width:100%;box-sizing:border-box;border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--text);outline:none;display:block;" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
+    <button class="note-post" style="margin-top:16px;" onclick="closeProfSheet('sheet-create-circle')">Create circle</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════ -->
+<!--  HIGHLIGHT SHEET                                         -->
+<!-- ════════════════════════════════════════════════════════ -->
+<div id="sheet-highlight">
+  <div class="sheet-bd" onclick="closeToolSheet('sheet-highlight')"></div>
+  <div class="sheet">
+    <div class="sheet-hdr">
+      <span class="sheet-ttl">Highlight</span>
+      <div class="sheet-x" onclick="closeToolSheet('sheet-highlight')">✕</div>
+    </div>
+    <p style="margin:0;font-family:'Source Sans 3',sans-serif;font-size:13px;color:var(--light);">Choose a colour</p>
+    <div class="hl-colors">
+      <div class="hl-chip hl-sel" style="background:#FEF08A" onclick="selectHL(this)"></div>
+      <div class="hl-chip" style="background:#BBF7D0" onclick="selectHL(this)"></div>
+      <div class="hl-chip" style="background:#FBCFE8" onclick="selectHL(this)"></div>
+      <div class="hl-chip" style="background:#BAE6FD" onclick="selectHL(this)"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════ -->
+<!--  ADD NOTE SHEET                                          -->
+<!-- ════════════════════════════════════════════════════════ -->
+<div id="sheet-note">
+  <div class="sheet-bd" onclick="closeToolSheet('sheet-note')"></div>
+  <div class="sheet">
+    <div class="sheet-hdr">
+      <span class="sheet-ttl">Add a note</span>
+      <div class="sheet-x" onclick="closeToolSheet('sheet-note')">✕</div>
+    </div>
+    <textarea class="note-ta" placeholder="Write something about this story…"></textarea>
+    <button class="note-post" onclick="closeToolSheet('sheet-note')">Post note</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════ -->
+<!--  SHARE SHEET                                             -->
+<!-- ════════════════════════════════════════════════════════ -->
+<div id="sheet-share">
+  <div class="sheet-bd" onclick="closeToolSheet('sheet-share')"></div>
+  <div class="sheet">
+    <div class="sheet-hdr">
+      <span class="sheet-ttl">Share</span>
+      <div class="sheet-x" onclick="closeToolSheet('sheet-share')">✕</div>
+    </div>
+    <div class="share-opts">
+      <div class="share-opt" onclick="closeToolSheet('sheet-share')">
+        <div class="share-opt-icon" style="background:#EEF2FC">
+          <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <span class="share-opt-label">Copy link</span>
+      </div>
+      <div class="share-opt" onclick="closeToolSheet('sheet-share')">
+        <div class="share-opt-icon" style="background:#EEF5DC">
+          <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="var(--green)" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="7" r="4" stroke="var(--green)" stroke-width="2"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="var(--green)" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <span class="share-opt-label">Send to a Circle</span>
+      </div>
+      <div class="share-opt" onclick="closeToolSheet('sheet-share')">
+        <div class="share-opt-icon" style="background:#F5F6FA">
+          <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1.5" fill="var(--mid)"/><circle cx="19" cy="12" r="1.5" fill="var(--mid)"/><circle cx="5" cy="12" r="1.5" fill="var(--mid)"/></svg>
+        </div>
+        <span class="share-opt-label">More options</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* prev screen stack for proper back navigation */
+  function backAuto() {
+    const prev = history.length > 1 ? history[history.length - 2] : 'home';
+    back(prev);
+  }
+
+  function showSheet() {
+    document.getElementById('s-saved').classList.add('sheet-open');
+  }
+  function hideSheet() {
+    document.getElementById('s-saved').classList.remove('sheet-open');
+  }
+
+  /* ── Profile sheet actions ── */
+  function showProfSheet(id) {
+    document.getElementById(id).classList.add('sheet-open');
+  }
+  function closeProfSheet(id) {
+    document.getElementById(id).classList.remove('sheet-open');
+  }
+  function selectCircleColor(el) {
+    el.parentElement.querySelectorAll('div').forEach(d => d.style.boxShadow = '');
+    el.style.boxShadow = '0 0 0 3px #fff, 0 0 0 5px ' + el.style.background;
+  }
+
+  /* ── Toolbar button actions ── */
+  function toggleSave(el) {
+    el.classList.toggle('saved');
+  }
+  function showHighlight() {
+    document.getElementById('sheet-highlight').classList.add('sheet-open');
+  }
+  function showNote() {
+    document.getElementById('sheet-note').classList.add('sheet-open');
+  }
+  function showShare() {
+    document.getElementById('sheet-share').classList.add('sheet-open');
+  }
+  function closeToolSheet(id) {
+    document.getElementById(id).classList.remove('sheet-open');
+  }
+  function selectHL(el) {
+    document.querySelectorAll('.hl-chip').forEach(c => c.classList.remove('hl-sel'));
+    el.classList.add('hl-sel');
+    setTimeout(() => closeToolSheet('sheet-highlight'), 220);
+  }
+
+  // URL hash → jump to screen on load (used for headless screenshots)
+  window.addEventListener('DOMContentLoaded', () => {
+    // Embed mode: hide status bar when loaded inside an iframe (phone shell overlay)
+    if (window.self !== window.top || location.hash.includes('embed')) {
+      document.body.classList.add('embed-mode');
+    }
+    const hash = location.hash.replace('#', '').replace('embed', '').replace(/^-/, '');
+    if (hash === 'article-saved') {
+      document.querySelector('.screen.active')?.classList.remove('active');
+      document.getElementById('s-article').classList.add('active');
+      // show saved sheet
+      const sheet = document.getElementById('s-saved');
+      if (sheet) { sheet.style.display = 'flex'; sheet.classList.add('open'); }
+    } else if (hash && document.getElementById('s-' + hash)) {
+      document.querySelector('.screen.active')?.classList.remove('active');
+      document.getElementById('s-' + hash).classList.add('active');
+    }
+  });
+
+  const history = ['home'];
+
+  function nav(id) {
+    const cur = document.querySelector('.screen.active');
+    if (cur) cur.classList.remove('active', 'anim-in', 'anim-back-in');
+    const next = document.getElementById('s-' + id);
+    if (!next) return;
+    next.classList.add('active', 'anim-in');
+    next.addEventListener('animationend', () => next.classList.remove('anim-in'), { once: true });
+    history.push(id);
+  }
+
+  function back(id) {
+    const cur = document.querySelector('.screen.active');
+    if (cur) cur.classList.remove('active', 'anim-in', 'anim-back-in');
+    const prev = document.getElementById('s-' + id);
+    if (!prev) return;
+    prev.classList.add('active', 'anim-back-in');
+    prev.addEventListener('animationend', () => prev.classList.remove('anim-back-in'), { once: true });
+    if (history.length > 1) history.pop();
+  }
+</script>
+</body>
+</html>

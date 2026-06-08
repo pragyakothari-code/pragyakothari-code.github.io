@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gyanshala — iPad Preview</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%; height: 100%;
+      background: #F0EDE8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ipad {
+      filter:
+        drop-shadow(0 4px 8px rgba(0,0,0,0.35))
+        drop-shadow(0 12px 24px rgba(0,0,0,0.28));
+    }
+
+    .ipad-frame {
+      width: 980px;
+      height: 692px;
+      background: linear-gradient(148deg, #2C2C2E 0%, #1E1E20 38%, #131315 100%);
+      border-radius: 42px;
+      padding: 15px;
+      position: relative;
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,0.13),
+        inset 0 1px 0 rgba(255,255,255,0.2),
+        inset 0 -1px 0 rgba(255,255,255,0.05),
+        0 0 0 1px rgba(0,0,0,0.7);
+    }
+
+    .ipad-frame::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 42px;
+      background: linear-gradient(94deg,
+        rgba(255,255,255,0.0)   0%,
+        rgba(255,255,255,0.10)  2%,
+        rgba(255,255,255,0.0)   6%,
+        rgba(255,255,255,0.0)  94%,
+        rgba(255,255,255,0.08) 98%,
+        rgba(255,255,255,0.0) 100%
+      );
+      pointer-events: none;
+    }
+
+    .ipad-frame::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 42px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.13) 0%, rgba(255,255,255,0.0) 3%);
+      pointer-events: none;
+    }
+
+    .ipad-btn {
+      position: absolute;
+      background: linear-gradient(90deg, #1A1A1C 0%, #262628 50%, #1A1A1C 100%);
+    }
+    .ipad-btn-power {
+      width: 4px; height: 64px;
+      right: -4px; top: 67px;
+      border-radius: 0 2px 2px 0;
+      box-shadow: inset -1px 0 0 rgba(255,255,255,0.08), 1px 0 3px rgba(0,0,0,0.5);
+    }
+    .ipad-btn-vol-up {
+      width: 4px; height: 46px;
+      left: -4px; top: 80px;
+      border-radius: 2px 0 0 2px;
+      box-shadow: inset 1px 0 0 rgba(255,255,255,0.08), -1px 0 3px rgba(0,0,0,0.5);
+    }
+    .ipad-btn-vol-down {
+      width: 4px; height: 46px;
+      left: -4px; top: 140px;
+      border-radius: 2px 0 0 2px;
+      box-shadow: inset 1px 0 0 rgba(255,255,255,0.08), -1px 0 3px rgba(0,0,0,0.5);
+    }
+
+    .ipad-pencil-rail {
+      position: absolute;
+      top: -3px;
+      left: 18%; right: 18%;
+      height: 5px;
+      background: linear-gradient(90deg, #1A1A1C 0%, #282829 15%, #2E2E30 50%, #242425 85%, #1A1A1C 100%);
+      border-radius: 2px 2px 0 0;
+      box-shadow: 0 -1px 3px rgba(0,0,0,0.5);
+    }
+
+    .ipad-usbc {
+      position: absolute;
+      bottom: 6px; left: 50%;
+      transform: translateX(-50%);
+      width: 30px; height: 9px;
+      background: #0A0A0C;
+      border-radius: 4px;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.06);
+    }
+
+    .ipad-speakers { position: absolute; bottom: 7px; }
+    .ipad-speakers-left  { left: 26px; }
+    .ipad-speakers-right { right: 26px; }
+    .ipad-speakers::before, .ipad-speakers::after {
+      content: '';
+      position: absolute;
+      width: 32px; height: 5px;
+      background: repeating-linear-gradient(90deg, #0C0C0E 0, #0C0C0E 2px, transparent 2px, transparent 4px);
+      border-radius: 2px;
+    }
+    .ipad-speakers-left::before  { left: 0;   top: 0; }
+    .ipad-speakers-left::after   { left: 40px; top: 0; }
+    .ipad-speakers-right::before { right: 0;   top: 0; }
+    .ipad-speakers-right::after  { right: 40px; top: 0; }
+
+    .ipad-screen {
+      background: #000;
+      border-radius: 30px;
+      overflow: hidden;
+      width: 950px;
+      height: 662px;
+      position: relative;
+    }
+
+    .ipad-camera {
+      position: absolute;
+      top: 7px; left: 50%;
+      transform: translateX(-50%);
+      width: 10px; height: 10px;
+      background: radial-gradient(circle at 38% 35%, #1E2E3E, #080E14);
+      border-radius: 50%;
+      z-index: 20;
+      box-shadow: 0 0 0 1.5px rgba(255,255,255,0.05), inset 0 0 3px rgba(60,130,255,0.2);
+    }
+
+    .ipad-iframe-wrap {
+      position: absolute;
+      top: 0; left: 0;
+      width: 950px; height: 662px;
+      overflow: hidden;
+      border-radius: 30px;
+    }
+
+    /* Scale 1194px wide site into 950px screen: 950/1194 = 0.7956 */
+    .ipad-iframe-wrap iframe {
+      width: 1194px;
+      height: 832px;
+      border: none;
+      transform: scale(0.7956);
+      transform-origin: top left;
+      display: block;
+    }
+
+    .ipad-glare {
+      position: absolute; inset: 0;
+      background: linear-gradient(130deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.025) 22%, transparent 48%);
+      pointer-events: none;
+      z-index: 10;
+      border-radius: 30px;
+    }
+
+    .ipad-inset-shadow {
+      position: absolute; inset: 0;
+      pointer-events: none;
+      z-index: 12;
+      box-shadow:
+        inset 0 2px 5px rgba(0,0,0,0.5),
+        inset 2px 0 5px rgba(0,0,0,0.22),
+        inset -2px 0 5px rgba(0,0,0,0.22),
+        inset 0 -2px 4px rgba(0,0,0,0.18);
+      border-radius: 30px;
+    }
+  </style>
+</head>
+<body>
+  <div class="ipad">
+    <div class="ipad-frame">
+      <div class="ipad-btn ipad-btn-power"></div>
+      <div class="ipad-btn ipad-btn-vol-up"></div>
+      <div class="ipad-btn ipad-btn-vol-down"></div>
+      <div class="ipad-pencil-rail"></div>
+      <div class="ipad-usbc"></div>
+      <div class="ipad-speakers ipad-speakers-left"></div>
+      <div class="ipad-speakers ipad-speakers-right"></div>
+      <div class="ipad-screen">
+        <div class="ipad-iframe-wrap">
+          <iframe src="../../gyanshala/index.html?v=59" title="Gyanshala — iPad"></iframe>
+        </div>
+        <div class="ipad-camera"></div>
+        <div class="ipad-glare"></div>
+        <div class="ipad-inset-shadow"></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

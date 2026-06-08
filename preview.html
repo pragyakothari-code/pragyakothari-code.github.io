@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Responsive Preview</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #1a1a1a; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+    .toolbar {
+      display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;
+      padding: 0.6rem 1rem; background: #111; flex-shrink: 0;
+      border-bottom: 1px solid #333;
+    }
+    .toolbar label { color: #888; font-size: 0.75rem; margin-right: 0.25rem; }
+    .bp-btn {
+      background: #2a2a2a; border: 1px solid #444; color: #ccc;
+      font-size: 0.75rem; padding: 0.3rem 0.75rem; border-radius: 6px;
+      cursor: pointer; transition: background 0.15s;
+    }
+    .bp-btn:hover { background: #3a3a3a; }
+    .bp-btn.active { background: #fff; color: #111; border-color: #fff; }
+
+    .width-display { color: #555; font-size: 0.75rem; min-width: 55px; }
+    .slider-wrap { display: flex; align-items: center; gap: 0.5rem; }
+    input[type=range] { width: 130px; accent-color: #fff; }
+
+    .page-select {
+      margin-left: auto; background: #2a2a2a; border: 1px solid #444;
+      color: #ccc; font-size: 0.75rem; padding: 0.3rem 0.5rem;
+      border-radius: 6px; cursor: pointer;
+    }
+
+    .stage {
+      flex: 1; overflow: auto; display: flex;
+      justify-content: center; align-items: flex-start;
+      padding: 2rem 1.5rem;
+    }
+
+    /* The iframe is set to the TARGET width; transform scales it to fit visually */
+    .frame-outer {
+      flex-shrink: 0;
+      transform-origin: top center;
+    }
+    iframe {
+      display: block; border: none; height: 900px;
+      background: #fff;
+      box-shadow: 0 0 0 1px #555, 0 12px 48px rgba(0,0,0,0.6);
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <label>Breakpoint</label>
+    <button class="bp-btn" data-w="375">Mobile 375</button>
+    <button class="bp-btn" data-w="430">Mobile 430</button>
+    <button class="bp-btn" data-w="768">Tablet 768</button>
+    <button class="bp-btn" data-w="1024">Laptop 1024</button>
+    <button class="bp-btn active" data-w="1440">Desktop 1440</button>
+    <div class="slider-wrap">
+      <label>Custom</label>
+      <input type="range" id="slider" min="320" max="1600" value="1440">
+      <span class="width-display" id="widthLabel">1440px</span>
+    </div>
+    <select class="page-select" id="pageSelect">
+      <option value="index.html">Home</option>
+      <option value="work/newsby.html">Newsby</option>
+      <option value="work/easymoney.html">EasyMoney</option>
+      <option value="work/gyanshala.html">Gyanshala</option>
+    </select>
+  </div>
+  <div class="stage" id="stage">
+    <div class="frame-outer" id="frameOuter">
+      <iframe id="frame" src="index.html" width="1440" height="900" scrolling="yes"></iframe>
+    </div>
+  </div>
+
+  <script>
+    const frame   = document.getElementById('frame');
+    const outer   = document.getElementById('frameOuter');
+    const stage   = document.getElementById('stage');
+    const slider  = document.getElementById('slider');
+    const label   = document.getElementById('widthLabel');
+    const btns    = document.querySelectorAll('.bp-btn');
+
+    let currentW = 1440;
+
+    function applyScale() {
+      const stageW = stage.clientWidth - 48; // padding
+      const scale  = Math.min(1, stageW / currentW);
+      outer.style.width       = currentW + 'px';
+      outer.style.transform   = `scale(${scale})`;
+      outer.style.marginBottom = `-${(currentW * (1 - scale))}px`; // reclaim space
+    }
+
+    function setWidth(w) {
+      currentW = w;
+      frame.width  = w;
+      frame.style.width = w + 'px';
+      slider.value = w;
+      label.textContent = w + 'px';
+      btns.forEach(b => b.classList.toggle('active', +b.dataset.w === w));
+      applyScale();
+    }
+
+    btns.forEach(b => b.addEventListener('click', () => setWidth(+b.dataset.w)));
+    slider.addEventListener('input', () => {
+      setWidth(+slider.value);
+      btns.forEach(b => b.classList.remove('active'));
+    });
+
+    document.getElementById('pageSelect').addEventListener('change', e => {
+      frame.src = e.target.value;
+    });
+
+    window.addEventListener('resize', applyScale);
+    applyScale();
+  </script>
+</body>
+</html>

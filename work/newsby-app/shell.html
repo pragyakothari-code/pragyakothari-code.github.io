@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Newsby — Preview</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: #f0f0f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 24px;
+      perspective: 1400px;
+    }
+
+    /* ── Scene ── */
+    .scene {
+      position: relative;
+      transform: none;
+    }
+
+    /* ── Chassis (the titanium frame) ── */
+    .chassis {
+      position: absolute;
+      inset: -14px;
+      border-radius: 68px;
+      background:
+        linear-gradient(
+          160deg,
+          #c8c8cc 0%,
+          #8e8e93 18%,
+          #636366 35%,
+          #48484a 55%,
+          #3a3a3c 72%,
+          #5a5a5e 85%,
+          #8e8e93 100%
+        );
+      box-shadow:
+        /* top-left specular */
+        inset 2px 2px 0 rgba(255,255,255,.22),
+        /* bottom-right shadow */
+        inset -1px -2px 0 rgba(0,0,0,.5),
+        /* outer ambient */
+        0 50px 120px rgba(0,0,0,.55),
+        0 20px 50px rgba(0,0,0,.35),
+        0 6px 16px rgba(0,0,0,.2),
+        /* 3d depth edge */
+        4px 8px 24px rgba(0,0,0,.3);
+      z-index: 0;
+    }
+
+    /* Thin inner lip (the actual bezel around screen) */
+    .bezel {
+      position: absolute;
+      inset: -3px;
+      border-radius: 57px;
+      background: #1c1c1e;
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.04),
+        inset 0 2px 4px rgba(0,0,0,.6);
+      z-index: 1;
+    }
+
+    /* Screen */
+    .phone {
+      width: 390px;
+      height: 844px;
+      border-radius: 54px;
+      overflow: hidden;
+      position: relative;
+      z-index: 2;
+      background: #000;
+    }
+
+    /* Glass glare over screen */
+    .phone::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 54px;
+      background:
+        linear-gradient(
+          128deg,
+          rgba(255,255,255,.12) 0%,
+          rgba(255,255,255,.04) 22%,
+          transparent 45%
+        );
+      pointer-events: none;
+      z-index: 400;
+    }
+
+    /* ── Dynamic Island ── */
+    .di {
+      position: absolute;
+      top: 13px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 126px;
+      height: 37px;
+      background: #000;
+      border-radius: 20px;
+      z-index: 300;
+      pointer-events: none;
+      box-shadow:
+        0 0 0 1.5px rgba(255,255,255,.05),
+        inset 0 1px 3px rgba(0,0,0,1);
+    }
+    /* Front camera dot */
+    .di::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      right: 18px;
+      transform: translateY(-50%);
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 38% 35%, #1a1a2e 0%, #05050d 60%, #000 100%);
+      box-shadow:
+        0 0 0 1.5px rgba(255,255,255,.04),
+        inset 0 0 6px rgba(80,100,255,.12);
+    }
+    /* Tiny lens reflection */
+    .di::after {
+      content: '';
+      position: absolute;
+      top: 11px;
+      right: 22px;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.15);
+      z-index: 1;
+    }
+
+    /* ── Buttons — left side ── */
+    .btn {
+      position: absolute;
+      z-index: 10;
+    }
+
+    /* Silent toggle */
+    .btn-silent {
+      left: -17px;
+      top: 116px;
+      width: 4px;
+      height: 22px;
+      border-radius: 3px 0 0 3px;
+      background: linear-gradient(90deg, #555 0%, #888 40%, #666 100%);
+      box-shadow:
+        -1px 0 2px rgba(0,0,0,.5),
+        inset 0 1px 0 rgba(255,255,255,.12),
+        inset 0 -1px 0 rgba(0,0,0,.4);
+    }
+
+    /* Vol up */
+    .btn-vol-up {
+      left: -17px;
+      top: 168px;
+      width: 4px;
+      height: 36px;
+      border-radius: 3px 0 0 3px;
+      background: linear-gradient(90deg, #555 0%, #888 40%, #666 100%);
+      box-shadow:
+        -1px 0 2px rgba(0,0,0,.5),
+        inset 0 1px 0 rgba(255,255,255,.12),
+        inset 0 -1px 0 rgba(0,0,0,.4);
+    }
+
+    /* Vol down */
+    .btn-vol-down {
+      left: -17px;
+      top: 216px;
+      width: 4px;
+      height: 36px;
+      border-radius: 3px 0 0 3px;
+      background: linear-gradient(90deg, #555 0%, #888 40%, #666 100%);
+      box-shadow:
+        -1px 0 2px rgba(0,0,0,.5),
+        inset 0 1px 0 rgba(255,255,255,.12),
+        inset 0 -1px 0 rgba(0,0,0,.4);
+    }
+
+    /* Power button — right */
+    .btn-power {
+      right: -17px;
+      top: 194px;
+      width: 4px;
+      height: 66px;
+      border-radius: 0 3px 3px 0;
+      background: linear-gradient(270deg, #555 0%, #888 40%, #666 100%);
+      box-shadow:
+        1px 0 2px rgba(0,0,0,.5),
+        inset 0 1px 0 rgba(255,255,255,.12),
+        inset 0 -1px 0 rgba(0,0,0,.4);
+    }
+
+    /* ── Bottom details ── */
+    .bottom-details {
+      position: absolute;
+      bottom: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 300px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .speaker {
+      display: flex;
+      gap: 3.5px;
+      align-items: center;
+    }
+    .s-dot {
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: rgba(150,150,155,.4);
+      box-shadow: 0 0 0 .5px rgba(0,0,0,.6), inset 0 1px 1px rgba(0,0,0,.5);
+    }
+
+    .usbc {
+      width: 48px;
+      height: 7px;
+      background: linear-gradient(180deg, #0a0a0a 0%, #1e1e20 50%, #0a0a0a 100%);
+      border-radius: 4px;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,.07),
+        inset 0 2px 3px rgba(0,0,0,.9),
+        inset 0 -1px 1px rgba(255,255,255,.04);
+    }
+
+    /* ── Ground shadow ── */
+    .ground-shadow {
+      position: absolute;
+      bottom: -60px;
+      left: 50%;
+      transform: translateX(-50%) rotateX(90deg);
+      width: 340px;
+      height: 60px;
+      background: radial-gradient(ellipse at center, rgba(0,0,0,.35) 0%, transparent 72%);
+      pointer-events: none;
+    }
+
+    iframe {
+      width: 390px;
+      height: 844px;
+      border: none;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="scene">
+    <div class="chassis"></div>
+    <div class="bezel"></div>
+
+    <div class="btn btn-silent"></div>
+    <div class="btn btn-vol-up"></div>
+    <div class="btn btn-vol-down"></div>
+    <div class="btn btn-power"></div>
+
+    <div class="bottom-details">
+      <div class="speaker">
+        <div class="s-dot"></div><div class="s-dot"></div>
+        <div class="s-dot"></div><div class="s-dot"></div>
+        <div class="s-dot"></div><div class="s-dot"></div>
+      </div>
+      <div class="usbc"></div>
+      <div class="speaker">
+        <div class="s-dot"></div><div class="s-dot"></div>
+        <div class="s-dot"></div><div class="s-dot"></div>
+        <div class="s-dot"></div><div class="s-dot"></div>
+      </div>
+    </div>
+
+    <div class="phone">
+      <div class="di"></div>
+      <iframe src="index.html#embed" title="Newsby"></iframe>
+    </div>
+
+    <div class="ground-shadow"></div>
+  </div>
+</body>
+</html>

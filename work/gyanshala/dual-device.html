@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gyanshala — Device Preview</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    html::-webkit-scrollbar {
+      display: none;
+    }
+
+    body {
+      min-width: fit-content;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px 40px 40px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+      zoom: 0.82;
+    }
+
+    .scene {
+      display: flex;
+      align-items: flex-start;
+      gap: 40px;
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       IPAD PRO 11"
+       ═══════════════════════════════════════════════════════ */
+
+    .ipad {
+      filter:
+        drop-shadow(0 2px 4px rgba(0,0,0,0.3))
+        drop-shadow(0 6px 10px rgba(0,0,0,0.25));
+    }
+
+    /* ── iPad frame — landscape, Space Black titanium ──── */
+    .ipad-frame {
+      width: 640px;
+      height: 452px;
+      background: linear-gradient(148deg,
+        #2C2C2E 0%,
+        #1E1E20 38%,
+        #131315 100%
+      );
+      border-radius: 28px;
+      padding: 10px;
+      position: relative;
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,0.13),
+        inset 0 1px 0 rgba(255,255,255,0.2),
+        inset 0 -1px 0 rgba(255,255,255,0.05),
+        0 0 0 1px rgba(0,0,0,0.7);
+    }
+
+    /* Left/right edge specular — titanium bevel highlights */
+    .ipad-frame::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 28px;
+      background: linear-gradient(94deg,
+        rgba(255,255,255,0.0)   0%,
+        rgba(255,255,255,0.10)  2%,
+        rgba(255,255,255,0.0)   6%,
+        rgba(255,255,255,0.0)  94%,
+        rgba(255,255,255,0.08) 98%,
+        rgba(255,255,255,0.0) 100%
+      );
+      pointer-events: none;
+    }
+
+    /* Top-edge specular */
+    .ipad-frame::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 28px;
+      background: linear-gradient(180deg,
+        rgba(255,255,255,0.13) 0%,
+        rgba(255,255,255,0.0)  3%
+      );
+      pointer-events: none;
+    }
+
+    /* Physical buttons */
+    .ipad-btn {
+      position: absolute;
+      background: linear-gradient(90deg, #1A1A1C 0%, #262628 50%, #1A1A1C 100%);
+    }
+
+    /* Power / Touch ID — right short edge, top area */
+    .ipad-btn-power {
+      width: 3.5px; height: 42px;
+      right: -3px; top: 44px;
+      border-radius: 0 2px 2px 0;
+      box-shadow: inset -1px 0 0 rgba(255,255,255,0.08), 1px 0 3px rgba(0,0,0,0.5);
+    }
+
+    /* Volume up — left short edge, top area */
+    .ipad-btn-vol-up {
+      width: 3.5px; height: 30px;
+      left: -3px; top: 52px;
+      border-radius: 2px 0 0 2px;
+      box-shadow: inset 1px 0 0 rgba(255,255,255,0.08), -1px 0 3px rgba(0,0,0,0.5);
+    }
+
+    /* Volume down — left short edge, below vol-up */
+    .ipad-btn-vol-down {
+      width: 3.5px; height: 30px;
+      left: -3px; top: 92px;
+      border-radius: 2px 0 0 2px;
+      box-shadow: inset 1px 0 0 rgba(255,255,255,0.08), -1px 0 3px rgba(0,0,0,0.5);
+    }
+
+    /* Apple Pencil magnetic connector rail — top long edge */
+    .ipad-pencil-rail {
+      position: absolute;
+      top: -2px;
+      left: 18%;
+      right: 18%;
+      height: 4px;
+      background: linear-gradient(90deg,
+        #1A1A1C 0%,
+        #282829 15%,
+        #2E2E30 50%,
+        #242425 85%,
+        #1A1A1C 100%
+      );
+      border-radius: 2px 2px 0 0;
+      box-shadow: 0 -1px 3px rgba(0,0,0,0.5);
+    }
+
+    /* USB-C port — bottom long edge, center */
+    .ipad-usbc {
+      position: absolute;
+      bottom: 4px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 20px;
+      height: 6px;
+      background: #0A0A0C;
+      border-radius: 3px;
+      box-shadow:
+        inset 0 1px 2px rgba(0,0,0,0.8),
+        0 0 0 1px rgba(255,255,255,0.06);
+    }
+
+    /* Speaker grille dots — bottom edge */
+    .ipad-speakers {
+      position: absolute;
+      bottom: 5px;
+    }
+    .ipad-speakers-left {
+      left: 18px;
+    }
+    .ipad-speakers-right {
+      right: 18px;
+    }
+    .ipad-speakers::before, .ipad-speakers::after {
+      content: '';
+      position: absolute;
+      width: 22px;
+      height: 4px;
+      background: repeating-linear-gradient(
+        90deg,
+        #0C0C0E 0,
+        #0C0C0E 2px,
+        transparent 2px,
+        transparent 4px
+      );
+      border-radius: 2px;
+    }
+    .ipad-speakers-left::before  { left: 0;   top: 0; }
+    .ipad-speakers-left::after   { left: 28px; top: 0; }
+    .ipad-speakers-right::before { right: 0;   top: 0; }
+    .ipad-speakers-right::after  { right: 28px; top: 0; }
+
+    /* ── Screen ─────────────────────────────────────────── */
+    .ipad-screen {
+      background: #000;
+      border-radius: 20px;
+      overflow: hidden;
+      width: 620px;
+      height: 432px;
+      position: relative;
+    }
+
+    /* Camera — top long edge, centred horizontally
+       iPad Pro M4 (2024): camera moved to landscape/long edge */
+    .ipad-camera {
+      position: absolute;
+      top: 5px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 7px;
+      height: 7px;
+      background: radial-gradient(circle at 38% 35%, #1E2E3E, #080E14);
+      border-radius: 50%;
+      z-index: 20;
+      box-shadow:
+        0 0 0 1.5px rgba(255,255,255,0.05),
+        inset 0 0 3px rgba(60,130,255,0.2);
+    }
+
+    /* iframe: iPad landscape viewport 1194 × 834, scaled to 620px wide.
+       Wrap is 20px wider than screen so the scrollbar falls outside
+       the screen's overflow:hidden clip.                              */
+    .ipad-iframe-wrap {
+      position: absolute;
+      top: 0; left: 0;
+      width: 620px;
+      height: 432px;
+      overflow: hidden;
+      border-radius: 20px;
+    }
+
+    .ipad-iframe-wrap iframe {
+      width: 1194px;
+      height: 834px;
+      border: none;
+      transform: scale(0.5192);   /* 620 ÷ 1194 — content area unchanged */
+      transform-origin: top left;
+      display: block;
+    }
+
+    /* Status bar — landscape: thinner, left side clear of camera */
+    .ipad-status {
+      position: absolute;
+      top: 0; left: 0; right: 32px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      z-index: 25;
+    }
+
+    .ipad-status-time {
+      font-size: 11px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.9);
+      letter-spacing: -0.3px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .ipad-status-right {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Screen glare */
+    .ipad-glare {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        130deg,
+        rgba(255,255,255,0.07) 0%,
+        rgba(255,255,255,0.025) 22%,
+        transparent 48%
+      );
+      pointer-events: none;
+      z-index: 10;
+      border-radius: 20px;
+    }
+
+    /* Inset shadow — screen sits slightly inside the frame */
+    .ipad-inset-shadow {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 12;
+      box-shadow:
+        inset 0 2px 5px rgba(0,0,0,0.5),
+        inset 2px 0 5px rgba(0,0,0,0.22),
+        inset -2px 0 5px rgba(0,0,0,0.22),
+        inset 0 -2px 4px rgba(0,0,0,0.18);
+      border-radius: 20px;
+    }
+
+
+    /* ═══════════════════════════════════════════════════════
+       IPHONE 15 PRO
+       ═══════════════════════════════════════════════════════ */
+
+    .iphone {
+      filter:
+        drop-shadow(0 2px 4px rgba(0,0,0,0.3))
+        drop-shadow(0 6px 10px rgba(0,0,0,0.25));
+    }
+
+    /* Titanium Black frame */
+    .iphone-frame {
+      width: 312px;
+      height: 648px;
+      background: linear-gradient(150deg,
+        #2D2D2F 0%,
+        #1D1D1F 40%,
+        #111113 100%
+      );
+      border-radius: 50px;
+      padding: 13px; /* uniform bezel all sides */
+      position: relative;
+      /* Titanium rim highlights */
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,0.13),
+        inset 0 1px 0 rgba(255,255,255,0.22),
+        inset 0 -1px 0 rgba(255,255,255,0.05),
+        0 0 0 1px rgba(0,0,0,0.65);
+    }
+
+    /* Edge specular — thin left/right highlight that fakes the titanium bevel */
+    .iphone-frame::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50px;
+      background: linear-gradient(92deg,
+        rgba(255,255,255,0.0)   0%,
+        rgba(255,255,255,0.09)  2%,
+        rgba(255,255,255,0.0)   6%,
+        rgba(255,255,255,0.0)  94%,
+        rgba(255,255,255,0.07) 98%,
+        rgba(255,255,255,0.0) 100%
+      );
+      pointer-events: none;
+    }
+
+    /* Physical buttons */
+    .iphone-btn {
+      position: absolute;
+      background: linear-gradient(90deg, #18181A 0%, #242426 50%, #18181A 100%);
+      border-radius: 2px;
+    }
+
+    .iphone-btn-silent {
+      width: 3.5px; height: 28px;
+      left: -3px; top: 98px;
+      border-radius: 2px 0 0 2px;
+      box-shadow:
+        inset 1px 0 0 rgba(255,255,255,0.08),
+        -1px 0 3px rgba(0,0,0,0.5);
+    }
+    .iphone-btn-vol-up {
+      width: 3.5px; height: 42px;
+      left: -3px; top: 142px;
+      border-radius: 2px 0 0 2px;
+      box-shadow:
+        inset 1px 0 0 rgba(255,255,255,0.08),
+        -1px 0 3px rgba(0,0,0,0.5);
+    }
+    .iphone-btn-vol-down {
+      width: 3.5px; height: 42px;
+      left: -3px; top: 198px;
+      border-radius: 2px 0 0 2px;
+      box-shadow:
+        inset 1px 0 0 rgba(255,255,255,0.08),
+        -1px 0 3px rgba(0,0,0,0.5);
+    }
+    .iphone-btn-power {
+      width: 3.5px; height: 62px;
+      right: -3px; top: 158px;
+      border-radius: 0 2px 2px 0;
+      box-shadow:
+        inset -1px 0 0 rgba(255,255,255,0.08),
+        1px 0 3px rgba(0,0,0,0.5);
+    }
+
+    /* ── Screen ─────────────────────────────────────────── */
+    .iphone-screen {
+      background: #000;
+      border-radius: 32px;
+      overflow: hidden;
+      width: 286px;
+      height: 622px;
+      position: relative;
+    }
+
+    /* iframe scaled from 390px → 286px.
+       scrollbar-width:none in the Gyanshala CSS means no scrollbar offset needed. */
+    .iphone-iframe-wrap {
+      position: absolute;
+      top: 0; left: 0;
+      width: 286px;
+      height: 622px;
+      overflow: hidden;
+      border-radius: 32px;
+    }
+
+    .iphone-iframe-wrap iframe {
+      width: 390px;
+      height: 849px;   /* 622 ÷ 0.7333 */
+      border: none;
+      transform: scale(0.7333);   /* 286 ÷ 390 — content area unchanged */
+      transform-origin: top left;
+      display: block;
+    }
+
+    /* Dynamic Island — sits in the frame bezel above the screen */
+    .dynamic-island {
+      position: absolute;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 94px;
+      height: 28px;
+      background: #000;
+      border-radius: 22px;
+      z-index: 20;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.04);
+    }
+
+    /* Tiny camera lens inside Dynamic Island */
+    .dynamic-island::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      right: 10px;
+      transform: translateY(-50%);
+      width: 10px;
+      height: 10px;
+      background: radial-gradient(circle at 38% 35%, #1E3A5A, #0A1A2E);
+      border-radius: 50%;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.06);
+    }
+
+    /* Status bar — flanking the Dynamic Island */
+    .status-left {
+      position: absolute;
+      top: 15px;
+      left: 20px;
+      font-size: 12px;
+      font-weight: 650;
+      color: rgba(255,255,255,0.9);
+      z-index: 25;
+      letter-spacing: -0.4px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .status-right {
+      position: absolute;
+      top: 17px;
+      right: 18px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      z-index: 25;
+    }
+
+    /* Home indicator */
+    .home-indicator {
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 112px;
+      height: 4px;
+      background: rgba(255,255,255,0.38);
+      border-radius: 4px;
+      z-index: 20;
+    }
+
+    /* Subtle glare on screen */
+    .phone-glare {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        128deg,
+        rgba(255,255,255,0.07) 0%,
+        rgba(255,255,255,0.025) 22%,
+        transparent 48%
+      );
+      pointer-events: none;
+      z-index: 10;
+      border-radius: 38px;
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="scene">
+
+    <!-- ══════════════════════════════════════════
+         iPad Pro 11"
+         ══════════════════════════════════════════ -->
+    <div class="ipad">
+      <div class="ipad-frame">
+
+        <!-- Buttons on top edge -->
+        <div class="ipad-btn ipad-btn-power"></div>
+        <div class="ipad-btn ipad-btn-vol-up"></div>
+        <div class="ipad-btn ipad-btn-vol-down"></div>
+
+        <!-- Apple Pencil rail on right -->
+        <div class="ipad-pencil-rail"></div>
+
+        <!-- USB-C bottom -->
+        <div class="ipad-usbc"></div>
+
+        <!-- Speaker grilles -->
+        <div class="ipad-speakers ipad-speakers-left"></div>
+        <div class="ipad-speakers ipad-speakers-right"></div>
+
+        <div class="ipad-screen">
+
+          <div class="ipad-iframe-wrap">
+            <iframe
+              src="../../gyanshala/index.html?v=59"
+              title="Gyanshala — tablet layout"
+            ></iframe>
+          </div>
+
+          <div class="ipad-camera"></div>
+
+
+          <div class="ipad-glare"></div>
+          <div class="ipad-inset-shadow"></div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         iPhone 15 Pro
+         ══════════════════════════════════════════ -->
+    <div class="iphone">
+      <div class="iphone-frame">
+
+        <div class="iphone-btn iphone-btn-silent"></div>
+        <div class="iphone-btn iphone-btn-vol-up"></div>
+        <div class="iphone-btn iphone-btn-vol-down"></div>
+        <div class="iphone-btn iphone-btn-power"></div>
+
+        <!-- Dynamic Island lives in the bezel, not the screen -->
+        <div class="dynamic-island"></div>
+
+        <div class="iphone-screen">
+
+          <div class="iphone-iframe-wrap">
+            <iframe
+              src="../../gyanshala/index.html?v=59"
+              title="Gyanshala — mobile layout"
+            ></iframe>
+          </div>
+
+          <div class="phone-glare"></div>
+          <div class="home-indicator"></div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

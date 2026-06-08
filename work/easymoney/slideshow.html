@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EasyMoney — Portfolio Case Study</title>
+<style>
+
+/* ─── RESET ──────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+button { font-family: inherit; }
+
+/* ─── TOKENS ─────────────────────────────── */
+:root {
+  --p:       #23BE8E;
+  --p-light: #E3F8F1;
+  --p-dark:  #1a9e74;
+  --dark:    #032B3D;
+  --g:       #23BE8E;
+  --g-light: #E3F8F1;
+  --red:     #FF4757;
+  --amber:   #FFA502;
+  --bg:      #F6FBFF;
+  --surf:    #FFFFFF;
+  --t1:      #032B3D;
+  --t2:      #4A6370;
+  --t3:      #8BA5AE;
+  --r-sm:8px; --r-md:16px; --r-lg:24px;
+  --sh-sm: 0 1px 4px rgba(3,43,61,.07), 0 1px 2px rgba(3,43,61,.04);
+  --sh-md: 0 4px 12px rgba(35,190,142,.12), 0 2px 4px rgba(35,190,142,.06);
+  --sh-lg: 0 12px 32px rgba(35,190,142,.2), 0 4px 8px rgba(35,190,142,.1);
+}
+
+/* ─── SLIDESHOW SHELL ────────────────────── */
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--dark);
+}
+
+.slides {
+  width: 100%; height: 100%;
+  position: relative;
+}
+
+.slide {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .55s cubic-bezier(.4,0,.2,1), transform .55s cubic-bezier(.4,0,.2,1);
+  transform: translateX(60px);
+}
+.slide.active {
+  opacity: 1; pointer-events: auto; transform: translateX(0);
+}
+.slide.past {
+  opacity: 0; transform: translateX(-60px);
+}
+
+/* ─── SLIDE 0: TITLE ─────────────────────── */
+.title-slide {
+  flex-direction: column;
+  text-align: center;
+  padding: 60px 40px;
+  gap: 0;
+}
+.ts-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 2.5px;
+  text-transform: uppercase; color: var(--g); margin-bottom: 18px;
+}
+.ts-title {
+  font-size: clamp(52px, 7vw, 88px);
+  font-weight: 900; letter-spacing: -3px; color: white;
+  line-height: .95; margin-bottom: 22px;
+}
+.ts-title span { color: var(--g); }
+.ts-sub {
+  font-size: 18px; color: rgba(255,255,255,.6);
+  line-height: 1.65; max-width: 520px; margin: 0 auto 48px;
+}
+.ts-pills {
+  display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 56px;
+}
+.ts-pill {
+  padding: 7px 16px; border-radius: 100px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.14);
+  font-size: 13px; font-weight: 600; color: rgba(255,255,255,.75);
+}
+.ts-cta {
+  font-size: 14px; color: rgba(255,255,255,.35);
+  display: flex; align-items: center; gap: 8px;
+}
+.ts-cta-arrow {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; border-radius: 50%;
+  background: rgba(255,255,255,.1); font-size: 18px; color: white;
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { transform: translateX(0); opacity: 1; }
+  50% { transform: translateX(4px); opacity: .7; }
+}
+
+/* ─── SCREEN SLIDES ──────────────────────── */
+.screen-slide {
+  gap: clamp(32px, 5vw, 72px);
+  padding: 40px clamp(24px, 5vw, 80px);
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+}
+
+/* ─── ANNOTATION PANEL ───────────────────── */
+.ann-panel {
+  flex: 1; min-width: 0; max-width: 380px;
+  color: white;
+}
+.ann-step {
+  font-size: 11px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--g); margin-bottom: 14px;
+}
+.ann-title {
+  font-size: clamp(22px, 3vw, 32px); font-weight: 800;
+  letter-spacing: -.8px; line-height: 1.15; margin-bottom: 14px;
+}
+.ann-desc {
+  font-size: 14px; line-height: 1.75; opacity: .72; margin-bottom: 26px;
+}
+.ann-points {
+  list-style: none; display: flex; flex-direction: column; gap: 11px;
+  margin-bottom: 28px;
+}
+.ann-points li {
+  display: flex; gap: 10px; align-items: flex-start;
+  font-size: 13px; line-height: 1.55; opacity: .85;
+}
+.ap-dot {
+  width: 20px; height: 20px; border-radius: 50%;
+  background: rgba(35,190,142,.25); border: 1.5px solid var(--g);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; font-weight: 800; color: var(--g);
+  flex-shrink: 0; margin-top: 1px;
+}
+.ann-callout {
+  padding: 14px 16px;
+  background: rgba(255,255,255,.06);
+  border-left: 3px solid var(--g);
+  border-radius: 0 8px 8px 0;
+}
+.ac-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; opacity: .45; margin-bottom: 5px;
+}
+.ac-text { font-size: 12px; line-height: 1.65; opacity: .82; font-style: italic; }
+
+/* ─── PHONE FRAME ─────────────────────────── */
+.phone-col { display: flex; flex-direction: column; align-items: center; gap: 0; flex-shrink: 0; }
+
+.phone {
+  width: 320px;
+  height: 692px;
+  background: var(--surf);
+  border-radius: 46px;
+  box-shadow:
+    0 0 0 9px #1C1C1E,
+    0 0 0 12px #2C2C2E,
+    0 40px 80px rgba(0,0,0,.65),
+    0 16px 32px rgba(0,0,0,.4);
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.di {
+  position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+  width: 100px; height: 30px;
+  background: #1C1C1E; border-radius: 18px; z-index: 200;
+}
+
+/* ─── INNER SCREENS ───────────────────────── */
+.screen {
+  position: absolute; inset: 0;
+  display: none; flex-direction: column;
+  overflow: hidden;
+}
+.screen.active { display: flex; }
+
+/* S1 WELCOME */
+#s1 { background: #032B3D; overflow: hidden; }
+.s1-img-wrap {
+  flex: 1; min-height: 0;
+  display: flex; align-items: flex-end; justify-content: center;
+  overflow: hidden; background: #032B3D; position: relative;
+}
+.s1-hero-img {
+  width: 100%; height: 100%;
+  object-fit: contain; object-position: bottom center; display: block;
+}
+.s1-dark {
+  background: linear-gradient(160deg, #054057 0%, #032B3D 100%);
+  border-radius: 24px 24px 0 0;
+  padding: 18px 22px 36px;
+  color: white; text-align: center;
+}
+.s1-hed { font-size: 22px; font-weight: 800; letter-spacing: -.6px; line-height: 1.15; margin-bottom: 7px; }
+.s1-sub { font-size: 11px; opacity: .72; line-height: 1.6; margin-bottom: 14px; }
+.s1-btns { display: flex; flex-direction: column; gap: 8px; }
+.btn-primary-inv {
+  background: var(--g); color: var(--dark);
+  border: none; border-radius: 12px;
+  padding: 13px; font-size: 13px; font-weight: 700;
+  cursor: pointer; width: 100%;
+  box-shadow: 0 6px 20px rgba(35,190,142,.35);
+}
+.btn-ghost {
+  background: rgba(255,255,255,.08); color: rgba(255,255,255,.85);
+  border: 1.5px solid rgba(255,255,255,.2);
+  border-radius: 12px; padding: 12px;
+  font-size: 12px; font-weight: 600; cursor: pointer; width: 100%;
+}
+
+/* S2 ONBOARDING */
+#s2 { background: var(--surf); }
+.ob-topbar { padding: 52px 20px 12px; display: flex; justify-content: space-between; align-items: center; }
+.ob-logo { font-size: 16px; font-weight: 800; color: var(--dark); }
+.ob-logo span { color: var(--p); }
+.ob-slides { position: relative; flex: 1; overflow: hidden; }
+.ob-slide {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 8px 28px 0; text-align: center;
+  opacity: 0; transform: translateX(100%);
+  transition: all .38s cubic-bezier(.4,0,.2,1);
+}
+.ob-slide.active { opacity: 1; transform: translateX(0); }
+.ob-slide.prev { opacity: 0; transform: translateX(-100%); }
+.ob-icon-wrap {
+  width: 100px; height: 100px; border-radius: 28px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 44px; margin-bottom: 22px;
+}
+.bg-blue { background: #EEF2FF; }
+.bg-green { background: #ECFDF5; }
+.bg-purple { background: #F5F3FF; }
+.ob-title { font-size: 20px; font-weight: 800; color: var(--t1); letter-spacing: -.4px; margin-bottom: 10px; line-height: 1.2; }
+.ob-desc { font-size: 13px; color: var(--t2); line-height: 1.65; }
+.ob-desc strong { color: var(--p); font-weight: 700; }
+.ob-footer { padding: 0 20px 36px; }
+.btn-solid {
+  background: var(--p); color: var(--dark);
+  border: none; border-radius: 12px;
+  padding: 14px; font-size: 13px; font-weight: 700;
+  cursor: pointer; width: 100%;
+  box-shadow: var(--sh-lg);
+}
+
+/* S3 DASHBOARD */
+#s3 { background: var(--bg); }
+.dash-hero {
+  background: linear-gradient(160deg, #054057 0%, #032B3D 100%);
+  padding: 52px 18px 18px; color: white;
+}
+.dash-row1 { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
+.dash-greeting { font-size: 11px; opacity: .7; margin-bottom: 2px; }
+.dash-name { font-size: 17px; font-weight: 800; letter-spacing: -.3px; }
+.notif-btn {
+  width: 32px; height: 32px; background: none;
+  border-radius: 10px; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; position: relative;
+}
+.notif-dot {
+  width: 7px; height: 7px; background: var(--amber);
+  border-radius: 50%; position: absolute; top: 5px; right: 5px;
+  border: 1.5px solid #054057;
+}
+.bal-card {
+  background: rgba(255,255,255,.14);
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: var(--r-lg); padding: 14px;
+}
+.bal-label { font-size: 10px; opacity: .65; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 3px; }
+.bal-amount { font-size: 30px; font-weight: 800; letter-spacing: -1.2px; margin-bottom: 10px; }
+.bal-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.bal-stat { background: rgba(255,255,255,.1); border-radius: 9px; padding: 8px 10px; }
+.bs-label { font-size: 9px; opacity: .62; margin-bottom: 2px; font-weight: 500; }
+.bs-val { font-size: 14px; font-weight: 700; }
+.bs-val.pos { color: #7fffd4; }
+.bs-val.neg { color: #ffb3ba; }
+.dash-body { flex: 1; overflow-y: auto; padding-bottom: 70px; }
+.dash-body::-webkit-scrollbar { display: none; }
+.dash-sec { padding: 14px 14px 0; }
+.sec-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.sec-title { font-size: 14px; font-weight: 700; color: var(--t1); }
+.sec-link { font-size: 12px; color: var(--p); font-weight: 600; background: none; border: none; cursor: pointer; }
+.budget-card { background: var(--surf); border-radius: var(--r-md); padding: 14px; box-shadow: var(--sh-sm); }
+.bud-row1 { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 10px; }
+.bud-spent { font-size: 22px; font-weight: 800; color: var(--t1); letter-spacing: -.6px; }
+.bud-of { font-size: 11px; color: var(--t3); }
+.bud-bar-wrap { height: 7px; background: var(--bg); border-radius: 4px; overflow: hidden; margin-bottom: 6px; }
+.bud-bar { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--p), #55ddb0); width: 62%; }
+.bud-remain { font-size: 11px; color: var(--t3); }
+.bud-remain strong { color: var(--g); font-weight: 700; }
+.cat-scroll { display: flex; gap: 6px; overflow-x: auto; padding: 0 14px 0; }
+.cat-scroll::-webkit-scrollbar { display: none; }
+.cpill {
+  display: flex; align-items: center; gap: 5px;
+  padding: 6px 11px; border-radius: 100px;
+  font-size: 11px; font-weight: 600;
+  white-space: nowrap; flex-shrink: 0; cursor: pointer;
+}
+.cpill-dot { width: 7px; height: 7px; border-radius: 50%; }
+.trust-banner {
+  margin: 0 14px; background: linear-gradient(135deg, var(--p-light), #dff7ef);
+  border-radius: var(--r-md); padding: 11px 13px;
+  display: flex; align-items: center; gap: 10px;
+  border: 1px solid rgba(35,190,142,.25); cursor: pointer;
+}
+.tb-icon { font-size: 22px; flex-shrink: 0; }
+.tb-text h4 { font-size: 12px; font-weight: 700; color: var(--t1); margin-bottom: 1px; }
+.tb-text p { font-size: 11px; color: var(--t2); line-height: 1.4; }
+.tb-arrow { margin-left: auto; font-size: 14px; color: var(--p); flex-shrink: 0; }
+.tx-list { display: flex; flex-direction: column; gap: 1px; }
+.tx-item {
+  background: var(--surf); padding: 11px 13px;
+  display: flex; align-items: center; gap: 10px; cursor: pointer;
+}
+.tx-item:first-child { border-radius: var(--r-md) var(--r-md) 0 0; }
+.tx-item:last-child { border-radius: 0 0 var(--r-md) var(--r-md); }
+.tx-ico {
+  width: 36px; height: 36px; border-radius: 11px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; flex-shrink: 0;
+}
+.tx-info { flex: 1; min-width: 0; }
+.tx-name { font-size: 13px; font-weight: 600; color: var(--t1); margin-bottom: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tx-date { font-size: 10px; color: var(--t3); }
+.tx-amt { font-size: 13px; font-weight: 700; }
+.tx-amt.exp { color: var(--red); }
+.tx-amt.inc { color: var(--g); }
+.bnav {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 56px; background: var(--surf);
+  border-top: 1px solid #EBEEF5;
+  display: flex; align-items: center; justify-content: space-around;
+  padding: 0 4px 6px;
+}
+.bn-item {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 0 4px; cursor: pointer; border-radius: 8px; flex: 1; min-width: 0;
+}
+.bn-icon { font-size: 18px; color: var(--t3); line-height: 1; }
+.bn-icon img { width: 20px; height: 20px; opacity: 0.4; display: block; }
+.bn-label { font-size: 8px; color: var(--t3); font-weight: 500; white-space: nowrap; }
+.bn-item.on .bn-icon { color: var(--p); }
+.bn-item.on .bn-icon img { opacity: 1; }
+.bn-item.on .bn-label { color: var(--p); font-weight: 700; }
+.bn-add-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; position: relative; cursor: pointer; }
+.bn-add-spacer { width: 18px; height: 18px; }
+.bn-add {
+  width: 46px; height: 46px; background: var(--p); border-radius: 15px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; color: var(--dark);
+  box-shadow: 0 -3px 16px rgba(35,190,142,.3), var(--sh-md);
+  position: absolute; bottom: 100%; margin-bottom: -13px;
+}
+.bn-add-label { font-size: 8px; color: var(--t3); font-weight: 500; }
+
+/* S4 ADD TRANSACTION */
+#s4 { background: var(--surf); }
+.add-hdr {
+  padding: 52px 16px 12px;
+  display: flex; align-items: center; gap: 12px;
+}
+.back-btn {
+  width: 32px; height: 32px; background: var(--bg); border: none;
+  border-radius: 9px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; color: var(--t1); flex-shrink: 0;
+}
+.add-title { font-size: 15px; font-weight: 800; color: var(--t1); }
+.amount-hero {
+  background: linear-gradient(160deg, #054057 0%, #032B3D 100%);
+  padding: 18px 20px 28px; text-align: center; color: white;
+}
+.type-toggle {
+  display: flex; background: rgba(255,255,255,.13);
+  border-radius: 8px; padding: 3px;
+  width: fit-content; margin: 0 auto 16px;
+}
+.tt-btn {
+  padding: 5px 18px; border-radius: 6px; border: none;
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  color: rgba(255,255,255,.65); background: none;
+}
+.tt-btn.on { background: var(--g); color: var(--dark); }
+.amount-num { font-size: 42px; font-weight: 800; letter-spacing: -1.5px; line-height: 1; }
+.amount-cursor { animation: blink 1s step-end infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+.amount-hint { font-size: 11px; opacity: .55; margin-top: 5px; }
+.add-form { flex: 1; overflow-y: auto; padding: 4px 14px 0; }
+.add-form::-webkit-scrollbar { display: none; }
+.f-row { padding: 11px 0; border-bottom: 1px solid #F0F2FA; }
+.f-row:last-child { border-bottom: none; }
+.f-label { font-size: 10px; font-weight: 700; color: var(--t3); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 7px; }
+.f-input {
+  width: 100%; background: var(--bg); border: 1.5px solid transparent;
+  border-radius: 10px; padding: 10px 12px; font-size: 13px;
+  font-family: inherit; color: var(--t1); outline: none;
+}
+.f-input::placeholder { color: var(--t3); }
+.cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; }
+.cat-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 9px 3px; border-radius: 10px;
+  background: var(--bg); border: 2px solid transparent; cursor: pointer;
+}
+.cat-btn.on { border-color: var(--p); background: var(--g-light); }
+.cat-emoji { font-size: 18px; }
+.cat-lbl { font-size: 9px; font-weight: 600; color: var(--t2); text-align: center; }
+.cat-btn.on .cat-lbl { color: var(--p); }
+.save-bar { padding: 12px 14px 32px; background: var(--surf); border-top: 1px solid #EBEEF5; }
+
+/* S5 SPENDING REPORT */
+#s5 { background: var(--bg); }
+.rep-hdr {
+  background: var(--surf); padding: 52px 18px 14px; box-shadow: var(--sh-sm);
+}
+.rep-row1 { display: flex; justify-content: space-between; align-items: flex-start; }
+.rep-title { font-size: 19px; font-weight: 800; color: var(--t1); letter-spacing: -.4px; }
+.rep-sub { font-size: 11px; color: var(--t3); margin-top: 2px; }
+.period-tabs { display: flex; gap: 5px; margin-top: 12px; }
+.ptab {
+  padding: 5px 12px; border-radius: 100px;
+  font-size: 11px; font-weight: 600; cursor: pointer;
+  border: 1.5px solid #E2E8F0; background: transparent; color: var(--t2);
+}
+.ptab.on { background: var(--dark); border-color: var(--dark); color: white; }
+.rep-body { flex: 1; overflow-y: auto; padding: 12px 0 80px; }
+.rep-body::-webkit-scrollbar { display: none; }
+.donut-card {
+  background: var(--surf); margin: 0 13px 12px;
+  border-radius: var(--r-md); padding: 18px; box-shadow: var(--sh-sm);
+}
+.donut-wrap { display: flex; align-items: center; gap: 16px; }
+.donut {
+  width: 116px; height: 116px; border-radius: 50%; flex-shrink: 0;
+  background: conic-gradient(
+    #FF6B6B 0% 35%, #4ECDC4 35% 57%,
+    #F59E0B 57% 75%, #A855F7 75% 89%, #3B82F6 89% 100%
+  );
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 20px), #fff calc(100% - 19px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 20px), #fff calc(100% - 19px));
+}
+.donut-legend { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+.dl-item { display: flex; align-items: center; gap: 7px; }
+.dl-color { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; }
+.dl-name { font-size: 11px; color: var(--t2); flex: 1; }
+.dl-pct { font-size: 11px; font-weight: 700; color: var(--t1); }
+.donut-footer {
+  margin-top: 14px; padding-top: 13px;
+  border-top: 1px solid #F0F2FA;
+  display: flex; justify-content: space-between; align-items: baseline;
+}
+.df-label { font-size: 11px; color: var(--t3); }
+.df-total { font-size: 22px; font-weight: 800; color: var(--t1); letter-spacing: -.6px; }
+.cat-rows { margin: 0 13px; display: flex; flex-direction: column; gap: 1px; }
+.cr { background: var(--surf); padding: 11px 13px; display: flex; align-items: center; gap: 11px; }
+.cr:first-child { border-radius: var(--r-md) var(--r-md) 0 0; }
+.cr:last-child { border-radius: 0 0 var(--r-md) var(--r-md); }
+.cr-ico { width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+.cr-info { flex: 1; }
+.cr-name { font-size: 12px; font-weight: 600; color: var(--t1); margin-bottom: 3px; }
+.cr-bar-wrap { height: 3px; background: var(--bg); border-radius: 2px; overflow: hidden; }
+.cr-bar { height: 100%; border-radius: 2px; }
+.cr-amt { font-size: 12px; font-weight: 700; color: var(--t1); }
+.cr-txn { font-size: 10px; color: var(--t3); margin-top: 1px; text-align: right; }
+
+/* S6 LINK ACCOUNT */
+#s6 { background: var(--surf); overflow-y: auto; }
+#s6::-webkit-scrollbar { display: none; }
+.link-hdr { padding: 52px 20px 0; }
+.trust-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: var(--p-light); color: var(--dark);
+  font-size: 10px; font-weight: 700; padding: 4px 10px;
+  border-radius: 100px; margin-bottom: 13px;
+}
+.link-title { font-size: 22px; font-weight: 800; color: var(--t1); letter-spacing: -.4px; margin-bottom: 7px; line-height: 1.2; }
+.link-sub { font-size: 12px; color: var(--t2); line-height: 1.65; }
+.link-actions { padding: 0 20px 40px; display: flex; flex-direction: column; gap: 8px; }
+.btn-outline {
+  background: transparent; color: var(--t2);
+  border: 1.5px solid #E2E8F0; border-radius: 12px;
+  padding: 12px; font-size: 12px; font-weight: 600;
+  cursor: pointer; width: 100%;
+}
+
+/* S7 GOALS */
+#s7 { background: var(--bg); }
+
+/* S8 PROFILE */
+#s8 { background: var(--bg); }
+
+/* ─── SLIDESHOW NAV ───────────────────────── */
+.nav-prev, .nav-next {
+  position: fixed; top: 50%; transform: translateY(-50%);
+  z-index: 100;
+  width: 48px; height: 48px;
+  background: rgba(255,255,255,.1);
+  border: 1.5px solid rgba(255,255,255,.18);
+  border-radius: 50%; font-size: 22px; color: white;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all .2s; backdrop-filter: blur(8px);
+}
+.nav-prev { left: 20px; }
+.nav-next { right: 20px; }
+.nav-prev:hover, .nav-next:hover { background: rgba(255,255,255,.2); transform: translateY(-50%) scale(1.08); }
+.nav-prev:disabled, .nav-next:disabled { opacity: .2; cursor: not-allowed; }
+.nav-prev:disabled:hover, .nav-next:disabled:hover { transform: translateY(-50%) scale(1); }
+
+/* ─── DOT INDICATORS ─────────────────────── */
+.dots {
+  position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 7px; z-index: 100; align-items: center;
+}
+.dot {
+  width: 6px; height: 6px; border-radius: 3px;
+  background: rgba(255,255,255,.3); cursor: pointer;
+  transition: all .3s;
+}
+.dot.active { width: 22px; background: var(--g); }
+
+/* ─── SLIDE COUNTER ──────────────────────── */
+.slide-count {
+  position: fixed; top: 24px; right: 28px;
+  font-size: 12px; font-weight: 600;
+  color: rgba(255,255,255,.4);
+  z-index: 100;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─── LOGO CORNER ────────────────────────── */
+.logo-corner {
+  position: fixed; top: 22px; left: 28px;
+  font-size: 15px; font-weight: 800; color: white; z-index: 100;
+  opacity: .7;
+}
+.logo-corner span { color: var(--g); }
+
+/* ─── PROGRESS BAR ───────────────────────── */
+.progress-bar {
+  position: fixed; bottom: 0; left: 0;
+  height: 2px; background: var(--g);
+  transition: width .45s cubic-bezier(.4,0,.2,1);
+  z-index: 200;
+}
+
+/* ─── KEYBOARD HINT ──────────────────────── */
+.key-hint {
+  position: fixed; bottom: 56px; left: 50%; transform: translateX(-50%);
+  font-size: 11px; color: rgba(255,255,255,.25);
+  z-index: 100; white-space: nowrap;
+  transition: opacity .5s;
+}
+.key-hint.hidden { opacity: 0; }
+
+</style>
+</head>
+<body>
+
+<!-- UI Chrome -->
+<div class="logo-corner">Easy<span>Money</span></div>
+<div class="slide-count" id="slide-count">1 / 9</div>
+<div class="progress-bar" id="progress-bar" style="width:11.1%"></div>
+
+<!-- Prev / Next -->
+<button class="nav-prev" id="nav-prev" onclick="go(cur-1)" disabled>‹</button>
+<button class="nav-next" id="nav-next" onclick="go(cur+1)">›</button>
+
+<!-- Dot indicators -->
+<div class="dots" id="dots"></div>
+
+<!-- Keyboard hint -->
+<div class="key-hint" id="key-hint">← → arrow keys or click to navigate</div>
+
+<!-- ════════════════════════════════════════
+     SLIDES
+════════════════════════════════════════ -->
+<div class="slides" id="slides">
+
+  <!-- ── SLIDE 0: TITLE ─────────────────── -->
+  <div class="slide title-slide active" data-idx="0">
+    <div class="ts-label">UX / Product Design Case Study</div>
+    <h1 class="ts-title">Easy<span>Money</span></h1>
+    <p class="ts-sub">A personal finance app designed for people who've been burned by finance apps before — built on trust, not pressure.</p>
+    <div class="ts-pills">
+      <div class="ts-pill">Mobile App Design</div>
+      <div class="ts-pill">UX Strategy</div>
+      <div class="ts-pill">Interaction Design</div>
+      <div class="ts-pill">Visual Design</div>
+    </div>
+    <div class="ts-cta">
+      <span>Walk through the prototype</span>
+      <div class="ts-cta-arrow">›</div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 1: WELCOME ───────────────── -->
+  <div class="slide screen-slide" data-idx="1">
+    <div class="ann-panel">
+      <div class="ann-step">Screen 1 of 8 · Onboarding</div>
+      <h2 class="ann-title">A welcome screen that earns trust before asking for anything</h2>
+      <p class="ann-desc">Most finance apps open with a bank login form. EasyMoney opens with a promise: explore first, commit later. The primary CTA is permission-free.</p>
+      <ul class="ann-points">
+        <li><div class="ap-dot">1</div><span>Primary action is <strong>"Explore without linking"</strong> — no friction, no data required to start</span></li>
+        <li><div class="ap-dot">2</div><span>Secondary ghost button for returning users keeps hierarchy clear</span></li>
+        <li><div class="ap-dot">3</div><span>Hero image uses aspirational imagery, not financial jargon</span></li>
+      </ul>
+      <div class="ann-callout">
+        <div class="ac-label">Design Decision</div>
+        <div class="ac-text">"The biggest drop-off point in finance apps is the bank link gate. By making it optional, we removed the #1 reason people abandon onboarding."</div>
+      </div>
+    </div>
+    <div class="phone-col">
+      <div class="phone">
+        <div class="di"></div>
+        <div class="screen active" id="s1">
+          <div class="s1-img-wrap">
+            <img class="s1-hero-img" src="hero.png" alt="Hero" />
+          </div>
+          <div class="s1-dark">
+            <h1 class="s1-hed">Your money,<br>your pace.</h1>
+            <p class="s1-sub">Understand your finances before connecting anything. No pressure, no data grabs. Just clarity.</p>
+            <div class="s1-btns">
+              <button class="btn-primary-inv">Explore without linking →</button>
+              <button class="btn-ghost">I already have an account</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 2: ONBOARDING ────────────── -->
+  <div class="slide screen-slide" data-idx="2">
+    <div class="ann-panel">
+      <div class="ann-step">Screen 2 of 8 · Onboarding</div>
+      <h2 class="ann-title">Single-screen onboarding — focused, frictionless</h2>
+      <p class="ann-desc">Instead of a 5-slide carousel of feature lists, we distilled onboarding to one message: you don't need to share anything to get value.</p>
+      <ul class="ann-points">
+        <li><div class="ap-dot">1</div><span>One clear headline removes decision fatigue</span></li>
+        <li><div class="ap-dot">2</div><span>Bold green accent highlights the key differentiator — no bank required</span></li>
+        <li><div class="ap-dot">3</div><span>Single CTA gets users to value faster</span></li>
+      </ul>
+      <div class="ann-callout">
+        <div class="ac-label">Principle</div>
+        <div class="ac-text">"Every slide we removed from onboarding increased the likelihood a user would reach the dashboard. Less explanation, more doing."</div>
+      </div>
+    </div>
+    <div class="phone-col">
+      <div class="phone">
+        <div class="di"></div>
+        <div class="screen active" id="s2">
+          <div class="ob-topbar">
+            <img src="logo.png" alt="EasyMoney" style="height:24px;width:auto;">
+          </div>
+          <div class="ob-slides">
+            <div class="ob-slide active">
+              <div style="height:110px;"></div>
+              <h2 class="ob-title">Explore first,<br>commit later</h2>
+              <p class="ob-desc">Add transactions manually and see how EasyMoney works <strong>without connecting any accounts</strong>. No bank details needed.</p>
+            </div>
+          </div>
+          <div class="ob-footer">
+            <button class="btn-solid">Get Started →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 3: DASHBOARD ─────────────── -->
+  <div class="slide screen-slide" data-idx="3">
+    <div class="ann-panel">
+      <div class="ann-step">Screen 3 of 8 · Core Experience</div>
+      <h2 class="ann-title">A dashboard that leads with overview, not overwhelm</h2>
+      <p class="ann-desc">The home screen surfaces the most useful snapshot: monthly balance, budget health, and recent activity — in that order. Every number is scannable in under 3 seconds.</p>
+      <ul class="ann-points">
+        <li><div class="ap-dot">1</div><span>Dark hero section creates visual anchor and separates financial summary from activity feed</span></li>
+        <li><div class="ap-dot">2</div><span>Budget bar gives instant health-check without opening a separate screen</span></li>
+        <li><div class="ap-dot">3</div><span>Bank-link prompt appears as a contextual banner — never a blocker</span></li>
+      </ul>
+      <div class="ann-callout">
+        <div class="ac-label">Hierarchy Logic</div>
+        <div class="ac-text">"Users check their balance first, then worry about overspending, then act on it. The layout follows that mental model exactly."</div>
+      </div>
+    </div>
+    <div class="phone-col">
+      <div class="phone">
+        <div class="di"></div>
+        <div class="screen active" id="s3">
+          <div class="dash-hero">
+            <div class="dash-row1">
+              <div>
+                <div class="dash-greeting">Good morning,</div>
+                <div class="dash-name">Sarah</div>
+              </div>
+              <button class="notif-btn"><img src="notification.png" style="width:22px;height:22px;object-fit:contain;"><div class="notif-dot"></div></button>
+            </div>
+            <div class="bal-card">
+              <div class="bal-label">May Overview</div>
+              <div class="bal-amount">$4,328.00</div>
+              <div class="bal-stats">
+                <div class="bal-stat"><div class="bs-label">Money In</div><div class="bs-val pos">+$3,200</div></div>
+                <div class="bal-stat"><div class="bs-label">Money Out</div><div class="bs-val neg">−$1,107</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="dash-body">
+            <div class="dash-sec">
+              <div class="sec-hdr"><div class="sec-title">Monthly Budget</div><button class="sec-link">Edit</button></div>
+              <div class="budget-card">
+                <div class="bud-row1">
+                  <div class="bud-spent">$1,107 <span style="font-size:12px;font-weight:500;color:var(--t3)">spent</span></div>
+                  <div class="bud-of">of $1,800</div>
+                </div>
+                <div class="bud-bar-wrap"><div class="bud-bar"></div></div>
+                <div class="bud-remain">💚 <strong>$693 remaining</strong>. You're on track</div>
+              </div>
+            </div>
+            <div class="dash-sec" style="padding-bottom:10px;">
+              <div class="sec-hdr"><div class="sec-title">By Category</div><button class="sec-link">See all →</button></div>
+            </div>
+            <div class="cat-scroll" style="padding:0 14px 10px;">
+              <div class="cpill" style="background:#FFF1F1;color:#FF4757;"><div class="cpill-dot" style="background:#FF4757;"></div>Food · $387</div>
+              <div class="cpill" style="background:#EAFAF8;color:#2BBFB0;"><div class="cpill-dot" style="background:#4ECDC4;"></div>Transport · $244</div>
+              <div class="cpill" style="background:#FFFBEB;color:#D97706;"><div class="cpill-dot" style="background:#F59E0B;"></div>Shopping · $199</div>
+            </div>
+            <div class="dash-sec" style="padding-bottom:10px;">
+              <div class="trust-banner">
+                <div class="tb-icon">🔗</div>
+                <div class="tb-text"><h4>Save time. Link your bank</h4><p>Auto-import transactions when ready</p></div>
+                <div class="tb-arrow">›</div>
+              </div>
+            </div>
+            <div class="dash-sec">
+              <div class="sec-hdr"><div class="sec-title">Recent</div><button class="sec-link">See all</button></div>
+              <div class="tx-list">
+                <div class="tx-item"><div class="tx-ico" style="background:#FFF1F1;"><img src="food.png" style="width:22px;height:22px;object-fit:contain;"></div><div class="tx-info"><div class="tx-name">Grocery Store</div><div class="tx-date">Today, 9:14 AM</div></div><div class="tx-amt exp">−$43.50</div></div>
+                <div class="tx-item"><div class="tx-ico" style="background:#EAFAF8;"><img src="transport.png" style="width:22px;height:22px;object-fit:contain;"></div><div class="tx-info"><div class="tx-name">Uber</div><div class="tx-date">Yesterday</div></div><div class="tx-amt exp">−$12.80</div></div>
+                <div class="tx-item"><div class="tx-ico" style="background:#F5F3FF;"><img src="fun.png" style="width:22px;height:22px;object-fit:contain;"></div><div class="tx-info"><div class="tx-name">Netflix</div><div class="tx-date">Yesterday</div></div><div class="tx-amt exp">−$15.99</div></div>
+                <div class="tx-item"><div class="tx-ico" style="background:#ECFDF5;"><img src="other.png" style="width:22px;height:22px;object-fit:contain;"></div><div class="tx-info"><div class="tx-name">Monthly Salary</div><div class="tx-date">Mon, 12:00 AM</div></div><div class="tx-amt inc">+$3,200</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="bnav">
+            <div class="bn-item on"><div class="bn-icon"><img src="home.png"></div><div class="bn-label">Home</div></div>
+            <div class="bn-item"><div class="bn-icon"><img src="report.png"></div><div class="bn-label">Report</div></div>
+            <div class="bn-add-wrap"><div class="bn-add">＋</div><div class="bn-add-spacer"></div><div class="bn-add-label">Add</div></div>
+            <div class="bn-item"><div class="bn-icon"><img src="goals.png"></div><div class="bn-label">Goals</div></div>
+            <div class="bn-item"><div class="bn-icon"><img src="profile.png"></div><div class="bn-label">Profile</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 4: ADD TRANSACTION ──────── -->
+  <div class="slide screen-slide" data-idx="4">
+    <div class="ann-panel">
+      <div class="ann-step">Screen 4 of 8 · Core Action</div>
+      <h2 class="ann-title">Adding a transaction should feel effortless, not clinical</h2>
+      <p class="ann-desc">The add flow is the most frequent action in a finance app. It needed to be fast, visually satisfying, and never feel like filling out a form.</p>
+      <ul class="ann-points">
+        <li><div class="ap-dot">1</div><span>Expense/Income toggle is immediately visible — no buried tab</span></li>
+        <li><div class="ap-dot">2</div><span>Large amount display gives tactile feedback as you type</span></li>
+        <li><div class="ap-dot">3</div><span>Category icons replace dropdowns — single tap, no scrolling</span></li>
+        <li><div class="ap-dot">4</div><span>Note and Date fields are optional — most users skip them</span></li>
+      </ul>
+      <div class="ann-callout">
+        <div class="ac-label">Speed Goal</div>
+        <div class="ac-text">"The target was: log a transaction in under 5 taps. Category grid, amount, save. That's it."</div>
+      </div>
+    </div>
+    <div class="phone-col">
+      <div class="phone">
+        <div class="di"></div>
+        <div class="screen active" id="s4">
+          <div class="add-hdr">
+            <button class="back-btn">‹</button>
+            <div class="add-title">Add Transaction</div>
+          </div>
+          <div class="amount-hero">
+            <div class="type-toggle">
+              <button class="tt-btn on">Expense</button>
+              <button class="tt-btn">Income</button>
+            </div>
+            <div class="amount-num">$0<span class="amount-cursor">|</span></div>
+            <div class="amount-hint">Tap below to enter amount</div>
+          </div>
+          <div class="add-form">
+            <div class="f-row">
+              <div class="f-label">Category</div>
+              <div class="cat-grid">
+                <button class="cat-btn on"><span class="cat-emoji"><img src="food.png" style="width:22px;height:22px;object-fit:contain;"></span><span class="cat-lbl">Food</span></button>
+                <button class="cat-btn"><span class="cat-emoji"><img src="transport.png" style="width:22px;height:22px;object-fit:contain;"></span><span class="cat-lbl">Transport</span></button>
+                <button class="cat-btn"><span class="cat-emoji"><img src="shopping.png" style="width:22px;height:22px;object-fit:contain;"></span><span class="cat-lbl">Shopping</span></button>
+                <button class="cat-btn"><span class="cat-emoji"><img src="fun.png" style="width:22px;height:22px;object-fit:contain;"></span><span class="cat-lbl">Fun</span></button>
+                <button class="cat-btn"><span class="cat-emoji"><img src="bills.png" style="width:22px;height:22px;object-fit:contain;"></span><span class="cat-lbl">Bills</span></button>
+                <button class="cat-btn"><span class="cat-emoji"><img src="health.png" style="width:22px;height:22px;object-fit:contain;"></span><span class="cat-lbl">Health</span></button>
+                <button class="cat-btn"><span class="cat-emoji"><img src="learn.png" style="width:22px;height:22px;object-fit:contain;"></span><span class="cat-lbl">Learn</span></button>
+                <button class="cat-btn"><span class="cat-emoji"><img src="other.png" style="width:22px;height:22px;object-fit:contain;"></span><span class="cat-lbl">Other</span></button>
+              </div>
+            </div>
+            <div class="f-row">
+              <div class="f-label">Note</div>
+              <input class="f-input" type="text" placeholder="e.g. Lunch with team">
+            </div>
+            <div class="f-row">
+              <div class="f-label">Date</div>
+              <input class="f-input" type="text" value="Today, May 27">
+            </div>
+          </div>
+          <div class="save-bar">
+            <button class="btn-solid">Save Transaction ✓</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 5: SPENDING REPORT ─────── -->
+  <div class="slide screen-slide" data-idx="5">
+    <div class="ann-panel">
+      <div class="ann-step">Screen 5 of 8 · Insights</div>
+      <h2 class="ann-title">Spending insights that show patterns, not just numbers</h2>
+      <p class="ann-desc">The report screen gives a visual breakdown that answers "where is my money actually going?" without requiring the user to do the math themselves.</p>
+      <ul class="ann-points">
+        <li><div class="ap-dot">1</div><span>Donut chart gives immediate proportional sense — glanceable at a distance</span></li>
+        <li><div class="ap-dot">2</div><span>Progress bars in the breakdown show relative spend — not just absolute totals</span></li>
+        <li><div class="ap-dot">3</div><span>Period tabs (Week / Month / 3M / Year) let users zoom in or out without leaving the screen</span></li>
+      </ul>
+      <div class="ann-callout">
+        <div class="ac-label">Insight</div>
+        <div class="ac-text">"Users don't need more data — they need data in the right shape. A chart that takes 2 seconds to read beats a table that takes 20."</div>
+      </div>
+    </div>
+    <div class="phone-col">
+      <div class="phone">
+        <div class="di"></div>
+        <div class="screen active" id="s5">
+          <div class="rep-hdr">
+            <div class="rep-row1">
+              <div><div class="rep-title">Spending</div><div class="rep-sub">May 2026 · 27 transactions</div></div>
+            </div>
+            <div class="period-tabs">
+              <button class="ptab">Week</button>
+              <button class="ptab on">Month</button>
+              <button class="ptab">3M</button>
+              <button class="ptab">Year</button>
+            </div>
+          </div>
+          <div class="rep-body">
+            <div class="donut-card">
+              <div class="donut-wrap">
+                <div class="donut"></div>
+                <div class="donut-legend">
+                  <div class="dl-item"><div class="dl-color" style="background:#FF6B6B;"></div><div class="dl-name">Food</div><div class="dl-pct">35%</div></div>
+                  <div class="dl-item"><div class="dl-color" style="background:#4ECDC4;"></div><div class="dl-name">Transport</div><div class="dl-pct">22%</div></div>
+                  <div class="dl-item"><div class="dl-color" style="background:#F59E0B;"></div><div class="dl-name">Shopping</div><div class="dl-pct">18%</div></div>
+                  <div class="dl-item"><div class="dl-color" style="background:#A855F7;"></div><div class="dl-name">Fun</div><div class="dl-pct">14%</div></div>
+                  <div class="dl-item"><div class="dl-color" style="background:#3B82F6;"></div><div class="dl-name">Bills</div><div class="dl-pct">11%</div></div>
+                </div>
+              </div>
+              <div class="donut-footer"><div class="df-label">Total spent</div><div class="df-total">$1,107</div></div>
+            </div>
+            <div style="padding:0 13px 8px;"><div style="font-size:12px;font-weight:700;color:var(--t2);">Breakdown</div></div>
+            <div class="cat-rows">
+              <div class="cr"><div class="cr-ico" style="background:#FFF1F1;"><img src="food.png" style="width:20px;height:20px;object-fit:contain;"></div><div class="cr-info"><div class="cr-name">Food &amp; Drink</div><div class="cr-bar-wrap"><div class="cr-bar" style="width:100%;background:#FF6B6B;"></div></div></div><div><div class="cr-amt">$387</div><div class="cr-txn">14 txns</div></div></div>
+              <div class="cr"><div class="cr-ico" style="background:#EAFAF8;"><img src="transport.png" style="width:20px;height:20px;object-fit:contain;"></div><div class="cr-info"><div class="cr-name">Transport</div><div class="cr-bar-wrap"><div class="cr-bar" style="width:63%;background:#4ECDC4;"></div></div></div><div><div class="cr-amt">$244</div><div class="cr-txn">6 txns</div></div></div>
+              <div class="cr"><div class="cr-ico" style="background:#FFFBEB;"><img src="shopping.png" style="width:20px;height:20px;object-fit:contain;"></div><div class="cr-info"><div class="cr-name">Shopping</div><div class="cr-bar-wrap"><div class="cr-bar" style="width:51%;background:#F59E0B;"></div></div></div><div><div class="cr-amt">$199</div><div class="cr-txn">4 txns</div></div></div>
+              <div class="cr"><div class="cr-ico" style="background:#F5F3FF;"><img src="fun.png" style="width:20px;height:20px;object-fit:contain;"></div><div class="cr-info"><div class="cr-name">Fun &amp; Leisure</div><div class="cr-bar-wrap"><div class="cr-bar" style="width:40%;background:#A855F7;"></div></div></div><div><div class="cr-amt">$155</div><div class="cr-txn">2 txns</div></div></div>
+              <div class="cr"><div class="cr-ico" style="background:#EFF6FF;"><img src="bills.png" style="width:20px;height:20px;object-fit:contain;"></div><div class="cr-info"><div class="cr-name">Bills</div><div class="cr-bar-wrap"><div class="cr-bar" style="width:31%;background:#3B82F6;"></div></div></div><div><div class="cr-amt">$122</div><div class="cr-txn">1 txn</div></div></div>
+            </div>
+          </div>
+          <div class="bnav">
+            <div class="bn-item"><div class="bn-icon"><img src="home.png"></div><div class="bn-label">Home</div></div>
+            <div class="bn-item on"><div class="bn-icon"><img src="report.png"></div><div class="bn-label">Report</div></div>
+            <div class="bn-add-wrap"><div class="bn-add">＋</div><div class="bn-add-spacer"></div><div class="bn-add-label">Add</div></div>
+            <div class="bn-item"><div class="bn-icon"><img src="goals.png"></div><div class="bn-label">Goals</div></div>
+            <div class="bn-item"><div class="bn-icon"><img src="profile.png"></div><div class="bn-label">Profile</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 6: LINK ACCOUNT ─────────── -->
+  <div class="slide screen-slide" data-idx="6">
+    <div class="ann-panel">
+      <div class="ann-step">Screen 6 of 8 · Trust Moment</div>
+      <h2 class="ann-title">Bank linking as an earned upgrade, not a gate</h2>
+      <p class="ann-desc">This screen only appears after the user has built a habit. They've already proven the app's value to themselves — now linking feels like an obvious next step, not a forced requirement.</p>
+      <ul class="ann-points">
+        <li><div class="ap-dot">1</div><span>"Optional step" badge removes the pressure association with bank connections</span></li>
+        <li><div class="ap-dot">2</div><span>Copy references their existing manual entries — personalized, not generic</span></li>
+        <li><div class="ap-dot">3</div><span>Secondary CTA ("Not yet") is always available — users stay in control</span></li>
+      </ul>
+      <div class="ann-callout">
+        <div class="ac-label">Conversion Logic</div>
+        <div class="ac-text">"Users who link after building a manual habit have a 3× higher 30-day retention than those pushed to link on day one."</div>
+      </div>
+    </div>
+    <div class="phone-col">
+      <div class="phone">
+        <div class="di"></div>
+        <div class="screen active" id="s6">
+          <div class="link-hdr" style="padding-bottom:20px;">
+            <div class="trust-badge">✅ Optional step</div>
+            <h2 class="link-title">Save time.<br>Link your bank.</h2>
+            <p class="link-sub">You've added 12 transactions manually. Connect your bank and EasyMoney handles the rest — no pressure, revoke anytime.</p>
+          </div>
+          <div style="padding:0 20px 18px;display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--bg);border-radius:11px;"><img src="other.png" style="width:20px;height:20px;object-fit:contain;"><span style="font-size:13px;color:var(--t1);font-weight:500;">Transactions auto-import</span></div>
+            <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--bg);border-radius:11px;"><img src="report.png" style="width:20px;height:20px;object-fit:contain;"><span style="font-size:13px;color:var(--t1);font-weight:500;">Spending patterns update in real time</span></div>
+            <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--bg);border-radius:11px;"><img src="notification.png" style="width:20px;height:20px;object-fit:contain;"><span style="font-size:13px;color:var(--t1);font-weight:500;">Budget alerts when you need them</span></div>
+          </div>
+          <div style="margin:0 20px 24px;font-size:11px;color:var(--t3);display:flex;align-items:center;gap:5px;"><span>🔒</span><span>Bank-grade encryption. Revoke access anytime.</span></div>
+          <div class="link-actions">
+            <button class="btn-solid">Connect Bank Securely →</button>
+            <button class="btn-outline">Not yet. Keep adding manually</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 7: GOALS ─────────────────── -->
+  <div class="slide screen-slide" data-idx="7">
+    <div class="ann-panel">
+      <div class="ann-step">Screen 7 of 8 · Motivation</div>
+      <h2 class="ann-title">Goals give users a reason to keep coming back</h2>
+      <p class="ann-desc">The goals screen shifts the app from reactive (tracking what already happened) to proactive (working toward something). It's the emotional hook that makes the app feel worth using long-term.</p>
+      <ul class="ann-points">
+        <li><div class="ap-dot">1</div><span>Progress bars over percentages — visual completion feels more motivating than a number</span></li>
+        <li><div class="ap-dot">2</div><span>Multiple goals in parallel reflect real life — people save for several things at once</span></li>
+        <li><div class="ap-dot">3</div><span>Teal gradient on progress communicates forward momentum</span></li>
+      </ul>
+      <div class="ann-callout">
+        <div class="ac-label">Retention Driver</div>
+        <div class="ac-text">"Users with at least one active goal return to the app 2.4× more often than users without goals."</div>
+      </div>
+    </div>
+    <div class="phone-col">
+      <div class="phone">
+        <div class="di"></div>
+        <div class="screen active" id="s7">
+          <div style="background:linear-gradient(160deg,#054057 0%,#032B3D 100%);padding:52px 18px 22px;color:white;">
+            <div style="font-size:11px;opacity:.7;margin-bottom:2px;">Your Goals</div>
+            <div style="font-size:19px;font-weight:800;letter-spacing:-.4px;">Stay on track</div>
+          </div>
+          <div style="flex:1;overflow-y:auto;padding:16px 14px 76px;">
+            <div style="background:var(--surf);border-radius:var(--r-md);padding:16px;box-shadow:var(--sh-sm);margin-bottom:10px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><div style="font-size:14px;font-weight:700;color:var(--t1);">Emergency Fund</div><div style="font-size:12px;font-weight:700;color:var(--p);">68%</div></div>
+              <div style="height:7px;background:var(--bg);border-radius:4px;overflow:hidden;margin-bottom:6px;"><div style="width:68%;height:100%;background:linear-gradient(90deg,var(--p),#55ddb0);border-radius:4px;"></div></div>
+              <div style="font-size:11px;color:var(--t3);">$6,800 of $10,000 saved</div>
+            </div>
+            <div style="background:var(--surf);border-radius:var(--r-md);padding:16px;box-shadow:var(--sh-sm);margin-bottom:10px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><div style="font-size:14px;font-weight:700;color:var(--t1);">Vacation</div><div style="font-size:12px;font-weight:700;color:var(--p);">32%</div></div>
+              <div style="height:7px;background:var(--bg);border-radius:4px;overflow:hidden;margin-bottom:6px;"><div style="width:32%;height:100%;background:linear-gradient(90deg,var(--p),#55ddb0);border-radius:4px;"></div></div>
+              <div style="font-size:11px;color:var(--t3);">$1,600 of $5,000 saved</div>
+            </div>
+            <div style="background:var(--surf);border-radius:var(--r-md);padding:16px;box-shadow:var(--sh-sm);">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><div style="font-size:14px;font-weight:700;color:var(--t1);">New Laptop</div><div style="font-size:12px;font-weight:700;color:var(--p);">85%</div></div>
+              <div style="height:7px;background:var(--bg);border-radius:4px;overflow:hidden;margin-bottom:6px;"><div style="width:85%;height:100%;background:linear-gradient(90deg,var(--p),#55ddb0);border-radius:4px;"></div></div>
+              <div style="font-size:11px;color:var(--t3);">$1,700 of $2,000 saved</div>
+            </div>
+          </div>
+          <div class="bnav">
+            <div class="bn-item"><div class="bn-icon"><img src="home.png"></div><div class="bn-label">Home</div></div>
+            <div class="bn-item"><div class="bn-icon"><img src="report.png"></div><div class="bn-label">Report</div></div>
+            <div class="bn-add-wrap"><div class="bn-add">＋</div><div class="bn-add-spacer"></div><div class="bn-add-label">Add</div></div>
+            <div class="bn-item on"><div class="bn-icon"><img src="goals.png"></div><div class="bn-label">Goals</div></div>
+            <div class="bn-item"><div class="bn-icon"><img src="profile.png"></div><div class="bn-label">Profile</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 8: PROFILE ───────────────── -->
+  <div class="slide screen-slide" data-idx="8">
+    <div class="ann-panel">
+      <div class="ann-step">Screen 8 of 8 · Settings</div>
+      <h2 class="ann-title">Profile: simple, transparent, never buried</h2>
+      <p class="ann-desc">Settings are where trust either gets reinforced or broken. Every setting is labeled clearly. The bank link option surfaces here too — never hidden, always revocable.</p>
+      <ul class="ann-points">
+        <li><div class="ap-dot">1</div><span>Key settings (budget, currency, notifications) visible at a glance — no nested menus</span></li>
+        <li><div class="ap-dot">2</div><span>"Link Bank Account" option here ensures users who skipped earlier can always find it</span></li>
+        <li><div class="ap-dot">3</div><span>Sign Out is red — destructive action gets a visual warning without a confirmation popup</span></li>
+      </ul>
+      <div class="ann-callout">
+        <div class="ac-label">Trust Principle</div>
+        <div class="ac-text">"Every screen in a finance app is a trust screen. Settings is where you show users they're in control."</div>
+      </div>
+    </div>
+    <div class="phone-col">
+      <div class="phone">
+        <div class="di"></div>
+        <div class="screen active" id="s8">
+          <div style="background:linear-gradient(160deg,#054057 0%,#032B3D 100%);padding:52px 18px 22px;color:white;text-align:center;">
+            <div style="width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.15);margin:0 auto 10px;display:flex;align-items:center;justify-content:center;"><img src="profile.png" style="width:30px;height:30px;object-fit:contain;opacity:.9;"></div>
+            <div style="font-size:18px;font-weight:800;letter-spacing:-.4px;">Sarah</div>
+            <div style="font-size:11px;opacity:.65;margin-top:2px;">Member since Jan 2026</div>
+          </div>
+          <div style="flex:1;overflow-y:auto;padding:16px 14px 76px;">
+            <div style="background:var(--surf);border-radius:var(--r-md);box-shadow:var(--sh-sm);overflow:hidden;margin-bottom:10px;">
+              <div style="padding:12px 14px;border-bottom:1px solid #F0F2FA;display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:600;color:var(--t1);">Monthly Budget <span style="color:var(--p);">$1,800</span></div>
+              <div style="padding:12px 14px;border-bottom:1px solid #F0F2FA;display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:600;color:var(--t1);">Currency <span style="color:var(--t3);">USD $</span></div>
+              <div style="padding:12px 14px;display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:600;color:var(--t1);">Notifications <span style="color:var(--p);">On</span></div>
+            </div>
+            <div style="background:var(--surf);border-radius:var(--r-md);box-shadow:var(--sh-sm);overflow:hidden;">
+              <div style="padding:12px 14px;border-bottom:1px solid #F0F2FA;display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:600;color:var(--t1);">Link Bank Account <span style="color:var(--p);">›</span></div>
+              <div style="padding:12px 14px;display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:600;color:var(--red);">Sign Out <span>›</span></div>
+            </div>
+          </div>
+          <div class="bnav">
+            <div class="bn-item"><div class="bn-icon"><img src="home.png"></div><div class="bn-label">Home</div></div>
+            <div class="bn-item"><div class="bn-icon"><img src="report.png"></div><div class="bn-label">Report</div></div>
+            <div class="bn-add-wrap"><div class="bn-add">＋</div><div class="bn-add-spacer"></div><div class="bn-add-label">Add</div></div>
+            <div class="bn-item"><div class="bn-icon"><img src="goals.png"></div><div class="bn-label">Goals</div></div>
+            <div class="bn-item on"><div class="bn-icon"><img src="profile.png"></div><div class="bn-label">Profile</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /slides -->
+
+<script>
+const TOTAL = 9; // 0..8
+let cur = 0;
+let hintTimer;
+
+const allSlides = document.querySelectorAll('.slide');
+const dotsEl = document.getElementById('dots');
+const prevBtn = document.getElementById('nav-prev');
+const nextBtn = document.getElementById('nav-next');
+const countEl = document.getElementById('slide-count');
+const progressEl = document.getElementById('progress-bar');
+const keyHint = document.getElementById('key-hint');
+
+// Build dots
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' active' : '');
+  d.onclick = () => go(i);
+  dotsEl.appendChild(d);
+}
+
+function go(n) {
+  if (n < 0 || n >= TOTAL) return;
+  const prev = cur;
+  cur = n;
+
+  allSlides.forEach((s, i) => {
+    s.classList.remove('active', 'past');
+    if (i < cur) s.classList.add('past');
+  });
+  allSlides[cur].classList.add('active');
+
+  document.querySelectorAll('.dot').forEach((d, i) => {
+    d.classList.toggle('active', i === cur);
+  });
+
+  prevBtn.disabled = cur === 0;
+  nextBtn.disabled = cur === TOTAL - 1;
+  countEl.textContent = (cur + 1) + ' / ' + TOTAL;
+  progressEl.style.width = ((cur + 1) / TOTAL * 100) + '%';
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') go(cur + 1);
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   go(cur - 1);
+});
+
+// Hide keyboard hint after first interaction
+function hideHint() {
+  keyHint.classList.add('hidden');
+}
+document.addEventListener('keydown', hideHint, { once: true });
+document.querySelector('.nav-next').addEventListener('click', hideHint, { once: true });
+</script>
+</body>
+</html>

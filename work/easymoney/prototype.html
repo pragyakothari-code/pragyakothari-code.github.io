@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EasyMoney: Trust-First Budgeting · UX Case Study</title>
+<style>
+/* ─── RESET ─────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+button { font-family: inherit; }
+
+/* ─── TOKENS ─────────────────────────────── */
+:root {
+  --p:       #23BE8E;
+  --p-light: #E3F8F1;
+  --p-dark:  #1a9e74;
+  --dark:    #032B3D;
+  --g:       #23BE8E;
+  --g-light: #E3F8F1;
+  --red:     #FF4757;
+  --amber:   #FFA502;
+  --bg:      #F6FBFF;
+  --surf:    #FFFFFF;
+  --t1:      #032B3D;
+  --t2:      #4A6370;
+  --t3:      #8BA5AE;
+  --r-sm:8px; --r-md:16px; --r-lg:24px;
+  --sh-sm: 0 1px 4px rgba(3,43,61,.07), 0 1px 2px rgba(3,43,61,.04);
+  --sh-md: 0 4px 12px rgba(35,190,142,.12), 0 2px 4px rgba(35,190,142,.06);
+  --sh-lg: 0 12px 32px rgba(35,190,142,.2), 0 4px 8px rgba(35,190,142,.1);
+}
+
+/* ─── PAGE ─────────────────────────────── */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #032B3D;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 24px 60px;
+}
+
+/* ─── CASE STUDY HEADER ─────────────────── */
+.cs-header {
+  text-align: center;
+  color: white;
+  margin-bottom: 48px;
+  max-width: 560px;
+}
+.cs-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--g);
+  margin-bottom: 10px;
+}
+.cs-title {
+  font-size: 42px;
+  font-weight: 800;
+  letter-spacing: -1.5px;
+  margin-bottom: 12px;
+}
+.cs-title span { color: var(--g); }
+.cs-sub {
+  font-size: 15px;
+  opacity: .65;
+  line-height: 1.65;
+}
+
+/* ─── 3-COLUMN PROTOTYPE LAYOUT ─────────── */
+.proto-layout {
+  display: grid;
+  grid-template-columns: 210px auto 230px;
+  gap: 44px;
+  align-items: start;
+  max-width: 1100px;
+  width: 100%;
+}
+
+/* ─── LEFT PANEL ─────────────────────────── */
+.left-panel { color: white; padding-top: 12px; }
+
+.lp-section { margin-bottom: 32px; }
+.lp-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  opacity: .45;
+  margin-bottom: 10px;
+}
+.screen-nav { list-style: none; display: flex; flex-direction: column; gap: 3px; }
+.sn-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  transition: all .2s;
+  opacity: .45;
+  font-size: 13px;
+  font-weight: 500;
+}
+.sn-item:hover { opacity: .72; background: rgba(255,255,255,.06); }
+.sn-item.active { opacity: 1; background: rgba(255,255,255,.12); }
+.sn-num {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700; flex-shrink: 0;
+}
+.sn-item.active .sn-num { background: var(--g); border-color: var(--g); color: #0D1B2A; }
+
+.principles-box {
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: var(--r-md);
+  padding: 18px;
+}
+.pb-title { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; opacity: .45; margin-bottom: 12px; }
+.pb-item { display: flex; gap: 8px; align-items: flex-start; margin-bottom: 10px; font-size: 12px; line-height: 1.55; opacity: .78; }
+.pb-item:last-child { margin-bottom: 0; }
+.pb-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--g); flex-shrink: 0; margin-top: 4px; }
+
+/* ─── PHONE FRAME ─────────────────────────── */
+.phone-wrap { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+
+.phone {
+  width: 375px;
+  height: 812px;
+  background: var(--surf);
+  border-radius: 52px;
+  box-shadow:
+    0 0 0 10px #1C1C1E,
+    0 0 0 13px #2C2C2E,
+    0 50px 100px rgba(0,0,0,.6),
+    0 20px 40px rgba(0,0,0,.35);
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+}
+
+/* Dynamic island */
+.di {
+  position: absolute; top: 14px; left: 50%; transform: translateX(-50%);
+  width: 118px; height: 34px;
+  background: #1C1C1E;
+  border-radius: 20px;
+  z-index: 200;
+}
+
+/* ─── SCREENS ─────────────────────────────── */
+.screen {
+  position: absolute; inset: 0;
+  display: none; flex-direction: column;
+  overflow: hidden;
+}
+.screen.active { display: flex; }
+
+/* ═══════════════════════════════════════════
+   SCREEN 1 — WELCOME
+═══════════════════════════════════════════ */
+#s1 { background: #032B3D; overflow: hidden; }
+
+.s1-img-wrap {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  overflow: hidden;
+  background: #032B3D;
+  position: relative;
+}
+.s1-dollar-overlay {
+  position: absolute;
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  background: #032B3D;
+  border: 3px solid rgba(255,255,255,0.15);
+  top: 54%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  font-weight: 800;
+  color: rgba(255,255,255,0.25);
+}
+.s1-hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: bottom center;
+  display: block;
+}
+.s1-dark {
+  background: linear-gradient(160deg, #054057 0%, #032B3D 100%);
+  border-radius: 28px 28px 0 0;
+  padding: 22px 28px 42px;
+  color: white;
+  text-align: center;
+}
+.s1-hed { font-size: 26px; font-weight: 800; letter-spacing: -.8px; line-height: 1.15; margin-bottom: 8px; }
+.s1-sub { font-size: 13px; opacity: .72; line-height: 1.6; margin-bottom: 18px; }
+.s1-btns { display: flex; flex-direction: column; gap: 10px; }
+.btn-primary-inv {
+  background: var(--g); color: var(--dark);
+  border: none; border-radius: 14px;
+  padding: 16px 20px; font-size: 15px; font-weight: 700;
+  cursor: pointer; transition: all .2s;
+  box-shadow: 0 6px 20px rgba(35,190,142,.35);
+  width: 100%;
+}
+.btn-primary-inv:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(35,190,142,.45); }
+.btn-ghost {
+  background: rgba(255,255,255,.08); color: rgba(255,255,255,.85);
+  border: 1.5px solid rgba(255,255,255,.2);
+  border-radius: 14px; padding: 15px 20px;
+  font-size: 14px; font-weight: 600; cursor: pointer; width: 100%; transition: all .2s;
+}
+.btn-ghost:hover { background: rgba(255,255,255,.15); }
+
+/* ═══════════════════════════════════════════
+   SCREEN 2 — ONBOARDING
+═══════════════════════════════════════════ */
+#s2 { background: var(--surf); }
+.ob-topbar {
+  padding: 62px 24px 16px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.ob-logo { font-size: 18px; font-weight: 800; color: var(--dark); }
+.ob-logo span { color: var(--p); }
+.skip-btn { font-size: 14px; color: var(--t3); background: none; border: none; cursor: pointer; font-weight: 500; }
+
+.ob-slides { position: relative; flex: 1; overflow: hidden; }
+.ob-slide {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 10px 36px 0; text-align: center;
+  transition: all .38s cubic-bezier(.4,0,.2,1);
+  opacity: 0; transform: translateX(100%);
+}
+.ob-slide.active { opacity: 1; transform: translateX(0); }
+.ob-slide.prev { opacity: 0; transform: translateX(-100%); }
+
+.ob-icon-wrap {
+  width: 120px; height: 120px;
+  border-radius: 32px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 52px; margin-bottom: 28px;
+}
+.bg-blue { background: #EEF2FF; }
+.bg-green { background: #ECFDF5; }
+.bg-purple { background: #F5F3FF; }
+
+.ob-title { font-size: 24px; font-weight: 800; color: var(--t1); letter-spacing: -.5px; margin-bottom: 12px; line-height: 1.2; }
+.ob-desc { font-size: 15px; color: var(--t2); line-height: 1.65; }
+.ob-desc strong { color: var(--p); font-weight: 700; }
+
+.ob-dots { display: flex; gap: 6px; justify-content: center; padding: 20px; }
+.dot { width: 6px; height: 6px; border-radius: 3px; background: #E2E8F0; transition: all .3s; }
+.dot.active { width: 22px; background: var(--p); }
+
+.ob-footer { padding: 0 24px 44px; }
+.btn-solid {
+  background: var(--p); color: var(--dark);
+  border: none; border-radius: 14px;
+  padding: 16px 20px; font-size: 15px; font-weight: 700;
+  cursor: pointer; width: 100%; transition: all .2s;
+  box-shadow: var(--sh-lg);
+}
+.btn-solid:hover { background: var(--p-dark); transform: translateY(-1px); }
+
+/* ═══════════════════════════════════════════
+   SCREEN 3 — DASHBOARD
+═══════════════════════════════════════════ */
+#s3 { background: var(--bg); }
+
+.dash-hero {
+  background: linear-gradient(160deg, #054057 0%, #032B3D 100%);
+  padding: 62px 22px 24px;
+  color: white;
+}
+.dash-row1 { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 18px; }
+.dash-greeting { font-size: 13px; opacity: .7; margin-bottom: 2px; }
+.dash-name { font-size: 20px; font-weight: 800; letter-spacing: -.4px; }
+.notif-btn {
+  width: 38px; height: 38px;
+  background: none;
+  border-radius: 12px; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; position: relative;
+}
+.notif-dot {
+  width: 8px; height: 8px; background: var(--amber);
+  border-radius: 50%; position: absolute; top: 6px; right: 6px;
+  border: 1.5px solid var(--p);
+}
+
+.bal-card {
+  background: rgba(255,255,255,.14);
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: var(--r-lg);
+  padding: 18px;
+}
+.bal-label { font-size: 11px; opacity: .65; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 4px; }
+.bal-amount { font-size: 36px; font-weight: 800; letter-spacing: -1.5px; margin-bottom: 14px; }
+.bal-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.bal-stat {
+  background: rgba(255,255,255,.1);
+  border-radius: 10px; padding: 10px 12px;
+}
+.bs-label { font-size: 10px; opacity: .62; margin-bottom: 3px; font-weight: 500; }
+.bs-val { font-size: 16px; font-weight: 700; }
+.bs-val.pos { color: #7fffd4; }
+.bs-val.neg { color: #ffb3ba; }
+
+.dash-body { flex: 1; overflow-y: auto; padding-bottom: 86px; }
+.dash-body::-webkit-scrollbar { display: none; }
+
+.dash-sec { padding: 18px 18px 0; }
+.sec-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.sec-title { font-size: 16px; font-weight: 700; color: var(--t1); }
+.sec-link { font-size: 13px; color: var(--p); font-weight: 600; background: none; border: none; cursor: pointer; }
+
+/* Budget progress */
+.budget-card {
+  background: var(--surf);
+  border-radius: var(--r-md);
+  padding: 18px;
+  box-shadow: var(--sh-sm);
+}
+.bud-row1 { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px; }
+.bud-spent { font-size: 28px; font-weight: 800; color: var(--t1); letter-spacing: -.8px; }
+.bud-of { font-size: 13px; color: var(--t3); }
+.bud-bar-wrap { height: 8px; background: var(--bg); border-radius: 4px; overflow: hidden; margin-bottom: 8px; }
+.bud-bar { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--p), #55ddb0); width: 62%; }
+.bud-remain { font-size: 12px; color: var(--t3); }
+.bud-remain strong { color: var(--g); font-weight: 700; }
+
+/* Quick category pills */
+.cat-scroll { display: flex; gap: 8px; overflow-x: auto; padding: 0 18px 0; margin-bottom: 0; }
+.cat-scroll::-webkit-scrollbar { display: none; }
+.cpill {
+  display: flex; align-items: center; gap: 6px;
+  padding: 7px 14px;
+  border-radius: 100px;
+  font-size: 12px; font-weight: 600;
+  white-space: nowrap; flex-shrink: 0;
+  cursor: pointer;
+}
+.cpill-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+/* Trust banner */
+.trust-banner {
+  margin: 0 18px;
+  background: linear-gradient(135deg, var(--p-light), #dff7ef);
+  border-radius: var(--r-md);
+  padding: 14px 16px;
+  display: flex; align-items: center; gap: 12px;
+  border: 1px solid rgba(35,190,142,.25);
+  cursor: pointer;
+}
+.tb-icon { font-size: 26px; flex-shrink: 0; }
+.tb-text h4 { font-size: 13px; font-weight: 700; color: var(--t1); margin-bottom: 2px; }
+.tb-text p { font-size: 12px; color: var(--t2); line-height: 1.4; }
+.tb-arrow { margin-left: auto; font-size: 16px; color: var(--p); flex-shrink: 0; }
+
+/* Transactions */
+.tx-list { display: flex; flex-direction: column; gap: 1.5px; }
+.tx-item {
+  background: var(--surf);
+  padding: 13px 16px;
+  display: flex; align-items: center; gap: 12px;
+  cursor: pointer; transition: background .15s;
+}
+.tx-item:first-child { border-radius: var(--r-md) var(--r-md) 0 0; }
+.tx-item:last-child { border-radius: 0 0 var(--r-md) var(--r-md); }
+.tx-item:hover { background: #FAFBFF; }
+.tx-ico {
+  width: 42px; height: 42px;
+  border-radius: 13px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 19px; flex-shrink: 0;
+}
+.tx-info { flex: 1; min-width: 0; }
+.tx-name { font-size: 14px; font-weight: 600; color: var(--t1); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tx-date { font-size: 11px; color: var(--t3); }
+.tx-amt { font-size: 15px; font-weight: 700; }
+.tx-amt.exp { color: var(--red); }
+.tx-amt.inc { color: var(--g); }
+
+/* Bottom nav */
+.bnav {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 64px;
+  background: var(--surf);
+  border-top: 1px solid #EBEEF5;
+  display: flex; align-items: center; justify-content: space-around;
+  padding: 0 4px 8px;
+}
+.bn-item {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 0 4px; cursor: pointer; border-radius: 10px; flex: 1; min-width: 0;
+}
+.bn-icon { font-size: 20px; color: var(--t3); line-height: 1; }
+.bn-icon img { width: 24px; height: 24px; opacity: 0.45; display: block; }
+.bn-label { font-size: 9px; color: var(--t3); font-weight: 500; white-space: nowrap; }
+.bn-item.on .bn-icon { color: var(--p); }
+.bn-item.on .bn-icon img { opacity: 1; }
+.bn-item.on .bn-label { color: var(--p); font-weight: 700; }
+/* Add button — absolutely floats above nav center */
+.bn-add-wrap {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  gap: 4px; position: relative; cursor: pointer;
+}
+.bn-add-spacer { width: 20px; height: 20px; } /* same size as other icons — keeps label level */
+.bn-add {
+  width: 54px; height: 54px;
+  background: var(--p); border-radius: 18px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; color: var(--dark);
+  box-shadow: 0 -4px 20px rgba(35,190,142,.3), var(--sh-md);
+  transition: all .18s;
+  position: absolute; bottom: 100%; margin-bottom: -15px;
+}
+.bn-add:hover { transform: scale(1.07); }
+.bn-add-label { font-size: 9px; color: var(--t3); font-weight: 500; white-space: nowrap; }
+
+/* ═══════════════════════════════════════════
+   SCREEN 4 — ADD TRANSACTION
+═══════════════════════════════════════════ */
+#s4 { background: var(--surf); }
+
+.add-hdr {
+  padding: 62px 20px 14px;
+  display: flex; align-items: center; gap: 14px;
+  background: var(--surf);
+}
+.back-btn {
+  width: 36px; height: 36px;
+  background: var(--bg); border: none;
+  border-radius: 10px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; color: var(--t1); flex-shrink: 0;
+}
+.add-title { font-size: 17px; font-weight: 800; color: var(--t1); }
+
+.amount-hero {
+  background: linear-gradient(160deg, #054057 0%, #032B3D 100%);
+  padding: 22px 24px 36px;
+  text-align: center; color: white;
+}
+.type-toggle {
+  display: flex;
+  background: rgba(255,255,255,.13);
+  border-radius: 9px; padding: 3px;
+  width: fit-content; margin: 0 auto 20px;
+}
+.tt-btn {
+  padding: 6px 22px;
+  border-radius: 7px; border: none;
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  color: rgba(255,255,255,.65); background: none; transition: all .2s;
+}
+.tt-btn.on { background: var(--g); color: var(--dark); }
+.amount-num { font-size: 50px; font-weight: 800; letter-spacing: -2px; line-height: 1; }
+.amount-cursor { animation: blink 1s step-end infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+.amount-hint { font-size: 13px; opacity: .55; margin-top: 6px; }
+
+.add-form { flex: 1; overflow-y: auto; padding: 4px 18px 0; }
+.add-form::-webkit-scrollbar { display: none; }
+.f-row { padding: 14px 0; border-bottom: 1px solid #F0F2FA; }
+.f-row:last-child { border-bottom: none; }
+.f-label { font-size: 11px; font-weight: 700; color: var(--t3); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 8px; }
+.f-input {
+  width: 100%; background: var(--bg);
+  border: 1.5px solid transparent; border-radius: 11px;
+  padding: 12px 14px; font-size: 15px;
+  font-family: inherit; color: var(--t1); outline: none; transition: all .2s;
+}
+.f-input:focus { border-color: var(--p); background: var(--p-light); }
+.f-input::placeholder { color: var(--t3); }
+
+/* Category grid */
+.cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.cat-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 5px;
+  padding: 11px 4px; border-radius: 11px;
+  background: var(--bg); border: 2px solid transparent; cursor: pointer; transition: all .18s;
+}
+.cat-btn.on { border-color: var(--p); background: var(--g-light); }
+.cat-emoji { font-size: 22px; }
+.cat-lbl { font-size: 10px; font-weight: 600; color: var(--t2); text-align: center; }
+.cat-btn.on .cat-lbl { color: var(--p); }
+
+/* Save button */
+.save-bar {
+  padding: 14px 18px 40px;
+  background: var(--surf);
+  border-top: 1px solid #EBEEF5;
+}
+
+/* ═══════════════════════════════════════════
+   SCREEN 5 — SPENDING REPORT
+═══════════════════════════════════════════ */
+#s5 { background: var(--bg); }
+.rep-hdr {
+  background: var(--surf);
+  padding: 62px 22px 18px;
+  box-shadow: var(--sh-sm);
+}
+.rep-row1 { display: flex; justify-content: space-between; align-items: flex-start; }
+.rep-title { font-size: 22px; font-weight: 800; color: var(--t1); letter-spacing: -.5px; }
+.rep-sub { font-size: 13px; color: var(--t3); margin-top: 2px; }
+.period-tabs { display: flex; gap: 6px; margin-top: 14px; }
+.ptab {
+  padding: 6px 14px; border-radius: 100px;
+  font-size: 12px; font-weight: 600;
+  cursor: pointer; border: 1.5px solid #E2E8F0;
+  background: transparent; color: var(--t2); transition: all .2s;
+}
+.ptab.on { background: var(--dark); border-color: var(--dark); color: white; }
+
+.rep-body { flex: 1; overflow-y: auto; padding: 16px 0 90px; }
+.rep-body::-webkit-scrollbar { display: none; }
+
+/* Donut */
+.donut-card {
+  background: var(--surf);
+  margin: 0 16px 14px; border-radius: var(--r-md);
+  padding: 22px; box-shadow: var(--sh-sm);
+}
+.donut-wrap { display: flex; align-items: center; gap: 20px; }
+.donut {
+  width: 136px; height: 136px; border-radius: 50%; flex-shrink: 0;
+  background: conic-gradient(
+    #FF6B6B 0% 35%,
+    #4ECDC4 35% 57%,
+    #F59E0B 57% 75%,
+    #A855F7 75% 89%,
+    #3B82F6 89% 100%
+  );
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 24px), #fff calc(100% - 23px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 24px), #fff calc(100% - 23px));
+  position: relative;
+}
+.donut-legend { flex: 1; display: flex; flex-direction: column; gap: 7px; }
+.dl-item { display: flex; align-items: center; gap: 8px; }
+.dl-color { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+.dl-name { font-size: 12px; color: var(--t2); flex: 1; }
+.dl-pct { font-size: 12px; font-weight: 700; color: var(--t1); }
+.donut-footer {
+  margin-top: 18px; padding-top: 16px;
+  border-top: 1px solid #F0F2FA;
+  display: flex; justify-content: space-between; align-items: baseline;
+}
+.df-label { font-size: 12px; color: var(--t3); }
+.df-total { font-size: 26px; font-weight: 800; color: var(--t1); letter-spacing: -.8px; }
+
+/* Category rows */
+.cat-rows { margin: 0 16px; display: flex; flex-direction: column; gap: 1.5px; }
+.cr {
+  background: var(--surf); padding: 14px 16px;
+  display: flex; align-items: center; gap: 13px;
+}
+.cr:first-child { border-radius: var(--r-md) var(--r-md) 0 0; }
+.cr:last-child { border-radius: 0 0 var(--r-md) var(--r-md); }
+.cr-ico {
+  width: 40px; height: 40px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+.cr-info { flex: 1; }
+.cr-name { font-size: 14px; font-weight: 600; color: var(--t1); margin-bottom: 4px; }
+.cr-bar-wrap { height: 4px; background: var(--bg); border-radius: 2px; overflow: hidden; }
+.cr-bar { height: 100%; border-radius: 2px; }
+.cr-amt { font-size: 14px; font-weight: 700; color: var(--t1); }
+.cr-txn { font-size: 11px; color: var(--t3); margin-top: 1px; text-align: right; }
+
+/* ═══════════════════════════════════════════
+   SCREEN 6 — LINK ACCOUNT
+═══════════════════════════════════════════ */
+#s6 { background: var(--surf); overflow-y: auto; }
+#s6::-webkit-scrollbar { display: none; }
+.link-hdr { padding: 62px 24px 0; }
+.trust-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--p-light); color: var(--dark);
+  font-size: 11px; font-weight: 700; padding: 5px 12px;
+  border-radius: 100px; margin-bottom: 16px;
+}
+.link-title { font-size: 26px; font-weight: 800; color: var(--t1); letter-spacing: -.5px; margin-bottom: 8px; line-height: 1.2; }
+.link-sub { font-size: 14px; color: var(--t2); line-height: 1.65; }
+
+.usage-row { display: flex; gap: 10px; margin: 22px 24px 0; }
+.usage-stat { flex: 1; background: var(--bg); border-radius: var(--r-md); padding: 16px; text-align: center; }
+.us-num { font-size: 28px; font-weight: 800; color: var(--p); letter-spacing: -1px; }
+.us-lbl { font-size: 11px; color: var(--t3); margin-top: 2px; }
+
+.benefits { padding: 22px 24px 0; }
+.ben-title { font-size: 13px; font-weight: 600; color: var(--t2); margin-bottom: 14px; }
+.ben-item { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px; }
+.ben-ico {
+  width: 38px; height: 38px; border-radius: 11px;
+  background: var(--g-light);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+.ben-text h4 { font-size: 14px; font-weight: 700; color: var(--t1); margin-bottom: 2px; }
+.ben-text p { font-size: 12px; color: var(--t2); line-height: 1.45; }
+
+.sec-note {
+  margin: 4px 24px 20px;
+  display: flex; align-items: center; gap: 8px;
+  padding: 11px 14px; background: var(--bg); border-radius: var(--r-sm);
+}
+.sec-note span { font-size: 12px; color: var(--t2); line-height: 1.4; }
+
+.link-actions { padding: 0 24px 48px; display: flex; flex-direction: column; gap: 10px; }
+.btn-outline {
+  background: transparent; color: var(--t2);
+  border: 1.5px solid #E2E8F0; border-radius: 14px;
+  padding: 14px 20px; font-size: 14px; font-weight: 600;
+  cursor: pointer; width: 100%; transition: all .2s;
+}
+.btn-outline:hover { border-color: var(--t2); }
+
+/* ─── PROTO NAV BUTTONS ─────────────────── */
+.proto-btns {
+  display: flex; align-items: center; gap: 0;
+  background: rgba(255,255,255,.1);
+  border-radius: 12px; overflow: hidden;
+}
+.pb {
+  width: 44px; height: 44px;
+  background: none; border: none;
+  cursor: pointer; font-size: 18px; color: white;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .2s;
+}
+.pb:hover { background: rgba(255,255,255,.15); }
+.pb:disabled { opacity: .25; cursor: not-allowed; }
+.pc { font-size: 13px; color: rgba(255,255,255,.55); padding: 0 14px; }
+
+/* ─── RIGHT PANEL ─────────────────────────── */
+.right-panel { color: white; padding-top: 12px; }
+.ann { display: none; }
+.ann.active { display: block; }
+
+.ann-tag {
+  font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--g); margin-bottom: 10px;
+}
+.ann-title {
+  font-size: 21px; font-weight: 800; letter-spacing: -.5px;
+  margin-bottom: 10px; line-height: 1.2;
+}
+.ann-desc { font-size: 13px; line-height: 1.7; opacity: .78; margin-bottom: 22px; }
+
+.ann-list { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 22px; }
+.ann-list li { display: flex; gap: 10px; font-size: 12px; opacity: .82; line-height: 1.5; align-items: flex-start; }
+.alchk {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--g); display: flex; align-items: center; justify-content: center;
+  font-size: 10px; flex-shrink: 0; color: #0D1B2A; margin-top: .5px; font-weight: 800;
+}
+
+.principle-call {
+  padding: 14px 16px;
+  background: rgba(255,255,255,.07);
+  border-left: 3px solid var(--g);
+  border-radius: 0 8px 8px 0;
+}
+.pc-label { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; opacity: .5; margin-bottom: 6px; }
+.pc-text { font-size: 12px; line-height: 1.6; opacity: .85; font-style: italic; }
+
+/* ─── FOOTER ─────────────────────────────── */
+.cs-footer {
+  margin-top: 60px;
+  text-align: center;
+  color: rgba(255,255,255,.35);
+  font-size: 12px;
+}
+.cs-footer a { color: rgba(255,255,255,.55); text-decoration: none; }
+
+</style>
+</head>
+<body>
+
+<!-- ─── HEADER ─────────────────────────────── -->
+<header class="cs-header">
+  <div class="cs-label">UX Case Study · Interactive Prototype</div>
+  <img src="logo-white.png" alt="EasyMoney" style="height:28px; width:auto; display:block; margin:0 auto 8px;">
+  <p class="cs-sub">A trust-first budgeting app designed to reduce financial anxiety, letting users explore and transact before committing sensitive data.</p>
+</header>
+
+<!-- ─── PROTOTYPE ─────────────────────────── -->
+<div class="proto-layout">
+
+  <!-- LEFT PANEL -->
+  <aside class="left-panel">
+    <div class="lp-section">
+      <div class="lp-label">Screens</div>
+      <ul class="screen-nav">
+        <li class="sn-item active" onclick="goTo(1)">
+          <span class="sn-num">1</span> Welcome
+        </li>
+        <li class="sn-item" onclick="goTo(2)">
+          <span class="sn-num">2</span> Onboarding
+        </li>
+        <li class="sn-item" onclick="goTo(3)">
+          <span class="sn-num">3</span> Dashboard
+        </li>
+        <li class="sn-item" onclick="goTo(4)">
+          <span class="sn-num">4</span> Add Transaction
+        </li>
+        <li class="sn-item" onclick="goTo(5)">
+          <span class="sn-num">5</span> Spending Report
+        </li>
+        <li class="sn-item" onclick="goTo(6)">
+          <span class="sn-num">6</span> Link Account
+        </li>
+        <li class="sn-item" onclick="goTo(7)">
+          <span class="sn-num">7</span> Goals
+        </li>
+        <li class="sn-item" onclick="goTo(8)">
+          <span class="sn-num">8</span> Profile
+        </li>
+      </ul>
+    </div>
+
+    <div class="lp-section">
+      <div class="principles-box">
+        <div class="pb-title">Design Principles</div>
+        <div class="pb-item">
+          <div class="pb-dot"></div>
+          <span><strong>Trust before automation</strong>: earn confidence before asking for access</span>
+        </div>
+        <div class="pb-item">
+          <div class="pb-dot"></div>
+          <span><strong>Clarity over completeness</strong>: show what matters, hide the rest</span>
+        </div>
+        <div class="pb-item">
+          <div class="pb-dot"></div>
+          <span><strong>Progressive commitment</strong>: guide gently, never force irreversible steps</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- PHONE -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="di"></div>
+
+      <!-- ── S1: WELCOME ──────────────────── -->
+      <div class="screen active" id="s1">
+        <div class="s1-img-wrap">
+          <img class="s1-hero-img" src="hero.png" alt="Two people confidently managing money together" />
+        </div>
+        <div class="s1-dark">
+          <h1 class="s1-hed">Your money,<br>your pace.</h1>
+          <p class="s1-sub">Understand your finances before connecting anything. No pressure, no data grabs. Just clarity.</p>
+          <div class="s1-btns">
+            <button class="btn-primary-inv" onclick="goTo(2)">Explore without linking →</button>
+            <button class="btn-ghost" onclick="goTo(3)">I already have an account</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── S2: ONBOARDING ──────────────── -->
+      <div class="screen" id="s2">
+        <div class="ob-topbar">
+          <img src="logo.png" alt="EasyMoney" style="height:28px; width:auto;">
+        </div>
+
+        <div class="ob-slides">
+          <div class="ob-slide active" id="ob0">
+            <div style="height:148px;"></div>
+            <h2 class="ob-title">Explore first,<br>commit later</h2>
+            <p class="ob-desc">Add transactions manually and see how EasyMoney works <strong>without connecting any accounts</strong>. No bank details needed to get started.</p>
+          </div>
+        </div>
+
+        <div class="ob-footer">
+          <button class="btn-solid" onclick="goTo(3)">Get Started →</button>
+        </div>
+      </div>
+
+      <!-- ── S3: DASHBOARD ───────────────── -->
+      <div class="screen" id="s3">
+        <div class="dash-hero">
+          <div class="dash-row1">
+            <div>
+              <div class="dash-greeting">Good morning,</div>
+              <div class="dash-name">Sarah</div>
+            </div>
+            <button class="notif-btn"><img src="notification.png" style="width:26px;height:26px;object-fit:contain;"><div class="notif-dot"></div></button>
+          </div>
+          <div class="bal-card">
+            <div class="bal-label">May Overview</div>
+            <div class="bal-amount">$4,328.00</div>
+            <div class="bal-stats">
+              <div class="bal-stat">
+                <div class="bs-label">Money In</div>
+                <div class="bs-val pos">+$3,200</div>
+              </div>
+              <div class="bal-stat">
+                <div class="bs-label">Money Out</div>
+                <div class="bs-val neg">−$1,107</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dash-body">
+          <!-- Budget -->
+          <div class="dash-sec">
+            <div class="sec-hdr">
+              <div class="sec-title">Monthly Budget</div>
+              <button class="sec-link">Edit</button>
+            </div>
+            <div class="budget-card">
+              <div class="bud-row1">
+                <div class="bud-spent">$1,107 <span style="font-size:14px;font-weight:500;color:var(--t3)">spent</span></div>
+                <div class="bud-of">of $1,800</div>
+              </div>
+              <div class="bud-bar-wrap"><div class="bud-bar"></div></div>
+              <div class="bud-remain">💚 <strong>$693 remaining</strong>. You're on track</div>
+            </div>
+          </div>
+
+          <!-- Category pills -->
+          <div class="dash-sec" style="padding-bottom:14px;">
+            <div class="sec-hdr">
+              <div class="sec-title">By Category</div>
+              <button class="sec-link" onclick="goTo(5)">See all →</button>
+            </div>
+          </div>
+          <div class="cat-scroll" style="padding:0 18px 14px;">
+            <div class="cpill" style="background:#FFF1F1;color:#FF4757;">
+              <div class="cpill-dot" style="background:#FF4757;"></div>Food · $387
+            </div>
+            <div class="cpill" style="background:#EAFAF8;color:#2BBFB0;">
+              <div class="cpill-dot" style="background:#4ECDC4;"></div>Transport · $244
+            </div>
+            <div class="cpill" style="background:#FFFBEB;color:#D97706;">
+              <div class="cpill-dot" style="background:#F59E0B;"></div>Shopping · $199
+            </div>
+            <div class="cpill" style="background:#F5F3FF;color:#7C3AED;">
+              <div class="cpill-dot" style="background:#A855F7;"></div>Fun · $155
+            </div>
+          </div>
+
+          <!-- Trust banner -->
+          <div class="dash-sec" style="padding-bottom:14px;">
+            <div class="trust-banner" onclick="goTo(6)">
+              <div class="tb-icon">🔗</div>
+              <div class="tb-text">
+                <h4>Save time. Link your bank</h4>
+                <p>Auto-import transactions when you're ready</p>
+              </div>
+              <div class="tb-arrow">›</div>
+            </div>
+          </div>
+
+          <!-- Recent transactions -->
+          <div class="dash-sec">
+            <div class="sec-hdr">
+              <div class="sec-title">Recent</div>
+              <button class="sec-link">See all</button>
+            </div>
+            <div class="tx-list">
+              <div class="tx-item">
+                <div class="tx-ico" style="background:#FFF1F1;"><img src="food.png" style="width:28px;height:28px;object-fit:contain;"></div>
+                <div class="tx-info">
+                  <div class="tx-name">Grocery Store</div>
+                  <div class="tx-date">Today, 9:14 AM</div>
+                </div>
+                <div class="tx-amt exp">−$43.50</div>
+              </div>
+              <div class="tx-item">
+                <div class="tx-ico" style="background:#EAFAF8;"><img src="transport.png" style="width:28px;height:28px;object-fit:contain;"></div>
+                <div class="tx-info">
+                  <div class="tx-name">Uber</div>
+                  <div class="tx-date">Yesterday</div>
+                </div>
+                <div class="tx-amt exp">−$12.80</div>
+              </div>
+              <div class="tx-item">
+                <div class="tx-ico" style="background:#F5F3FF;"><img src="fun.png" style="width:28px;height:28px;object-fit:contain;"></div>
+                <div class="tx-info">
+                  <div class="tx-name">Netflix</div>
+                  <div class="tx-date">Yesterday</div>
+                </div>
+                <div class="tx-amt exp">−$15.99</div>
+              </div>
+              <div class="tx-item">
+                <div class="tx-ico" style="background:#F0FFF4;"><img src="food.png" style="width:28px;height:28px;object-fit:contain;"></div>
+                <div class="tx-info">
+                  <div class="tx-name">Coffee Shop</div>
+                  <div class="tx-date">Mon, 8:40 AM</div>
+                </div>
+                <div class="tx-amt exp">−$6.40</div>
+              </div>
+              <div class="tx-item">
+                <div class="tx-ico" style="background:#ECFDF5;"><img src="other.png" style="width:28px;height:28px;object-fit:contain;"></div>
+                <div class="tx-info">
+                  <div class="tx-name">Monthly Salary</div>
+                  <div class="tx-date">Mon, 12:00 AM</div>
+                </div>
+                <div class="tx-amt inc">+$3,200</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom nav -->
+        <div class="bnav">
+          <div class="bn-item on">
+            <div class="bn-icon"><img src="home.png" alt="Home"></div>
+            <div class="bn-label">Home</div>
+          </div>
+          <div class="bn-item" onclick="goTo(5)">
+            <div class="bn-icon"><img src="report.png" alt="Report"></div>
+            <div class="bn-label">Report</div>
+          </div>
+          <div class="bn-add-wrap" onclick="goTo(4)">
+            <div class="bn-add">＋</div>
+            <div class="bn-add-spacer"></div>
+            <div class="bn-add-label">Add</div>
+          </div>
+          <div class="bn-item" onclick="goTo(7)">
+            <div class="bn-icon"><img src="goals.png" alt="Goals"></div>
+            <div class="bn-label">Goals</div>
+          </div>
+          <div class="bn-item" onclick="goTo(8)">
+            <div class="bn-icon"><img src="profile.png" alt="Profile"></div>
+            <div class="bn-label">Profile</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── S4: ADD TRANSACTION ──────────── -->
+      <div class="screen" id="s4">
+        <div class="add-hdr">
+          <button class="back-btn" onclick="goTo(3)">‹</button>
+          <div class="add-title">Add Transaction</div>
+        </div>
+
+        <div class="amount-hero">
+          <div class="type-toggle">
+            <button class="tt-btn" id="tt-exp" onclick="setType('expense')" style="background:white;color:var(--p);">Expense</button>
+            <button class="tt-btn" id="tt-inc" onclick="setType('income')">Income</button>
+          </div>
+          <div class="amount-num">$0<span class="amount-cursor">|</span></div>
+          <div class="amount-hint">Tap below to enter amount</div>
+        </div>
+
+        <div class="add-form">
+          <!-- Category -->
+          <div class="f-row">
+            <div class="f-label">Category</div>
+            <div class="cat-grid">
+              <button class="cat-btn on" onclick="selectCat(this)">
+                <span class="cat-emoji"><img src="food.png" style="width:28px;height:28px;object-fit:contain;"></span>
+                <span class="cat-lbl">Food</span>
+              </button>
+              <button class="cat-btn" onclick="selectCat(this)">
+                <span class="cat-emoji"><img src="transport.png" style="width:28px;height:28px;object-fit:contain;"></span>
+                <span class="cat-lbl">Transport</span>
+              </button>
+              <button class="cat-btn" onclick="selectCat(this)">
+                <span class="cat-emoji"><img src="shopping.png" style="width:28px;height:28px;object-fit:contain;"></span>
+                <span class="cat-lbl">Shopping</span>
+              </button>
+              <button class="cat-btn" onclick="selectCat(this)">
+                <span class="cat-emoji"><img src="fun.png" style="width:28px;height:28px;object-fit:contain;"></span>
+                <span class="cat-lbl">Fun</span>
+              </button>
+              <button class="cat-btn" onclick="selectCat(this)">
+                <span class="cat-emoji"><img src="bills.png" style="width:28px;height:28px;object-fit:contain;"></span>
+                <span class="cat-lbl">Bills</span>
+              </button>
+              <button class="cat-btn" onclick="selectCat(this)">
+                <span class="cat-emoji"><img src="health.png" style="width:28px;height:28px;object-fit:contain;"></span>
+                <span class="cat-lbl">Health</span>
+              </button>
+              <button class="cat-btn" onclick="selectCat(this)">
+                <span class="cat-emoji"><img src="learn.png" style="width:28px;height:28px;object-fit:contain;"></span>
+                <span class="cat-lbl">Learn</span>
+              </button>
+              <button class="cat-btn" onclick="selectCat(this)">
+                <span class="cat-emoji"><img src="other.png" style="width:28px;height:28px;object-fit:contain;"></span>
+                <span class="cat-lbl">Other</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Note -->
+          <div class="f-row">
+            <div class="f-label">Note</div>
+            <input class="f-input" type="text" placeholder="e.g. Lunch with team">
+          </div>
+
+          <!-- Date -->
+          <div class="f-row">
+            <div class="f-label">Date</div>
+            <input class="f-input" type="text" value="Today, May 27">
+          </div>
+        </div>
+
+        <div class="save-bar">
+          <button class="btn-solid" onclick="goTo(3)">Save Transaction ✓</button>
+        </div>
+      </div>
+
+      <!-- ── S5: SPENDING REPORT ──────────── -->
+      <div class="screen" id="s5">
+        <div class="rep-hdr">
+          <div class="rep-row1">
+            <div>
+              <div class="rep-title">Spending</div>
+              <div class="rep-sub">May 2026 · 27 transactions</div>
+            </div>
+          </div>
+          <div class="period-tabs">
+            <button class="ptab">Week</button>
+            <button class="ptab on">Month</button>
+            <button class="ptab">3M</button>
+            <button class="ptab">Year</button>
+          </div>
+        </div>
+
+        <div class="rep-body">
+          <!-- Donut -->
+          <div class="donut-card">
+            <div class="donut-wrap">
+              <div class="donut"></div>
+              <div class="donut-legend">
+                <div class="dl-item">
+                  <div class="dl-color" style="background:#FF6B6B;"></div>
+                  <div class="dl-name">Food</div>
+                  <div class="dl-pct">35%</div>
+                </div>
+                <div class="dl-item">
+                  <div class="dl-color" style="background:#4ECDC4;"></div>
+                  <div class="dl-name">Transport</div>
+                  <div class="dl-pct">22%</div>
+                </div>
+                <div class="dl-item">
+                  <div class="dl-color" style="background:#F59E0B;"></div>
+                  <div class="dl-name">Shopping</div>
+                  <div class="dl-pct">18%</div>
+                </div>
+                <div class="dl-item">
+                  <div class="dl-color" style="background:#A855F7;"></div>
+                  <div class="dl-name">Fun</div>
+                  <div class="dl-pct">14%</div>
+                </div>
+                <div class="dl-item">
+                  <div class="dl-color" style="background:#3B82F6;"></div>
+                  <div class="dl-name">Bills</div>
+                  <div class="dl-pct">11%</div>
+                </div>
+              </div>
+            </div>
+            <div class="donut-footer">
+              <div class="df-label">Total spent</div>
+              <div class="df-total">$1,107</div>
+            </div>
+          </div>
+
+          <!-- Category breakdown -->
+          <div style="padding:0 16px 10px;">
+            <div style="font-size:13px;font-weight:700;color:var(--t2);margin-bottom:8px;">Breakdown</div>
+          </div>
+          <div class="cat-rows">
+            <div class="cr">
+              <div class="cr-ico" style="background:#FFF1F1;"><img src="food.png" style="width:26px;height:26px;object-fit:contain;"></div>
+              <div class="cr-info">
+                <div class="cr-name">Food &amp; Drink</div>
+                <div class="cr-bar-wrap"><div class="cr-bar" style="width:100%;background:#FF6B6B;"></div></div>
+              </div>
+              <div>
+                <div class="cr-amt">$387</div>
+                <div class="cr-txn">14 txns</div>
+              </div>
+            </div>
+            <div class="cr">
+              <div class="cr-ico" style="background:#EAFAF8;"><img src="transport.png" style="width:26px;height:26px;object-fit:contain;"></div>
+              <div class="cr-info">
+                <div class="cr-name">Transport</div>
+                <div class="cr-bar-wrap"><div class="cr-bar" style="width:63%;background:#4ECDC4;"></div></div>
+              </div>
+              <div>
+                <div class="cr-amt">$244</div>
+                <div class="cr-txn">6 txns</div>
+              </div>
+            </div>
+            <div class="cr">
+              <div class="cr-ico" style="background:#FFFBEB;"><img src="shopping.png" style="width:26px;height:26px;object-fit:contain;"></div>
+              <div class="cr-info">
+                <div class="cr-name">Shopping</div>
+                <div class="cr-bar-wrap"><div class="cr-bar" style="width:51%;background:#F59E0B;"></div></div>
+              </div>
+              <div>
+                <div class="cr-amt">$199</div>
+                <div class="cr-txn">4 txns</div>
+              </div>
+            </div>
+            <div class="cr">
+              <div class="cr-ico" style="background:#F5F3FF;"><img src="fun.png" style="width:26px;height:26px;object-fit:contain;"></div>
+              <div class="cr-info">
+                <div class="cr-name">Fun &amp; Leisure</div>
+                <div class="cr-bar-wrap"><div class="cr-bar" style="width:40%;background:#A855F7;"></div></div>
+              </div>
+              <div>
+                <div class="cr-amt">$155</div>
+                <div class="cr-txn">2 txns</div>
+              </div>
+            </div>
+            <div class="cr">
+              <div class="cr-ico" style="background:#EFF6FF;"><img src="bills.png" style="width:26px;height:26px;object-fit:contain;"></div>
+              <div class="cr-info">
+                <div class="cr-name">Bills</div>
+                <div class="cr-bar-wrap"><div class="cr-bar" style="width:31%;background:#3B82F6;"></div></div>
+              </div>
+              <div>
+                <div class="cr-amt">$122</div>
+                <div class="cr-txn">1 txn</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom nav -->
+        <div class="bnav">
+          <div class="bn-item" onclick="goTo(3)">
+            <div class="bn-icon"><img src="home.png" alt="Home"></div>
+            <div class="bn-label">Home</div>
+          </div>
+          <div class="bn-item on">
+            <div class="bn-icon"><img src="report.png" alt="Report"></div>
+            <div class="bn-label">Report</div>
+          </div>
+          <div class="bn-add-wrap" onclick="goTo(4)">
+            <div class="bn-add">＋</div>
+            <div class="bn-add-spacer"></div>
+            <div class="bn-add-label">Add</div>
+          </div>
+          <div class="bn-item" onclick="goTo(7)">
+            <div class="bn-icon"><img src="goals.png" alt="Goals"></div>
+            <div class="bn-label">Goals</div>
+          </div>
+          <div class="bn-item" onclick="goTo(8)">
+            <div class="bn-icon"><img src="profile.png" alt="Profile"></div>
+            <div class="bn-label">Profile</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── S6: LINK ACCOUNT ─────────────── -->
+      <div class="screen" id="s6">
+        <div class="link-hdr" style="padding-bottom:24px;">
+          <div class="trust-badge">✅ Optional step</div>
+          <h2 class="link-title">Save time.<br>Link your bank.</h2>
+          <p class="link-sub">You've added 12 transactions manually. Connect your bank and EasyMoney handles the rest — no pressure, revoke anytime.</p>
+        </div>
+
+        <div style="padding: 0 24px 24px; display:flex; flex-direction:column; gap:12px;">
+          <div style="display:flex; align-items:center; gap:12px; padding:14px 16px; background:var(--bg); border-radius:12px;">
+            <img src="other.png" style="width:24px;height:24px;object-fit:contain;">
+            <span style="font-size:14px; color:var(--t1); font-weight:500;">Transactions auto-import</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:12px; padding:14px 16px; background:var(--bg); border-radius:12px;">
+            <img src="report.png" style="width:24px;height:24px;object-fit:contain;">
+            <span style="font-size:14px; color:var(--t1); font-weight:500;">Spending patterns update in real time</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:12px; padding:14px 16px; background:var(--bg); border-radius:12px;">
+            <img src="notification.png" style="width:24px;height:24px;object-fit:contain;">
+            <span style="font-size:14px; color:var(--t1); font-weight:500;">Budget alerts when you need them</span>
+          </div>
+        </div>
+
+        <div style="margin:0 24px 32px; font-size:12px; color:var(--t3); display:flex; align-items:center; gap:6px;">
+          <span>🔒</span><span>Bank-grade encryption. Revoke access anytime.</span>
+        </div>
+
+        <div class="link-actions">
+          <button class="btn-solid">Connect Bank Securely →</button>
+          <button class="btn-outline" onclick="goTo(3)">Not yet. Keep adding manually</button>
+        </div>
+      </div>
+
+      <!-- ── S7: GOALS ───────────────────── -->
+      <div class="screen" id="s7">
+        <div style="background:linear-gradient(160deg,#054057 0%,#032B3D 100%); padding:62px 22px 28px; color:white;">
+          <div style="font-size:13px;opacity:.7;margin-bottom:2px;">Your Goals</div>
+          <div style="font-size:22px;font-weight:800;letter-spacing:-.4px;">Stay on track</div>
+        </div>
+        <div style="flex:1;overflow-y:auto;padding:20px 18px 90px;">
+          <div style="background:var(--surf);border-radius:var(--r-md);padding:18px;box-shadow:var(--sh-sm);margin-bottom:12px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+              <div style="font-size:15px;font-weight:700;color:var(--t1);">Emergency Fund</div>
+              <div style="font-size:13px;font-weight:700;color:var(--p);">68%</div>
+            </div>
+            <div style="height:8px;background:var(--bg);border-radius:4px;overflow:hidden;margin-bottom:8px;">
+              <div style="width:68%;height:100%;background:linear-gradient(90deg,var(--p),#55ddb0);border-radius:4px;"></div>
+            </div>
+            <div style="font-size:12px;color:var(--t3);">$6,800 of $10,000 saved</div>
+          </div>
+          <div style="background:var(--surf);border-radius:var(--r-md);padding:18px;box-shadow:var(--sh-sm);margin-bottom:12px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+              <div style="font-size:15px;font-weight:700;color:var(--t1);">Vacation</div>
+              <div style="font-size:13px;font-weight:700;color:var(--p);">32%</div>
+            </div>
+            <div style="height:8px;background:var(--bg);border-radius:4px;overflow:hidden;margin-bottom:8px;">
+              <div style="width:32%;height:100%;background:linear-gradient(90deg,var(--p),#55ddb0);border-radius:4px;"></div>
+            </div>
+            <div style="font-size:12px;color:var(--t3);">$1,600 of $5,000 saved</div>
+          </div>
+          <div style="background:var(--surf);border-radius:var(--r-md);padding:18px;box-shadow:var(--sh-sm);">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+              <div style="font-size:15px;font-weight:700;color:var(--t1);">New Laptop</div>
+              <div style="font-size:13px;font-weight:700;color:var(--p);">85%</div>
+            </div>
+            <div style="height:8px;background:var(--bg);border-radius:4px;overflow:hidden;margin-bottom:8px;">
+              <div style="width:85%;height:100%;background:linear-gradient(90deg,var(--p),#55ddb0);border-radius:4px;"></div>
+            </div>
+            <div style="font-size:12px;color:var(--t3);">$1,700 of $2,000 saved</div>
+          </div>
+        </div>
+        <div class="bnav">
+          <div class="bn-item" onclick="goTo(3)"><div class="bn-icon"><img src="home.png" alt="Home"></div><div class="bn-label">Home</div></div>
+          <div class="bn-item" onclick="goTo(5)"><div class="bn-icon"><img src="report.png" alt="Report"></div><div class="bn-label">Report</div></div>
+          <div class="bn-add-wrap" onclick="goTo(4)"><div class="bn-add">＋</div><div class="bn-add-spacer"></div><div class="bn-add-label">Add</div></div>
+          <div class="bn-item on"><div class="bn-icon"><img src="goals.png" alt="Goals"></div><div class="bn-label">Goals</div></div>
+          <div class="bn-item" onclick="goTo(8)"><div class="bn-icon"><img src="profile.png" alt="Profile"></div><div class="bn-label">Profile</div></div>
+        </div>
+      </div>
+
+      <!-- ── S8: PROFILE ─────────────────── -->
+      <div class="screen" id="s8">
+        <div style="background:linear-gradient(160deg,#054057 0%,#032B3D 100%); padding:62px 22px 28px; color:white; text-align:center;">
+          <div style="width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,.15);margin:0 auto 12px;display:flex;align-items:center;justify-content:center;"><img src="profile.png" style="width:36px;height:36px;object-fit:contain;opacity:.9;"></div>
+          <div style="font-size:20px;font-weight:800;letter-spacing:-.4px;">Sarah</div>
+          <div style="font-size:13px;opacity:.65;margin-top:2px;">Member since Jan 2026</div>
+        </div>
+        <div style="flex:1;overflow-y:auto;padding:20px 18px 90px;">
+          <div style="background:var(--surf);border-radius:var(--r-md);box-shadow:var(--sh-sm);overflow:hidden;margin-bottom:12px;">
+            <div style="padding:14px 16px;border-bottom:1px solid #F0F2FA;display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:600;color:var(--t1);">Monthly Budget <span style="color:var(--p);">$1,800</span></div>
+            <div style="padding:14px 16px;border-bottom:1px solid #F0F2FA;display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:600;color:var(--t1);">Currency <span style="color:var(--t3);">USD $</span></div>
+            <div style="padding:14px 16px;display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:600;color:var(--t1);">Notifications <span style="color:var(--p);">On</span></div>
+          </div>
+          <div style="background:var(--surf);border-radius:var(--r-md);box-shadow:var(--sh-sm);overflow:hidden;">
+            <div style="padding:14px 16px;border-bottom:1px solid #F0F2FA;display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:600;color:var(--t1);">Link Bank Account <span style="color:var(--p);">›</span></div>
+            <div style="padding:14px 16px;display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:600;color:var(--red);">Sign Out <span>›</span></div>
+          </div>
+        </div>
+        <div class="bnav">
+          <div class="bn-item" onclick="goTo(3)"><div class="bn-icon"><img src="home.png" alt="Home"></div><div class="bn-label">Home</div></div>
+          <div class="bn-item" onclick="goTo(5)"><div class="bn-icon"><img src="report.png" alt="Report"></div><div class="bn-label">Report</div></div>
+          <div class="bn-add-wrap" onclick="goTo(4)"><div class="bn-add">＋</div><div class="bn-add-spacer"></div><div class="bn-add-label">Add</div></div>
+          <div class="bn-item" onclick="goTo(7)"><div class="bn-icon"><img src="goals.png" alt="Goals"></div><div class="bn-label">Goals</div></div>
+          <div class="bn-item on"><div class="bn-icon"><img src="profile.png" alt="Profile"></div><div class="bn-label">Profile</div></div>
+        </div>
+      </div>
+
+    </div><!-- /phone -->
+
+    <!-- Nav controls -->
+    <div class="proto-btns">
+      <button class="pb" id="prev-btn" onclick="goTo(currentScreen-1)" disabled>‹</button>
+      <div class="pc" id="screen-counter">1 / 8</div>
+      <button class="pb" id="next-btn" onclick="goTo(currentScreen+1)">›</button>
+    </div>
+  </div><!-- /phone-wrap -->
+
+  <!-- RIGHT PANEL -->
+  <aside class="right-panel">
+
+    <!-- Ann 1 -->
+    <div class="ann active" id="a1">
+      <div class="ann-tag">Screen 1 · Welcome</div>
+      <h3 class="ann-title">Earn trust before asking for access</h3>
+      <p class="ann-desc">The first screen addresses the #1 anxiety from research: "being asked to link my bank immediately." The primary CTA leads to value, not to a data request.</p>
+      <ul class="ann-list">
+        <li><span class="alchk">✓</span><span>Floating cards show value <em>before</em> login: concretise the benefit</span></li>
+        <li><span class="alchk">✓</span><span>"Explore without linking" as the primary action, account sign-in is secondary</span></li>
+        <li><span class="alchk">✓</span><span>Copywriting avoids financial jargon; language is warm and personal</span></li>
+      </ul>
+      <div class="principle-call">
+        <div class="pc-label">Principle applied</div>
+        <div class="pc-text">"Trust before automation: help users feel in control before asking them to hand over sensitive data."</div>
+      </div>
+    </div>
+
+    <!-- Ann 2 -->
+    <div class="ann" id="a2">
+      <div class="ann-tag">Screen 2 · Onboarding</div>
+      <h3 class="ann-title">Set expectations, not requirements</h3>
+      <p class="ann-desc">3-step carousel establishes the mental model before the user reaches the dashboard. Each slide addresses one of the three core fears found in interviews.</p>
+      <ul class="ann-list">
+        <li><span class="alchk">✓</span><span>Slide 1 reaffirms no account needed: answers the anxiety upfront</span></li>
+        <li><span class="alchk">✓</span><span>Slide 2 pre-empts dashboard overwhelm by promising simplicity</span></li>
+        <li><span class="alchk">✓</span><span>Slide 3 confirms reversibility: "change your mind at any time"</span></li>
+        <li><span class="alchk">✓</span><span>Prominent "Skip" reduces friction for returning or confident users</span></li>
+      </ul>
+      <div class="principle-call">
+        <div class="pc-label">Principle applied</div>
+        <div class="pc-text">"Progressive commitment: guide users forward without forcing irreversible steps."</div>
+      </div>
+    </div>
+
+    <!-- Ann 3 -->
+    <div class="ann" id="a3">
+      <div class="ann-tag">Screen 3 · Dashboard</div>
+      <h3 class="ann-title">One signal, not a dashboard of noise</h3>
+      <p class="ann-desc">The hero card shows exactly three numbers: balance, in, out. The budget bar provides one clear health signal. Every secondary detail is discoverable, not upfront.</p>
+      <ul class="ann-list">
+        <li><span class="alchk">✓</span><span>Budget bar with plain language ("you're on track") reduces cognitive load</span></li>
+        <li><span class="alchk">✓</span><span>Category pills are scrollable: present without overwhelming</span></li>
+        <li><span class="alchk">✓</span><span>Bank-linking prompt is a soft banner: present but never blocking</span></li>
+        <li><span class="alchk">✓</span><span>FAB makes adding a transaction one tap away: reinforces manual-first UX</span></li>
+      </ul>
+      <div class="principle-call">
+        <div class="pc-label">Principle applied</div>
+        <div class="pc-text">"Clarity over completeness: show what matters, let users dig deeper on their own terms."</div>
+      </div>
+    </div>
+
+    <!-- Ann 4 -->
+    <div class="ann" id="a4">
+      <div class="ann-tag">Screen 4 · Add Transaction</div>
+      <h3 class="ann-title">Manual entry as a first-class feature</h3>
+      <p class="ann-desc">Adding transactions manually is not a fallback. It's the trust-building core interaction. The screen is optimised for speed and confidence, not for pushing automation.</p>
+      <ul class="ann-list">
+        <li><span class="alchk">✓</span><span>Amount hero is large and immediate: focus on the primary action first</span></li>
+        <li><span class="alchk">✓</span><span>Expense / Income toggle at the top: no hidden mode switching</span></li>
+        <li><span class="alchk">✓</span><span>8-icon category grid: visual, fast, no dropdowns</span></li>
+        <li><span class="alchk">✓</span><span>Minimal required fields: note and date are optional, reducing friction</span></li>
+      </ul>
+      <div class="principle-call">
+        <div class="pc-label">Principle applied</div>
+        <div class="pc-text">"Trust before automation: manual entry builds familiarity and confidence with the product."</div>
+      </div>
+    </div>
+
+    <!-- Ann 5 -->
+    <div class="ann" id="a5">
+      <div class="ann-tag">Screen 5 · Spending Report</div>
+      <h3 class="ann-title">Insight without information overload</h3>
+      <p class="ann-desc">A donut chart gives an at-a-glance spending shape; the category list adds detail progressively. Period toggle allows exploration without changing the default view.</p>
+      <ul class="ann-list">
+        <li><span class="alchk">✓</span><span>Donut + legend: visual overview before numbers: pattern recognition first</span></li>
+        <li><span class="alchk">✓</span><span>Bar within each category row shows relative weight without extra labels</span></li>
+        <li><span class="alchk">✓</span><span>Transaction count per category: shows volume, not just spend</span></li>
+        <li><span class="alchk">✓</span><span>Month is the default period: matches mental model of "this month's budget"</span></li>
+      </ul>
+      <div class="principle-call">
+        <div class="pc-label">Principle applied</div>
+        <div class="pc-text">"Clarity over completeness: a single chart that tells the whole story."</div>
+      </div>
+    </div>
+
+    <!-- Ann 6 -->
+    <div class="ann" id="a6">
+      <div class="ann-tag">Screen 6 · Link Account</div>
+      <h3 class="ann-title">Contextual ask, earned timing</h3>
+      <p class="ann-desc">The bank-linking prompt only appears after the user has built up real activity. It acknowledges their progress, frames linking as optional, and leads with clear security information.</p>
+      <ul class="ann-list">
+        <li><span class="alchk">✓</span><span>"Optional step" badge immediately defuses anxiety about being forced</span></li>
+        <li><span class="alchk">✓</span><span>Usage stats (12 txns, 3 days) validate the user's effort and build reciprocity</span></li>
+        <li><span class="alchk">✓</span><span>Security note is inline and specific: not buried in a modal</span></li>
+        <li><span class="alchk">✓</span><span>"Not yet" button is equal weight to "Connect": no dark patterns</span></li>
+      </ul>
+      <div class="principle-call">
+        <div class="pc-label">Principle applied</div>
+        <div class="pc-text">"Progressive commitment: ask for trust only after you've demonstrated value."</div>
+      </div>
+    </div>
+
+    <!-- Ann 7 -->
+    <div class="ann" id="a7">
+      <div class="ann-tag">Screen 7 · Goals</div>
+      <h3 class="ann-title">Visual progress builds motivation</h3>
+      <p class="ann-desc">Each goal shows a progress bar and a clear target. Simple, scannable, and encouraging — not a spreadsheet.</p>
+    </div>
+
+    <!-- Ann 8 -->
+    <div class="ann" id="a8">
+      <div class="ann-tag">Screen 8 · Profile</div>
+      <h3 class="ann-title">Settings without overwhelm</h3>
+      <p class="ann-desc">Budget, currency, notifications and account linking — everything in one clean list. No nested menus.</p>
+    </div>
+
+  </aside>
+</div><!-- /proto-layout -->
+
+<footer class="cs-footer">
+  <img src="logo-white.png" alt="EasyMoney" style="height:14px; width:auto; vertical-align:middle; opacity:.45;"> · UX Case Study · Trust-First Mobile Budgeting
+</footer>
+
+<script>
+let currentScreen = 1;
+let currentSlide  = 0;
+const totalScreens = 8;
+const totalSlides  = 3;
+
+function goTo(n) {
+  if (n < 1 || n > totalScreens) return;
+
+  // Hide current
+  document.getElementById('s' + currentScreen).classList.remove('active');
+  document.querySelectorAll('.sn-item')[currentScreen - 1].classList.remove('active');
+  document.getElementById('a' + currentScreen).classList.remove('active');
+
+  // Show new
+  currentScreen = n;
+  document.getElementById('s' + currentScreen).classList.add('active');
+  document.querySelectorAll('.sn-item')[currentScreen - 1].classList.add('active');
+  document.getElementById('a' + currentScreen).classList.add('active');
+
+  // Update nav buttons
+  document.getElementById('prev-btn').disabled = (currentScreen === 1);
+  document.getElementById('next-btn').disabled = (currentScreen === totalScreens);
+  document.getElementById('screen-counter').textContent = currentScreen + ' / ' + totalScreens;
+}
+
+function nextSlide() {
+  if (currentSlide < totalSlides - 1) {
+    document.getElementById('ob' + currentSlide).classList.remove('active');
+    document.getElementById('ob' + currentSlide).classList.add('prev');
+    document.getElementById('d' + currentSlide).classList.remove('active');
+
+    currentSlide++;
+
+    document.getElementById('ob' + currentSlide).classList.add('active');
+    document.getElementById('ob' + currentSlide).classList.remove('prev');
+    document.getElementById('d' + currentSlide).classList.add('active');
+
+    if (currentSlide === totalSlides - 1) {
+      document.getElementById('ob-cta').textContent = 'Start Exploring →';
+      document.getElementById('ob-cta').onclick = function() { goTo(3); };
+    }
+  } else {
+    goTo(3);
+  }
+}
+
+function selectCat(el) {
+  document.querySelectorAll('#s4 .cat-btn').forEach(b => b.classList.remove('on'));
+  el.classList.add('on');
+}
+
+function setType(t) {
+  document.getElementById('tt-exp').classList.toggle('on', t === 'expense');
+  document.getElementById('tt-inc').classList.toggle('on', t === 'income');
+}
+
+// Period tab interactivity
+document.querySelectorAll('.ptab').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.ptab').forEach(b => b.classList.remove('on'));
+    this.classList.add('on');
+  });
+});
+</script>
+</body>
+</html>
