@@ -368,6 +368,10 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 400; line-height: 1.
   width: 100%;
   display: block;
 }
+/* Mobile info section — hidden on desktop */
+.case-card-full__info { display: none; }
+.case-card-full__btn-mobile { display: none; }
+
 .case-card-full:hover { transform: translateY(-4px); }
 .case-card-full__btn {
   position: absolute;
@@ -993,13 +997,51 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 400; line-height: 1.
   .nav-links { display: none; }
   .nav-hamburger { display: flex; }
 
-  .case-card-full__btn,
-  .case-card-full__btn--left,
-  .case-card-full__btn--right {
-    position: static;
+  /* Hide desktop overlay button, show info row instead */
+  .case-card-full__btn { display: none; }
+
+  .case-card-full {
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid #e8e8e4;
+  }
+
+  /* Image fills full width at natural height */
+  .case-card-full img {
+    height: auto;
+    width: 100%;
     display: block;
-    width: fit-content;
-    margin: 1rem auto 0;
+  }
+
+  /* Compact title + button row below the image */
+  .case-card-full__info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .case-card-full__info-title {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin: 0;
+  }
+
+  .case-card-full__btn-mobile {
+    display: inline-block;
+    flex-shrink: 0;
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+    font-weight: 500;
+    padding: 0.38rem 0.9rem;
+    border: 1.5px solid var(--ink);
+    border-radius: 100px;
+    background: transparent;
+    color: var(--ink);
+    white-space: nowrap;
   }
 }
 
