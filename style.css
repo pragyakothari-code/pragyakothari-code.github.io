@@ -993,13 +993,13 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 400; line-height: 1.
   .nav-links { display: none; }
   .nav-hamburger { display: flex; }
 
-  .case-card-full__btn {
-    bottom: 10%;
-    left: 61%;
-  }
-  .case-card-full__btn--left {
-    bottom: 15%;
-    left: calc(var(--pad) + 21px);
+  .case-card-full__btn,
+  .case-card-full__btn--left,
+  .case-card-full__btn--right {
+    position: static;
+    display: block;
+    width: fit-content;
+    margin: 1rem auto 0;
   }
 }
 
