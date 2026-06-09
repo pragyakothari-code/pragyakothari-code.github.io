@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../style.css?v=8">
+  <link rel="stylesheet" href="../style.css?v=9">
   <style>
     /* ── EASYMONEY CASE STUDY ─────────────────────────────── */
     :root {
@@ -944,6 +944,8 @@
 
     /* ── RESPONSIVE ──────────────────────────────────────── */
     @media (max-width: 768px) {
+      html, body { overflow-x: hidden; }
+      .em-hero-illus-caption { white-space: normal; }
       .cs-overview { grid-template-columns: 1fr 1fr; }
       .cs-ov-item:nth-child(3) { border-left: none; border-top: 1px solid #E4E1DC; padding-left: 0; }
       .cs-ov-item:nth-child(4) { border-top: 1px solid #E4E1DC; }
@@ -966,6 +968,7 @@
   <!-- ── NAV ─────────────────────────────────────────────── -->
   <nav id="nav">
     <div class="nav-inner">
+      <a href="../index.html" class="nav-wordmark">Pragya Kothari</a>
       <ul class="nav-links">
         <li><a href="../index.html#work">Work</a></li>
         <li><a href="../index.html#about">About</a></li>
@@ -1292,7 +1295,8 @@
           src="easymoney/phone-only.html"
           title="EasyMoney interactive prototype"
           allowtransparency="true"
-          allowfullscreen>
+          allowfullscreen
+          scrolling="no">
         </iframe>
       </div>
     </div>
@@ -1312,10 +1316,6 @@
   <footer class="footer">
     <div class="footer-inner">
       <span>© 2026 Pragya Kothari</span>
-      <div class="footer-links">
-        <a href="https://www.linkedin.com/in/pragya--kothari/" target="_blank" rel="noopener">LinkedIn</a>
-        <a href="https://pragyak.com" target="_blank" rel="noopener">Illustration</a>
-      </div>
       <a href="#" class="footer-top">↑ Back to top</a>
     </div>
   </footer>

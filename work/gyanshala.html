@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../style.css?v=8">
+  <link rel="stylesheet" href="../style.css?v=9">
   <style>
     /* ── GYANSHALA CASE STUDY ────────────────────────────── */
     :root {
@@ -145,17 +145,8 @@
       padding: 1.75rem 0;
     }
     .cs-ov-item + .cs-ov-item {
+      border-left: 1px solid #E4E1DC;
       padding-left: 2rem;
-      position: relative;
-    }
-    .cs-ov-item + .cs-ov-item::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 25%;
-      bottom: 25%;
-      width: 1px;
-      background: #E4E1DC;
     }
     .cs-ov-label {
       font-family: var(--font-body);
@@ -737,12 +728,37 @@
     .gy-devices-frame iframe::-webkit-scrollbar {
       display: none;
     }
+    .gy-mobile-phone-frame { display: none; }
     @media (max-width: 768px) {
-      .gy-devices-frame iframe { height: 680px; }
-    }
-    @media (max-width: 480px) {
-      .gy-devices-frame iframe { height: 560px; }
+      .gy-devices-section { padding-bottom: 3rem; }
+      .gy-devices-frame { display: none; }
       .gy-devices-header { align-items: flex-start; text-align: left; }
+      .gy-mobile-phone-frame {
+        display: block;
+        margin-top: 2rem;
+        background: #000;
+        border-radius: 44px;
+        padding: 12px;
+        box-shadow: 0 0 0 2px #333, 0 0 0 4px #555, 0 20px 60px rgba(0,0,0,0.5);
+        width: 260px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .gy-mobile-phone-frame .gy-phone-screen {
+        width: 236px;
+        height: 512px;
+        border-radius: 34px;
+        overflow: hidden;
+        position: relative;
+      }
+      .gy-mobile-phone-frame iframe {
+        width: 390px;
+        height: 846px;
+        border: none;
+        display: block;
+        transform: scale(0.605);   /* 236 ÷ 390 */
+        transform-origin: top left;
+      }
     }
 
     /* ── REFLECTION ──────────────────────────────────────── */
@@ -825,12 +841,65 @@
 
     /* ── RESPONSIVE ──────────────────────────────────────── */
     @media (max-width: 768px) {
+      html, body { overflow-x: hidden; }
+      /* Stack table rows as cards on mobile */
+      .gy-impact-table thead { display: none; }
+      .gy-impact-table tbody tr {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        background: transparent;
+        margin-bottom: 2.5rem;
+      }
+      .gy-impact-table tbody tr td {
+        display: block;
+        width: 100%;
+        text-align: left;
+        border: none;
+        border-top: none;
+        background: var(--gy-blue);
+        border-radius: 10px;
+        padding: 0.65rem 1rem;
+        font-size: 0.875rem;
+        color: #fff;
+        font-weight: 500;
+        position: relative;
+        margin-bottom: 28px;
+      }
+      .gy-impact-table tbody tr td:last-child { margin-bottom: 0; }
+      .gy-impact-table tbody tr:nth-child(even) td { background: #1a1a2e; }
+      .gy-impact-table tbody tr td.gy-impact-arrow-col { display: none; }
+      /* labels */
+      .gy-impact-table tbody tr td:first-child::before  { content: "BEFORE";   font-size: 0.58rem; font-weight: 800; letter-spacing: 0.1em; color: rgba(255,255,255,0.55); display: block; margin-bottom: 3px; }
+      .gy-impact-table tbody tr td:nth-child(3)::before { content: "DECISION"; font-size: 0.58rem; font-weight: 800; letter-spacing: 0.1em; color: rgba(255,255,255,0.55); display: block; margin-bottom: 3px; }
+      .gy-impact-table tbody tr td:last-child::before   { content: "AFTER";    font-size: 0.58rem; font-weight: 800; letter-spacing: 0.1em; color: rgba(255,255,255,0.55); display: block; margin-bottom: 3px; }
+      /* arrows in the space between boxes */
+      .gy-impact-table tbody tr td:first-child::after,
+      .gy-impact-table tbody tr td:nth-child(3)::after {
+        content: "↓";
+        position: absolute;
+        bottom: -22px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 1.1rem;
+        color: var(--gy-blue);
+        line-height: 1;
+      }
+      .gy-impact-table tbody tr:nth-child(even) td:first-child::after,
+      .gy-impact-table tbody tr:nth-child(even) td:nth-child(3)::after {
+        color: #1a1a2e;
+      }
       .cs-overview { grid-template-columns: 1fr 1fr; }
       .cs-ov-item:nth-child(3) { border-left: none; border-top: 1px solid #E4E1DC; padding-left: 0; }
       .cs-ov-item:nth-child(4) { border-top: 1px solid #E4E1DC; }
       .gy-insights { grid-template-columns: 1fr; }
       .gy-principles { grid-template-columns: 1fr; }
       .gy-reflection-grid { grid-template-columns: 1fr; }
+      .gy-problem-grid { grid-template-columns: 1fr; }
+      .gy-audit-layout { grid-template-columns: 1fr; }
+      .gy-char-strip { display: flex; flex-wrap: wrap; justify-content: center; }
+      .gy-char-item { width: 33.33%; }
+      .gy-char-item:nth-child(4)::before { display: none; }
       .cs-hero-row { flex-direction: column; align-items: flex-start; }
       .gy-cta-btn { width: 100%; justify-content: center; }
     }
@@ -841,6 +910,7 @@
   <!-- ── NAV ─────────────────────────────────────────────── -->
   <nav id="nav">
     <div class="nav-inner">
+      <a href="../index.html" class="nav-wordmark">Pragya Kothari</a>
       <ul class="nav-links">
         <li><a href="../index.html#work">Work</a></li>
         <li><a href="../index.html#about">About</a></li>
@@ -934,7 +1004,7 @@
       <h2 style="font-family:var(--font-display);font-size:clamp(1.75rem,3vw,2.5rem);font-weight:400;color:var(--gy-blue-dark);line-height:1.15;letter-spacing:-0.02em;margin:0.25rem 0 0;">The original site, annotated.</h2>
       <div class="gy-audit-layout">
         <div class="gy-audit-img-wrap">
-          <img src="../../gyanshala/images/original-site.png" alt="Original JVBNA Gyanshala website">
+          <img src="gyanshala/images/original-site.png" alt="Original JVBNA Gyanshala website">
           <!-- marker positions as % of image dimensions -->
           <span class="gy-audit-marker" style="left:47%;top:12%">1</span>
           <span class="gy-audit-marker" style="left:16%;top:28%">2</span>
@@ -1033,23 +1103,23 @@
         <p>The original site had no imagery, limited colour, and little sense of warmth or community. The redesign took inspiration directly from the students themselves, from yellow Gyanshala t-shirts to blue Gyanshala bags and familiar classroom moments. Every character was illustrated by hand using details families would instantly recognise, giving the experience a sense of personality, familiarity, and belonging.</p>
       </div>
       <div class="gy-illus-hero">
-        <img src="../../gyanshala/images/classroom-teacher.png" alt="Teacher at the front of a Gyanshala classroom with students at their desks">
+        <img src="gyanshala/images/classroom-teacher.png" alt="Teacher at the front of a Gyanshala classroom with students at their desks">
       </div>
       <div class="gy-char-strip">
         <div class="gy-char-item">
-          <img src="../../gyanshala/images/walking-to-gyanshala.png" alt="Two students walking to school">
+          <img src="gyanshala/images/walking-to-gyanshala.png" alt="Two students walking to school">
         </div>
         <div class="gy-char-item">
-          <img src="../../gyanshala/images/child-reading-girl.png" alt="Girl reading and raising her hand">
+          <img src="gyanshala/images/child-reading-girl.png" alt="Girl reading and raising her hand">
         </div>
         <div class="gy-char-item">
-          <img src="../../gyanshala/images/sign-in-illus.png" alt="Two kids reading together">
+          <img src="gyanshala/images/sign-in-illus.png" alt="Two kids reading together">
         </div>
         <div class="gy-char-item">
-          <img src="../../gyanshala/images/syllabus-illus.png" alt="Stack of subject books">
+          <img src="gyanshala/images/syllabus-illus.png" alt="Stack of subject books">
         </div>
         <div class="gy-char-item">
-          <img src="../../gyanshala/images/schedule-illus.png" alt="Calendar with marked dates">
+          <img src="gyanshala/images/schedule-illus.png" alt="Calendar with marked dates">
         </div>
       </div>
       <div class="gy-illus-callout">
@@ -1083,28 +1153,28 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
+          <tr data-n="1">
             <td>24 clicks to find classwork and homework</td>
             <td class="gy-impact-arrow-col">→</td>
             <td>One time login and weekly classwork surfaced directly from the home screen</td>
             <td class="gy-impact-arrow-col">→</td>
             <td>Faster access with fewer navigation steps</td>
           </tr>
-          <tr>
+          <tr data-n="2">
             <td>Back and forth between website and WhatsApp to find info</td>
             <td class="gy-impact-arrow-col">→</td>
             <td>Everything in one place on the website</td>
             <td class="gy-impact-arrow-col">→</td>
             <td>One reliable destination for information</td>
           </tr>
-          <tr>
+          <tr data-n="3">
             <td>Admin-labelled navigation</td>
             <td class="gy-impact-arrow-col">→</td>
             <td>Nav labels match parent questions</td>
             <td class="gy-impact-arrow-col">→</td>
             <td>Less guessing, faster understanding</td>
           </tr>
-          <tr>
+          <tr data-n="4">
             <td>Important information was buried deep within pages</td>
             <td class="gy-impact-arrow-col">→</td>
             <td>Prioritize high need content using progressive disclosure and clear hierarchy</td>
@@ -1144,6 +1214,15 @@
           allowtransparency="true"
           allowfullscreen>
         </iframe>
+      </div>
+      <div class="gy-mobile-phone-frame">
+        <div class="gy-phone-screen">
+          <iframe
+            src="gyanshala/site/index.html"
+            title="Gyanshala prototype on mobile"
+            allowfullscreen>
+          </iframe>
+        </div>
       </div>
     </div>
   </div>
@@ -1190,10 +1269,6 @@
   <footer class="footer">
     <div class="footer-inner">
       <span>© 2026 Pragya Kothari</span>
-      <div class="footer-links">
-        <a href="https://www.linkedin.com/in/pragya--kothari/" target="_blank" rel="noopener">LinkedIn</a>
-        <a href="https://pragyak.com" target="_blank" rel="noopener">Illustration</a>
-      </div>
       <a href="#" class="footer-top">↑ Back to top</a>
     </div>
   </footer>
