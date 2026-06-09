@@ -117,14 +117,13 @@ lightbox.addEventListener('touchend', e => {
   if (Math.abs(dx) > 50) dx < 0 ? showNext() : showPrev();
 }, { passive: true });
 
-// ── CENTER ABOUT SECTION on nav click ────────────────────
+// ── SCROLL ABOUT SECTION to top on nav click ─────────────
 document.querySelector('a[href="#about"]')?.addEventListener('click', (e) => {
   e.preventDefault();
   const about = document.getElementById('about');
-  const aboutTop = about.getBoundingClientRect().top + window.scrollY;
-  const aboutHeight = about.offsetHeight;
-  const offset = aboutTop - (window.innerHeight / 2) + (aboutHeight / 2);
-  window.scrollTo({ top: Math.max(0, offset), behavior: 'smooth' });
+  const navHeight = document.getElementById('nav').offsetHeight;
+  const aboutTop = about.getBoundingClientRect().top + window.scrollY - navHeight;
+  window.scrollTo({ top: Math.max(0, aboutTop), behavior: 'smooth' });
 });
 
 // ── ACTIVE NAV LINK on scroll ─────────────────────────────
