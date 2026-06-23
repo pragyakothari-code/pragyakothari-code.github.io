@@ -502,6 +502,27 @@
     .nb-proto-phone-col {
       width: clamp(220px, 26vw, 300px);
       margin-left: 3rem;
+      text-align: center;
+    }
+    .nb-try-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 1.5rem;
+      padding: 0.6rem 1.25rem;
+      background: #E8C547;
+      color: #1a1a2e;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      border-radius: 100px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+      animation: nb-badge-bounce 2.2s ease-in-out infinite;
+    }
+    @keyframes nb-badge-bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
     }
     .nb-proto-tips-col { }
     .nb-proto-eyebrow {
@@ -1051,6 +1072,7 @@
           </iframe>
         </div>
       </div>
+      <span class="nb-try-badge">Try it, scroll and tap around</span>
     </div>
     <!-- Right: label + nav tips -->
     <div class="nb-proto-tips-col">
@@ -1076,8 +1098,8 @@
   <div class="cs-next">
     <div class="cs-next-inner">
       <span>Next Case Study</span>
-      <h3><span style="font-family:Georgia,serif;font-size:2.25rem;font-weight:700;color:#1E3A80;display:block;margin-bottom:0.5rem;text-transform:none;letter-spacing:-0.02em;">Gyanshala</span>a school website redesigned for parents and community.</h3>
-      <a href="gyanshala.html">View Gyanshala →</a>
+      <h3><span style="font-family:'Fraunces',serif;font-size:2.25rem;font-weight:700;color:#1a1a1a;display:block;margin-bottom:0.5rem;text-transform:none;letter-spacing:-0.02em;">Kiln Kissed Ceramics</span>a handmade pottery site redesigned for shopping and discovery.</h3>
+      <a href="kiln-kissed.html">View Kiln Kissed Ceramics →</a>
     </div>
   </div>
 

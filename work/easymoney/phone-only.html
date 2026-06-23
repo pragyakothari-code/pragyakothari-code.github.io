@@ -770,21 +770,25 @@ body {
 .btn-outline:hover { border-color: var(--t2); }
 
 /* ─── PROTO NAV BUTTONS ─────────────────── */
-.proto-btns {
-  display: flex; align-items: center; gap: 0;
-  background: rgba(255,255,255,.22);
-  border-radius: 12px; overflow: hidden;
+.proto-try-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.25rem;
+  background: #E8C547;
+  color: var(--t1);
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  border-radius: 100px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  animation: proto-badge-bounce 2.2s ease-in-out infinite;
 }
-.pb {
-  width: 44px; height: 44px;
-  background: none; border: none;
-  cursor: pointer; font-size: 18px; color: rgba(255,255,255,1);
-  display: flex; align-items: center; justify-content: center;
-  transition: background .2s;
+@keyframes proto-badge-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
 }
-.pb:hover { background: rgba(255,255,255,.2); }
-.pb:disabled { opacity: .3; cursor: not-allowed; }
-.pc { font-size: 13px; color: rgba(255,255,255,.9); padding: 0 14px; }
 
 /* ─── RIGHT PANEL ─────────────────────────── */
 .right-panel { color: white; padding-top: 12px; }
@@ -1418,11 +1422,7 @@ body {
     </div><!-- /phone-shell -->
 
     <!-- Nav controls -->
-    <div class="proto-btns">
-      <button class="pb" id="prev-btn" onclick="goTo(currentScreen-1)" disabled>‹</button>
-      <div class="pc" id="screen-counter">1 / 8</div>
-      <button class="pb" id="next-btn" onclick="goTo(currentScreen+1)">›</button>
-    </div>
+    <span class="proto-try-badge">Try it, tap around</span>
   </div><!-- /phone-wrap -->
 <script>
 
@@ -1441,10 +1441,6 @@ function goTo(n) {
   currentScreen = n;
   document.getElementById('s' + currentScreen).classList.add('active');
 
-  // Update nav buttons
-  document.getElementById('prev-btn').disabled = (currentScreen === 1);
-  document.getElementById('next-btn').disabled = (currentScreen === totalScreens);
-  document.getElementById('screen-counter').textContent = currentScreen + ' / ' + totalScreens;
 }
 
 function nextSlide() {

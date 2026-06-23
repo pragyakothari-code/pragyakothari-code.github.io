@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kiln Kissed Ceramics, Pragya Kothari</title>
+  <meta name="description" content="A redesign of a handmade pottery site, giving a small-batch ceramics business a clean, shoppable home online.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css?v=9">
+  <style>
+    /* ── KILN KISSED CERAMICS CASE STUDY ──────────────────── */
+    :root {
+      --kk-clay:  #1a1a1a;
+      --kk-moss:  #6b7a52;
+      --kk-cream: #f2f1ee;
+    }
+
+    /* ── HERO TWO-COL LAYOUT ─────────────────────────────── */
+    .cs-hero-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 3rem;
+    }
+    .cs-hero-left { flex: 1; }
+    .cs-hero-cta {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ── HERO CTA BUTTON ─────────────────────────────────── */
+    .kk-cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.7rem 1.3rem;
+      background: var(--ink);
+      color: #fff;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      border-radius: 100px;
+      letter-spacing: 0.01em;
+      transition: background 0.2s, transform 0.15s;
+      white-space: nowrap;
+    }
+    .kk-cta-icon { font-size: 0.75rem; }
+    .kk-cta-btn:hover {
+      background: #333;
+      transform: translateY(-1px);
+    }
+    @media (max-width: 640px) {
+      .cs-hero-row { flex-direction: column; align-items: flex-start; gap: 1rem; }
+      .kk-cta-btn { width: 100%; justify-content: center; }
+    }
+
+    /* ── NAV BACK LINK ───────────────────────────────────── */
+    .cs-nav-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: var(--font-body);
+      font-size: 0.875rem;
+      color: var(--ink-light);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .cs-nav-back:hover { color: var(--ink); }
+
+    /* ── HERO ────────────────────────────────────────────── */
+    .cs-hero {
+      padding: calc(clamp(3rem, 5vw, 5rem) + 64px) var(--pad) 0;
+      max-width: var(--max-w);
+      margin: 0 auto;
+    }
+    .cs-hero-meta { margin-bottom: 1.5rem; }
+    .cs-tag {
+      display: block;
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--ink-light);
+      margin-top: 1rem;
+    }
+    .cs-hero-title {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(2.25rem, 5vw, 3.5rem);
+      font-weight: 700;
+      color: var(--kk-clay);
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      margin: 0.75rem 0 1.25rem;
+    }
+    .cs-hero-sub {
+      font-size: clamp(1rem, 1.5vw, 1.175rem);
+      color: var(--ink-mid);
+      max-width: 60ch;
+      line-height: 1.75;
+    }
+
+    /* ── OVERVIEW BAR ────────────────────────────────────── */
+    .cs-overview {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border-top: 1px solid #E4E1DC;
+      border-bottom: 1px solid #E4E1DC;
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 var(--pad);
+    }
+    .cs-ov-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      padding: 1.75rem 0;
+    }
+    .cs-ov-item + .cs-ov-item {
+      border-left: 1px solid #E4E1DC;
+      padding-left: 2rem;
+    }
+    .cs-ov-label {
+      font-family: var(--font-body);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-light);
+    }
+    .cs-ov-val {
+      font-family: var(--font-body);
+      font-size: 0.9375rem;
+      color: var(--ink);
+    }
+
+    /* ── SECTIONS ────────────────────────────────────────── */
+    .cs-section {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: clamp(3rem, 5vw, 5rem) var(--pad);
+    }
+    .cs-section + .cs-section {
+      border-top: 1px solid #E4E1DC;
+    }
+    .cs-section--dark {
+      background: var(--kk-clay);
+      max-width: 100%;
+      padding: clamp(3rem, 5vw, 5rem) var(--pad);
+    }
+    .cs-section--dark .cs-section-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+    }
+
+    /* ── TYPOGRAPHY ──────────────────────────────────────── */
+    .cs-label {
+      font-family: var(--font-body);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--kk-moss);
+      display: block;
+      margin-bottom: 0.875rem;
+    }
+    .cs-section h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.625rem, 2.75vw, 2.375rem);
+      font-weight: 400;
+      color: var(--kk-clay);
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      margin: 0 0 1.25rem;
+    }
+    .cs-section--dark h2 { color: #fff; }
+    .cs-section p {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      color: var(--ink-mid);
+      line-height: 1.8;
+      max-width: 68ch;
+    }
+    .cs-section p + p { margin-top: 0.875rem; }
+    .cs-section--dark p { color: rgba(255,255,255,0.72); max-width: none; }
+
+    .cs-subhead {
+      font-family: var(--font-display);
+      font-size: clamp(1.05rem, 1.5vw, 1.25rem);
+      font-weight: 600;
+      color: var(--kk-clay);
+      margin: 3rem 0 0.5rem;
+    }
+    .cs-subhead-sub {
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      color: var(--ink-light);
+      margin: 0 0 0;
+    }
+
+    .cs-bullet-list {
+      list-style: none;
+      margin: 1rem 0 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .cs-bullet-list li {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.6;
+      padding-left: 1.25rem;
+      position: relative;
+    }
+    .cs-bullet-list li::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      color: var(--kk-moss);
+    }
+
+    .cs-img {
+      width: 100%;
+      display: block;
+      margin: 2.5rem 0 0;
+      border-radius: 12px;
+      box-shadow: 0 12px 48px rgba(0,0,0,0.12);
+    }
+
+    /* ── UX TEARDOWN ANNOTATIONS ──────────────────────────── */
+    .cs-annotate {
+      position: relative;
+      margin: 2.5rem 0 0;
+    }
+    .cs-annotate img {
+      width: 100%;
+      display: block;
+      border-radius: 12px;
+      box-shadow: 0 12px 48px rgba(0,0,0,0.12);
+    }
+    .cs-pin {
+      position: absolute;
+      width: 26px;
+      height: 26px;
+      transform: translate(-50%, -50%);
+      background: #E8C547;
+      color: var(--kk-clay);
+      border: 2px solid #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      font-weight: 700;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.35);
+    }
+    .cs-annotate-legend {
+      list-style: none;
+      margin: 1.25rem 0 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+    .cs-annotate-legend li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.7rem;
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      color: var(--ink-mid);
+      line-height: 1.5;
+    }
+    .cs-annotate-num {
+      flex-shrink: 0;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #E8C547;
+      color: var(--kk-clay);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+      margin-top: 0.1rem;
+    }
+
+    /* ── PHOTOGRAPHY COMPARISON ──────────────────────────── */
+    .cs-compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-top: 2.5rem;
+    }
+    .cs-compare-item img {
+      width: 100%;
+      display: block;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      border-radius: 12px;
+      box-shadow: 0 12px 48px rgba(0,0,0,0.12);
+    }
+    .cs-compare-tag {
+      display: block;
+      font-family: var(--font-body);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink-light);
+      margin-bottom: 0.625rem;
+    }
+    .cs-compare-item--after .cs-compare-tag { color: var(--kk-moss); }
+    @media (max-width: 640px) {
+      .cs-compare { grid-template-columns: 1fr; }
+    }
+
+    /* ── NEXT CASE STUDY ───────────────────────────────────── */
+    .cs-next {
+      text-align: center;
+      padding: clamp(4rem, 8vw, 7rem) var(--pad);
+      max-width: 100%;
+    }
+    .cs-next-inner { max-width: 600px; margin: 0 auto; }
+    .cs-next span {
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-light);
+      display: block;
+      margin-bottom: 1.25rem;
+    }
+    .cs-next h3 {
+      font-family: var(--font-display);
+      font-size: clamp(1.5rem, 3vw, 2.25rem);
+      font-weight: 400;
+      color: var(--ink);
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      margin-bottom: 2rem;
+    }
+    .cs-next a {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.85rem 1.75rem;
+      background: var(--ink);
+      color: #fff;
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      border-radius: 100px;
+      transition: opacity 0.2s;
+    }
+    .cs-next a:hover { opacity: 0.85; }
+
+    /* ── DESKTOP MONITOR FRAME PROTOTYPE ───────────────────── */
+    .kk-proto-wrap {
+      margin-top: 2.5rem;
+      text-align: center;
+    }
+    .kk-monitor {
+      max-width: 100%;
+    }
+    .kk-monitor-bezel {
+      background: #1a1a1a;
+      border-radius: clamp(6px, 3.6vw, 14px);
+      padding: clamp(7px, 4.2vw, 16px) clamp(7px, 4.2vw, 16px) clamp(9px, 5.2vw, 20px);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.28), 0 4px 16px rgba(0,0,0,0.1);
+    }
+    .kk-screen {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1280 / 860;
+      background: #fff;
+      border-radius: clamp(2px, 1vw, 4px);
+      overflow: hidden;
+    }
+    .kk-screen iframe {
+      width: 1280px;
+      height: 100%;
+      border: none;
+      display: block;
+      transform-origin: top left;
+    }
+    .kk-monitor-cam {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #3a3a3a;
+      margin: 0 auto 8px;
+    }
+    .kk-monitor-stand-neck {
+      width: 90px;
+      height: 34px;
+      background: linear-gradient(180deg, #2a2a2a, #1a1a1a);
+      margin: 0 auto;
+      clip-path: polygon(30% 0, 70% 0, 88% 100%, 12% 100%);
+    }
+    .kk-monitor-stand-base {
+      width: 220px;
+      height: 12px;
+      background: #1a1a1a;
+      margin: 0 auto;
+      border-radius: 8px;
+    }
+    .kk-try-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 1.5rem auto 0;
+      padding: 0.6rem 1.25rem;
+      background: #E8C547;
+      color: var(--kk-clay);
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      border-radius: 100px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+      animation: kk-badge-bounce 2.2s ease-in-out infinite;
+    }
+    .kk-try-badge-icon {
+      font-size: 1rem;
+      transform: rotate(-8deg);
+    }
+    @keyframes kk-badge-bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+    @media (max-width: 640px) {
+      .kk-monitor-stand-base { width: 160px; }
+    }
+
+    @media (max-width: 768px) {
+      .cs-overview { grid-template-columns: 1fr 1fr; }
+      .cs-ov-item:nth-child(3) { border-left: none; border-top: 1px solid #E4E1DC; padding-left: 0; }
+      .cs-ov-item:nth-child(4) { border-top: 1px solid #E4E1DC; }
+    }
+    @media (max-width: 480px) {
+      .cs-overview { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── NAV ─────────────────────────────────────────────── -->
+  <nav id="nav">
+    <div class="nav-inner">
+      <a href="../index.html" class="nav-wordmark">Pragya Kothari</a>
+      <ul class="nav-links">
+        <li><a href="../index.html#work">Work</a></li>
+        <li><a href="../index.html#about">About</a></li>
+        <li><a href="../index.html#contact">Contact</a></li>
+        <li><a href="../index.html#playground">Playground</a></li>
+      </ul>
+      <button class="nav-hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="nav-rule"></div>
+  </nav>
+
+  <!-- ── HERO ────────────────────────────────────────────── -->
+  <div class="cs-hero">
+    <div class="cs-hero-meta">
+      <a href="../index.html#work" class="cs-nav-back">← All Work</a>
+    </div>
+    <div class="cs-hero-row">
+      <div class="cs-hero-left">
+        <span class="cs-tag">Web Design &middot; E-Commerce &middot; Branding</span>
+        <h1 class="cs-hero-title">Kiln Kissed Ceramics</h1>
+        <p class="cs-hero-sub">A redesign of a handmade pottery site, giving a small-batch ceramics business a clean, shoppable home online.</p>
+      </div>
+      <div class="cs-hero-cta">
+        <a href="#prototype" class="kk-cta-btn">
+          <span class="kk-cta-icon">▶</span> See it in action
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── OVERVIEW BAR ────────────────────────────────────── -->
+  <div class="cs-overview">
+    <div class="cs-ov-item">
+      <span class="cs-ov-label">Role</span>
+      <span class="cs-ov-val">UX &amp; Visual Designer</span>
+    </div>
+    <div class="cs-ov-item">
+      <span class="cs-ov-label">Timeline</span>
+      <span class="cs-ov-val">2 Weeks</span>
+    </div>
+    <div class="cs-ov-item">
+      <span class="cs-ov-label">Tools</span>
+      <span class="cs-ov-val">Figma &middot; Claude Code &middot; Procreate &middot; ChatGPT</span>
+    </div>
+    <div class="cs-ov-item">
+      <span class="cs-ov-label">Platform</span>
+      <span class="cs-ov-val">Web (Responsive)</span>
+    </div>
+  </div>
+
+  <!-- ── THE PROBLEM ──────────────────────────────────────── -->
+  <div class="cs-section">
+    <span class="cs-label">The Problem</span>
+    <h2>Functional, but aesthetically sad.</h2>
+    <p>The original site worked, you could browse and find information, but there was no real brand behind it. The header was a Canva template dressed up with mismatched clip-art icons, and the homepage photography was dim and unstyled, more like a quick phone snapshot than a product photo.</p>
+    <p>For a business built on handmade, one-of-a-kind pottery, the site read as generic. It didn't give the work any visual identity of its own, and didn't position the pieces as the premium, considered objects they actually are.</p>
+    <div class="cs-annotate">
+      <img src="../images/work/kiln-kissed-before.png" alt="The original Kiln Kissed Ceramics homepage, with a Canva-style logo and dim, unstyled product photography">
+      <div class="cs-pin" style="top: 7%; left: 54%;">1</div>
+      <div class="cs-pin" style="top: 21%; left: 50%;">2</div>
+      <div class="cs-pin" style="top: 55%; left: 50%;">3</div>
+      <div class="cs-pin" style="top: 93%; left: 30%;">4</div>
+      <div class="cs-pin" style="top: 38%; left: 50%;">5</div>
+      <div class="cs-pin" style="top: 97%; left: 60%;">6</div>
+      <div class="cs-pin" style="top: 21%; left: 91%;">7</div>
+    </div>
+    <ol class="cs-annotate-legend">
+      <li><span class="cs-annotate-num">1</span> Logo lacks professionalism, clip-art icons and mismatched styles make the brand feel amateur and inconsistent</li>
+      <li><span class="cs-annotate-num">2</span> Navigation has no hierarchy, every item looks the same weight and Cart feels visually disconnected</li>
+      <li><span class="cs-annotate-num">3</span> Photography isn't doing the product justice, flat lighting and a busy background compete with the pottery</li>
+      <li><span class="cs-annotate-num">4</span> Dense, unscannable copy, long paragraphs with no formatting or visual breaks</li>
+      <li><span class="cs-annotate-num">5</span> No clear call to action, visitors don't know what to do next</li>
+      <li><span class="cs-annotate-num">6</span> Links lack emphasis, important links blend into the paragraph and get missed</li>
+      <li><span class="cs-annotate-num">7</span> Cart lacks prominence, small, alone, and separated from the nav</li>
+    </ol>
+  </div>
+
+  <!-- ── THE REDESIGN ──────────────────────────────────────── -->
+  <div class="cs-section">
+    <span class="cs-label">The Redesign</span>
+    <h2>Rebranding the business, not just the site.</h2>
+    <p>This wasn't a styling pass on the old site, it was a full rebrand. I defined a new visual identity for Kiln Kissed Ceramics from scratch, then rebuilt the product photography to match it, so every image positions the pottery as a premium, one-of-a-kind brand rather than a hobby shop.</p>
+    <ul class="cs-bullet-list">
+      <li>A clean wordmark and type system to replace the Canva header</li>
+      <li>Product photography re-shot and re-aligned to the new brand aesthetic</li>
+      <li>A dedicated shop with a working cart and checkout flow</li>
+      <li>A gallery page to showcase one-of-a-kind pieces beyond what's for sale</li>
+      <li>An events page so customers can find the studio at markets and pop-ups</li>
+    </ul>
+
+    <!-- ── PHOTOGRAPHY COMPARISON ────────────────────────────── -->
+    <h3 class="cs-subhead">The photography got the same treatment.</h3>
+    <p class="cs-subhead-sub">Same pieces, same table, shot and styled to look like a considered product rather than a snapshot.</p>
+    <div class="cs-compare">
+      <div class="cs-compare-item cs-compare-item--before">
+        <span class="cs-compare-tag">Before</span>
+        <img src="../images/work/kiln-kissed-old-product.png" alt="Original product photography, dim and unstyled">
+      </div>
+      <div class="cs-compare-item cs-compare-item--after">
+        <span class="cs-compare-tag">After</span>
+        <img src="../images/work/kiln-kissed-after.png" alt="Re-shot product photography, styled to match the new brand">
+      </div>
+    </div>
+
+    <!-- ── LIVE PROTOTYPE ────────────────────────────────────── -->
+    <h3 class="cs-subhead">And here's the site it all came together in.</h3>
+    <p class="cs-subhead-sub">New wordmark, new photography, and the shop, gallery, and events pages from the list above.</p>
+    <div class="kk-proto-wrap" id="prototype">
+      <div class="kk-monitor">
+        <div class="kk-monitor-bezel">
+          <div class="kk-monitor-cam"></div>
+          <div class="kk-screen">
+            <iframe src="https://www.pragyakothari.com/kiln-kissed-ceramics/" title="Kiln Kissed Ceramics, live site" loading="lazy"></iframe>
+          </div>
+        </div>
+        <div class="kk-monitor-stand-neck"></div>
+        <div class="kk-monitor-stand-base"></div>
+      </div>
+      <span class="kk-try-badge">Try it, scroll and click around</span>
+    </div>
+  </div>
+
+  <!-- ── OUTCOME ──────────────────────────────────────────── -->
+  <div class="cs-section--dark">
+    <div class="cs-section-inner">
+      <span class="cs-label" style="color: rgba(255,255,255,0.65);">Outcome</span>
+      <h2>A brand that matches the craft.</h2>
+      <p>Kiln Kissed Ceramics now looks like the premium, one-of-a-kind brand it always was, with an identity and photography that match the care put into every piece. Instead of relying on Instagram DMs and in-person sales alone, the business has a single branded site to direct customers to, with a clear path to browse, shop, and reach out.</p>
+    </div>
+  </div>
+
+  <!-- ── NEXT CASE STUDY ───────────────────────────────────── -->
+  <div class="cs-next">
+    <div class="cs-next-inner">
+      <span>Next Case Study</span>
+      <h3><span style="font-family:Georgia,serif;font-size:2.25rem;font-weight:700;color:#1E3A80;display:block;margin-bottom:0.5rem;text-transform:none;letter-spacing:-0.02em;">Gyanshala</span>a school website redesigned for parents and community.</h3>
+      <a href="gyanshala.html">View Gyanshala →</a>
+    </div>
+  </div>
+
+  <!-- ── FOOTER ─────────────────────────────────────────── -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <span>© 2026 Pragya Kothari</span>
+      <a href="#" class="footer-top">↑ Back to top</a>
+    </div>
+  </footer>
+
+  <script>
+    // ── NAV ───────────────────────────────────────────────
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 40);
+    }, { passive: true });
+
+    const hamburger = document.querySelector('.nav-hamburger');
+    const navLinks  = document.querySelector('.nav-links');
+    hamburger?.addEventListener('click', () => {
+      const open = navLinks.classList.toggle('nav-open');
+      hamburger.setAttribute('aria-expanded', open);
+    });
+    navLinks?.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => navLinks.classList.remove('nav-open'));
+    });
+
+    // ── PROTOTYPE: always render desktop layout, scaled to fit ──
+    const kkScreen = document.querySelector('.kk-screen');
+    const kkFrame = document.querySelector('.kk-screen iframe');
+    const KK_DESKTOP_WIDTH = 1280;
+    function sizeKKFrame() {
+      if (!kkScreen || !kkFrame) return;
+      const screenW = kkScreen.clientWidth;
+      const screenH = kkScreen.clientHeight;
+      const scale = screenW / KK_DESKTOP_WIDTH;
+      kkFrame.style.transform = `scale(${scale})`;
+      kkFrame.style.width = KK_DESKTOP_WIDTH + 'px';
+      kkFrame.style.height = (screenH / scale) + 'px';
+    }
+    sizeKKFrame();
+    window.addEventListener('resize', sizeKKFrame, { passive: true });
+
+    const fadeEls = document.querySelectorAll('.cs-hero, .cs-overview, .cs-section, .cs-section--dark, .cs-next');
+    fadeEls.forEach(el => el.classList.add('fade-up'));
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), i * 60);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.06 });
+    fadeEls.forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
